@@ -48,6 +48,9 @@ const requestedCustomerSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    appointmentDate:{
+      type: Date,
+    },
     approvedAt: Date,
   },
   {

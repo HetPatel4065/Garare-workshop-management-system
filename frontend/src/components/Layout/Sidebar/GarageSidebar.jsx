@@ -284,7 +284,7 @@ export default function GarageSidebar({ isOpen, onClose, showNotifications }) {
               <div key={section.label} className="mb-6 last:mb-2">
                 {/* Section header */}
                 {(!collapsed || !isDesktop) && (
-                  <button
+                  <motion.button
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -298,46 +298,48 @@ export default function GarageSidebar({ isOpen, onClose, showNotifications }) {
                       size={12}
                       className={`text-gray-600 transition-transform duration-200 ${isOpenSection ? "" : "-rotate-90"}`}
                     />
-                  </button>
+                  </motion.button>
                 )}
 
                 {/* Items */}
-                <div className="space-y-1">
-                  {visibleItems.map((item) => {
-                    const Icon = item.icon;
-                    const active = isActive(item.path);
-                    const isCollapsedDesktop = collapsed && isDesktop;
+                {isOpenSection && (
+                  <div className="space-y-1">
+                    {visibleItems.map((item) => {
+                      const Icon = item.icon;
+                      const active = isActive(item.path);
+                      const isCollapsedDesktop = collapsed && isDesktop;
 
-                    return (
-                      <Link
-                        key={item.path}
-                        to={item.path}
-                        title={isCollapsedDesktop ? item.name : undefined}
-                        className={`
+                      return (
+                        <Link
+                          key={item.path}
+                          to={item.path}
+                          title={isCollapsedDesktop ? item.name : undefined}
+                          className={`
                           relative flex items-center rounded-xl text-sm font-semibold
                           transition-colors duration-200
                           ${isCollapsedDesktop ? "justify-center py-3" : "gap-3 px-3 py-2.5"}
                           ${active ? "bg-blue-600 text-white" : "text-gray-400 hover:bg-white/10 hover:text-white"}
                         `}
-                      >
-                        <Icon
-                          size={18}
-                          className={`shrink-0 ${active ? "text-white" : "text-gray-500 group-hover:text-gray-300"}`}
-                        />
-                        {!isCollapsedDesktop && (
-                          <span className="truncate">{item.name}</span>
-                        )}
+                        >
+                          <Icon
+                            size={18}
+                            className={`shrink-0 ${active ? "text-white" : "text-gray-500 group-hover:text-gray-300"}`}
+                          />
+                          {!isCollapsedDesktop && (
+                            <span className="truncate">{item.name}</span>
+                          )}
 
-                        {/* Tooltip */}
-                        {isCollapsedDesktop && (
-                          <div className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-100 border border-white/10 shadow-xl">
-                            {item.name}
-                          </div>
-                        )}
-                      </Link>
-                    );
-                  })}
-                </div>
+                          {/* Tooltip */}
+                          {isCollapsedDesktop && (
+                            <div className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-100 border border-white/10 shadow-xl">
+                              {item.name}
+                            </div>
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             );
           })}
