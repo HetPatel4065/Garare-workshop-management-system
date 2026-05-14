@@ -1,14 +1,16 @@
 import GarageSettings from "../models/GarageSettings.js";
 import Owner from "../models/Owner.js";
 import { sendEmail } from "./notifications.js";
+import { createNotification } from "./notificationHelper.js";
 
+// Original method kept as requested by user
 export const notifyLowStock = async (ownerId, item) => {
   if (!item || !ownerId) return;
 
   if (item.stock <= (item.minLimit ?? 5)) {
     try {
       const settings = await GarageSettings.findOne({ ownerId });
-      
+
       // Only proceed if low stock notifications are enabled in settings
       if (settings?.notifications?.lowStock) {
         const owner = await Owner.findById(ownerId).select("name email mobileNumber garageName");
@@ -38,6 +40,28 @@ export const notifyLowStock = async (ownerId, item) => {
       }
     } catch (notifErr) {
       console.error("[NOTIFY] Low-stock notification error:", notifErr.message);
+    }
+  }
+};
+
+// New method for in-app and real-time notifications
+export const createLowStockNotification = async (ownerId, item) => {
+  if (!item || !ownerId) return;
+
+  console.log(`[DEBUG] Checking stock for ${item.name}: ${item.stock} / ${item.minLimit ?? 5}`);
+  if (item.stock <= (item.minLimit ?? 5)) {
+    console.log(`[DEBUG] Item ${item.name} is low stock. Creating notification...`);
+    try {
+      await createNotification({
+        ownerId,
+        title: `⚠️ Low Stock Alert: ${item.name}`,
+        message: `The stock for ${item.name} has reached ${item.stock} ${item.unit || 'pcs'}. Min limit is ${item.minLimit ?? 5}.`,
+        type: "low_stock",
+        link: `/inventory?q=${encodeURIComponent(item.name)}`
+      });
+      console.log(`[NOTIFY] In-app low stock notification created for ${item.name}`);
+    } catch (notifErr) {
+      console.error("[NOTIFY] In-app low-stock notification error:", notifErr.message);
     }
   }
 };

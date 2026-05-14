@@ -2,7 +2,7 @@ import Inventory from "../models/Inventory.js";
 import mongoose from "mongoose";
 import GarageSettings from "../models/GarageSettings.js";
 import Owner from "../models/Owner.js";
-import { notifyLowStock } from "../utils/inventoryUtils.js";
+import { notifyLowStock, createLowStockNotification } from "../utils/inventoryUtils.js";
 
 // 📋 GET INVENTORY (with search + low stock filter)
 export const getInventory = async (req, res) => {
@@ -61,6 +61,11 @@ export const addPart = async (req, res) => {
     const data = { ...req.body, ownerId: req.user.effectiveOwnerId };
     const part = await Inventory.create(data);
     res.status(201).json(part);
+
+    // 📱 Fire low-stock notification
+    const ownerId = req.user.effectiveOwnerId;
+    notifyLowStock(ownerId, part);
+    createLowStockNotification(ownerId, part);
   } catch (error) {
     console.error("ADD PART ERROR:", error);
     if (error.code === 11000) {
@@ -116,6 +121,7 @@ export const updateStock = async (req, res) => {
 
     // 📱 Fire low-stock notification (non-blocking)
     notifyLowStock(ownerId, updatedItem);
+    createLowStockNotification(ownerId, updatedItem);
   } catch (error) {
     console.error("Update Error:", error);
     res.status(400).json({ error: error.message });
@@ -140,6 +146,7 @@ export const updatePart = async (req, res) => {
     
     // Check if the update (e.g., minLimit change) triggered a low stock state
     notifyLowStock(ownerId, updatedPart);
+    createLowStockNotification(ownerId, updatedPart);
   } catch (error) {
     console.error("Update Part Error:", error);
     res.status(400).json({ error: error.message });
@@ -191,6 +198,10 @@ export const addInventory = async (req, res) => {
     const data = { ...req.body, ownerId };
     const newItem = await Inventory.create(data);
     res.status(201).json(newItem);
+
+    // 📱 Fire low-stock notification
+    notifyLowStock(ownerId, newItem);
+    createLowStockNotification(ownerId, newItem);
   } catch (err) {
     console.error(err);
     if (err.name === "ValidationError") {

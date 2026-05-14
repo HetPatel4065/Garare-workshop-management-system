@@ -54,15 +54,24 @@ export default function SearchBar({
           className="w-full bg-transparent border-none outline-none ring-0 shadow-none text-sm font-medium text-gray-700 placeholder:text-gray-400"
         />
 
-        {value && (
+        <div className="flex items-center gap-1.5 ml-1.5 shrink-0">
+          {value && (
+            <button
+              onClick={handleClear}
+              className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all"
+              title="Clear input"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+          
           <button
-            onClick={handleClear}
-            className="p-1 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all ml-1.5 shrink-0"
-            title="Clear input"
+            onClick={handleSearchClick}
+            className="px-3 py-1 bg-blue-600 text-white text-[10px] font-bold rounded-lg hover:bg-blue-700 transition-colors uppercase tracking-wider"
           >
-            <X className="w-3.5 h-3.5" />
+            Search
           </button>
-        )}
+        </div>
       </div>
 
       {activeSearch && (

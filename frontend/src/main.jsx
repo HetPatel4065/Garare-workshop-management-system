@@ -6,6 +6,7 @@ import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { ToastProvider } from "./context/ToastContext.jsx";
 import { LoadingProvider } from "./context/LoadingContext.jsx";
+import { NotificationProvider } from "./context/NotificationContext.jsx";
 
 const originalFetch = window.fetch;
 window.fetch = async (...args) => {
@@ -41,7 +42,9 @@ createRoot(document.getElementById("root")).render(
       <ToastProvider>
         <LoadingProvider>
           <AuthProvider>
-            <App />
+            <NotificationProvider>
+              <App />
+            </NotificationProvider>
           </AuthProvider>
         </LoadingProvider>
       </ToastProvider>

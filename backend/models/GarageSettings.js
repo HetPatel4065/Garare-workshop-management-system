@@ -64,6 +64,14 @@ const garageSettingsSchema = new mongoose.Schema(
         default: [-7, -3, 0, 3], // 7 days before, 3 days before, on due date, 3 days after
       },
     },
+    // SMTP Custom Configuration
+    smtp: {
+      host: { type: String },
+      port: { type: Number },
+      secure: { type: Boolean, default: false },
+      user: { type: String },
+      pass: { type: String },
+    },
     // Security settings
     security: {
       twoFactorAuth: { type: Boolean, default: false },

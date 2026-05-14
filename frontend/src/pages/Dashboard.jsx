@@ -192,9 +192,9 @@ export default function Dashboard() {
         <div className="mb-2 text-[10px] text-slate-400 font-black uppercase tracking-widest px-1">
           {typeof label === "string" && label.includes("-")
             ? new Date(label).toLocaleDateString("en-IN", {
-                day: "numeric",
-                month: "short",
-              })
+              day: "numeric",
+              month: "short",
+            })
             : label}
         </div>
 

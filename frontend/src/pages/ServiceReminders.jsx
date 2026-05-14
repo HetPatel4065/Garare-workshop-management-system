@@ -2,28 +2,280 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import {
-  FiMail,
-  FiMessageCircle,
-  FiPhone,
-  FiCalendar,
-  FiCheckCircle,
-  FiAlertCircle,
-  FiClock,
-  FiSearch,
-} from "react-icons/fi";
-import { FaUser } from "react-icons/fa";
+  Search,
+  Eye,
+  ChevronLeft,
+  ChevronRight,
+  Phone,
+  Mail,
+  MapPin,
+  Clock,
+  Users,
+  Calendar,
+  CheckCircle,
+  AlertCircle,
+  MessageCircle,
+  X,
+  Car,
+} from "lucide-react";
 import { format } from "date-fns";
 
-const ServiceReminders = () => {
+// ─── MetaField (mirrors RequestedCustomers) ───────────────────────
+function MetaField({
+  label,
+  primary,
+  secondary,
+  icon: Icon,
+  className = "",
+  noCapitalize = false,
+}) {
+  return (
+    <div className={`flex flex-col min-w-0 ${className}`}>
+      <p className="text-[9px] sm:text-[11px] uppercase font-black tracking-wide text-slate-500 border-b-2 border-slate-100 w-fit pb-0.5 mb-1.5 flex items-center gap-1 whitespace-nowrap">
+        {Icon && <Icon size={12} className="text-slate-400" />}
+        {label}
+      </p>
+      <p
+        className={`text-xs sm:text-sm font-bold text-slate-800 leading-normal truncate ${noCapitalize ? "" : "capitalize"}`}
+      >
+        {primary || "—"}
+      </p>
+      {secondary && (
+        <p className="text-[10px] font-bold text-slate-400 mt-0.5">
+          {secondary}
+        </p>
+      )}
+    </div>
+  );
+}
+
+// ─── Status Badge ─────────────────────────────────────────────────
+function getStatusMeta(reminderStatus, nextServiceDate) {
+  const nextDate = new Date(nextServiceDate);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (reminderStatus === "Completed")
+    return {
+      label: "Completed",
+      style: "text-emerald-700 bg-emerald-50 border-emerald-200",
+      dot: "bg-emerald-500",
+    };
+  if (nextDate < today)
+    return {
+      label: "Overdue",
+      style: "text-rose-700 bg-rose-50 border-rose-200",
+      dot: "bg-rose-500 animate-pulse",
+    };
+  if (nextDate.toDateString() === today.toDateString())
+    return {
+      label: "Due Today",
+      style: "text-amber-700 bg-amber-50 border-amber-200",
+      dot: "bg-amber-400 animate-pulse",
+    };
+  return {
+    label: "Upcoming",
+    style: "text-blue-700 bg-blue-50 border-blue-200",
+    dot: "bg-blue-500",
+  };
+}
+
+function StatusBadge({ reminderStatus, nextServiceDate }) {
+  const { label, style, dot } = getStatusMeta(reminderStatus, nextServiceDate);
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 text-[10px] font-black px-2.5 py-1 rounded-full border uppercase tracking-wider ${style}`}
+    >
+      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dot}`} />
+      {label}
+    </span>
+  );
+}
+
+// ─── Skeleton Card ────────────────────────────────────────────────
+const SkeletonCard = () => (
+  <div className="bg-white rounded-3xl p-4 sm:p-5 mb-4 border border-slate-100 shadow-sm animate-pulse">
+    <div className="flex flex-wrap items-center gap-3 mb-4">
+      <div className="h-5 bg-slate-100 rounded w-32" />
+      <div className="h-5 bg-slate-100 rounded-lg w-16" />
+      <div className="h-5 bg-slate-100 rounded-full w-20" />
+    </div>
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-3 mb-4">
+      {[...Array(4)].map((_, i) => (
+        <div key={i} className="space-y-1.5">
+          <div className="h-3 bg-slate-100 rounded w-14" />
+          <div className="h-4 bg-slate-100 rounded w-24" />
+        </div>
+      ))}
+    </div>
+    <div className="border-t border-slate-100 my-3" />
+    <div className="h-8 bg-slate-100 rounded-2xl w-full" />
+  </div>
+);
+
+// ─── Empty State ──────────────────────────────────────────────────
+const EmptyState = ({ hasSearch }) => (
+  <div className="flex flex-col items-center gap-3 py-16 px-6 text-center bg-white rounded-3xl border border-slate-100">
+    <div className="w-16 h-16 bg-slate-50 rounded-3xl flex items-center justify-center">
+      {hasSearch ? (
+        <Search size={24} className="text-slate-300" />
+      ) : (
+        <Calendar size={24} className="text-slate-300" />
+      )}
+    </div>
+    <div>
+      <p className="font-black text-slate-700 text-sm">
+        {hasSearch ? "No matching reminders" : "No service reminders"}
+      </p>
+      <p className="text-xs text-slate-400 font-medium mt-1">
+        {hasSearch
+          ? "Try adjusting your search or filter"
+          : "Service reminders will appear here"}
+      </p>
+    </div>
+  </div>
+);
+
+// ─── Stat Card ────────────────────────────────────────────────────
+const StatCard = ({
+  label,
+  count,
+  icon: Icon,
+  colorClasses,
+  onClick,
+  active,
+}) => (
+  <button
+    onClick={onClick}
+    className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl border transition-all duration-200 text-left w-full
+      ${
+        active
+          ? `${colorClasses.activeBg} ${colorClasses.activeBorder} shadow-sm scale-[1.02]`
+          : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm"
+      }`}
+  >
+    <div
+      className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${active ? colorClasses.iconBg : "bg-slate-50"}`}
+    >
+      <Icon
+        size={16}
+        className={active ? colorClasses.iconColor : "text-slate-400"}
+      />
+    </div>
+    <div className="min-w-0">
+      <p
+        className={`text-[10px] font-black uppercase tracking-widest leading-none mb-1 ${active ? colorClasses.label : "text-slate-400"}`}
+      >
+        {label}
+      </p>
+      <p
+        className={`text-xl font-black leading-none ${active ? colorClasses.count : "text-slate-800"}`}
+      >
+        {count}
+      </p>
+    </div>
+  </button>
+);
+
+// ─── Reminder Card (mirrors RequestCard layout) ───────────────────
+function ReminderCard({ r, onSendEmail, onSendSMS, onCall }) {
+  const nextDate = new Date(r.nextServiceDate);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const isOverdue = nextDate < today && r.reminderStatus !== "Completed";
+
+  return (
+    <div className="bg-white rounded-3xl p-4 sm:p-5 mb-4 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] transition-all duration-300 border border-slate-100 shadow-sm relative overflow-hidden group">
+      {/* ── TOP ROW: Plate + Make/Model + Status ── */}
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <h3 className="text-lg font-bold text-gray-900 tracking-tight">
+            {r.licensePlate}
+          </h3>
+          <span className="px-2 py-0.5 bg-slate-100 border border-slate-300 text-slate-600 text-[11px] font-bold rounded-lg uppercase tracking-wide">
+            {r.make} {r.model}
+          </span>
+          <StatusBadge
+            reminderStatus={r.reminderStatus}
+            nextServiceDate={r.nextServiceDate}
+          />
+        </div>
+      </div>
+
+      {/* ── META GRID ── */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-4 mb-4">
+        <MetaField label="Customer" primary={r.customerId?.name || r.customerName || "Walk-in"} />
+        <MetaField label="Phone" primary={r.customerId?.phone || "—"} />
+        <MetaField label="Email" primary={r.customerId?.email || "—"} noCapitalize />
+        <MetaField
+          label="Due Date"
+          primary={format(new Date(r.nextServiceDate), "dd MMM yyyy")}
+          secondary={isOverdue ? "Overdue" : ""}
+        />
+        <MetaField
+          label="Service Type"
+          primary={r.serviceType || "General Service"}
+        />
+      </div>
+
+      {/* ── DIVIDER ── */}
+      <div className="border-t border-gray-100 my-3" />
+
+      {/* ── BOTTOM ROW: Actions ── */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-2">
+        {/* Left: last service info */}
+        <p className="text-[11px] font-semibold text-slate-400">
+          {r.lastServiceDate
+            ? `Last serviced: ${format(new Date(r.lastServiceDate), "dd MMM yyyy")}`
+            : "No previous service recorded"}
+        </p>
+
+        {/* Right: contact actions */}
+        <div className="flex items-center gap-2">
+          {r.customerId?.email && (
+            <a
+              href={`mailto:${r.customerId.email}?subject=Service Reminder - ${r.licensePlate}&body=Dear ${r.customerId.name || r.customerName}, your vehicle ${r.make} ${r.model} (${r.licensePlate}) is due for service on ${format(new Date(r.nextServiceDate), "dd MMM yyyy")}.`}
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-[12px] font-bold text-blue-600 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-600 hover:text-white transition active:scale-95"
+            >
+              <Mail size={14} />
+              Email
+            </a>
+          )}
+          {r.customerId?.phone && (
+            <>
+              <a
+                href={`https://wa.me/${r.customerId.phone.replace(/\D/g, "")}?text=Hello ${r.customerId.name || r.customerName}, your vehicle ${r.make} ${r.model} (${r.licensePlate}) is due for service on ${format(new Date(r.nextServiceDate), "dd MMM yyyy")}.`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-[12px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-xl hover:bg-emerald-600 hover:text-white transition active:scale-95"
+              >
+                <MessageCircle size={14} />
+                WhatsApp
+              </a>
+              <a
+                href={`tel:${r.customerId.phone}`}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-[12px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-xl hover:bg-indigo-600 hover:text-white transition active:scale-95"
+              >
+                <Phone size={14} />
+                Call
+              </a>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Component ───────────────────────────────────────────────
+export default function ServiceReminders() {
   const { token } = useAuth();
   const [reminders, setReminders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("Upcoming");
-  const [searchTerm, setSearchTerm] = useState("");
-
-  useEffect(() => {
-    fetchReminders();
-  }, []);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const fetchReminders = async () => {
     try {
@@ -39,6 +291,11 @@ const ServiceReminders = () => {
     }
   };
 
+  useEffect(() => {
+    fetchReminders();
+  }, []);
+
+  // ── Filter logic ──
   const filteredReminders = reminders.filter((r) => {
     if (!r.nextServiceDate) return false;
 
@@ -51,86 +308,151 @@ const ServiceReminders = () => {
     const isUpcoming = nextDate > today && r.reminderStatus !== "Completed";
     const isCompleted = r.reminderStatus === "Completed";
 
+    const query = searchQuery.toLowerCase();
     const matchesSearch =
-      r.licensePlate.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      r.customerName?.toLowerCase().includes(searchTerm.toLowerCase());
+      r.licensePlate?.toLowerCase().includes(query) ||
+      r.customerName?.toLowerCase().includes(query) ||
+      r.customerId?.name?.toLowerCase().includes(query) ||
+      r.customerId?.phone?.includes(query) ||
+      r.customerId?.email?.toLowerCase().includes(query);
 
     if (!matchesSearch) return false;
 
-    if (filter === "Today") return isToday;
-    if (filter === "Overdue") return isOverdue;
-    if (filter === "Upcoming") return isUpcoming;
-    if (filter === "Completed") return isCompleted;
-    return true;
+    if (statusFilter === "Today") return isToday;
+    if (statusFilter === "Overdue") return isOverdue;
+    if (statusFilter === "Upcoming") return isUpcoming;
+    if (statusFilter === "Completed") return isCompleted;
+    return true; // "All"
   });
 
-  const getStatusBadge = (status, dueDate) => {
-    const nextDate = new Date(dueDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+  // ── Status counts ──
+  const statusCounts = reminders.reduce(
+    (acc, r) => {
+      if (!r.nextServiceDate) return acc;
+      const nextDate = new Date(r.nextServiceDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-    const baseClass =
-      "px-2.5 py-1 rounded-full text-[10px] sm:text-xs font-bold flex items-center gap-1 w-fit whitespace-nowrap";
+      acc.All += 1;
+      if (r.reminderStatus === "Completed") acc.Completed += 1;
+      else if (nextDate < today) acc.Overdue += 1;
+      else if (nextDate.toDateString() === today.toDateString()) acc.Today += 1;
+      else acc.Upcoming += 1;
 
-    if (status === "Completed") {
-      return (
-        <span className={`${baseClass} bg-green-100 text-green-700`}>
-          <FiCheckCircle size={12} /> Completed
-        </span>
-      );
-    }
-    if (nextDate < today) {
-      return (
-        <span className={`${baseClass} bg-red-100 text-red-700`}>
-          <FiAlertCircle size={12} /> Overdue
-        </span>
-      );
-    }
-    if (nextDate.toDateString() === today.toDateString()) {
-      return (
-        <span className={`${baseClass} bg-yellow-100 text-yellow-700`}>
-          <FiClock size={12} /> Due Today
-        </span>
-      );
-    }
-    return (
-      <span className={`${baseClass} bg-blue-100 text-blue-700`}>
-        <FiCalendar size={12} /> Upcoming
-      </span>
-    );
+      return acc;
+    },
+    { All: 0, Today: 0, Upcoming: 0, Overdue: 0, Completed: 0 },
+  );
+
+  // ── Pagination ──
+  const totalPages = Math.ceil(filteredReminders.length / itemsPerPage);
+  const currentReminders = filteredReminders.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
+
+  const handleFilterChange = (value) => {
+    setStatusFilter(value);
+    setCurrentPage(1);
   };
 
+  const statCards = [
+    {
+      label: "All",
+      count: statusCounts.All,
+      icon: Users,
+      value: "All",
+      colorClasses: {
+        activeBg: "bg-blue-50",
+        activeBorder: "border-blue-200",
+        iconBg: "bg-blue-100",
+        iconColor: "text-blue-600",
+        label: "text-blue-600",
+        count: "text-blue-700",
+      },
+    },
+    {
+      label: "Today",
+      count: statusCounts.Today,
+      icon: Clock,
+      value: "Today",
+      colorClasses: {
+        activeBg: "bg-amber-50",
+        activeBorder: "border-amber-200",
+        iconBg: "bg-amber-100",
+        iconColor: "text-amber-600",
+        label: "text-amber-600",
+        count: "text-amber-700",
+      },
+    },
+    {
+      label: "Upcoming",
+      count: statusCounts.Upcoming,
+      icon: Calendar,
+      value: "Upcoming",
+      colorClasses: {
+        activeBg: "bg-indigo-50",
+        activeBorder: "border-indigo-200",
+        iconBg: "bg-indigo-100",
+        iconColor: "text-indigo-600",
+        label: "text-indigo-600",
+        count: "text-indigo-700",
+      },
+    },
+    {
+      label: "Overdue",
+      count: statusCounts.Overdue,
+      icon: AlertCircle,
+      value: "Overdue",
+      colorClasses: {
+        activeBg: "bg-rose-50",
+        activeBorder: "border-rose-200",
+        iconBg: "bg-rose-100",
+        iconColor: "text-rose-600",
+        label: "text-rose-600",
+        count: "text-rose-700",
+      },
+    },
+    {
+      label: "Completed",
+      count: statusCounts.Completed,
+      icon: CheckCircle,
+      value: "Completed",
+      colorClasses: {
+        activeBg: "bg-emerald-50",
+        activeBorder: "border-emerald-200",
+        iconBg: "bg-emerald-100",
+        iconColor: "text-emerald-600",
+        label: "text-emerald-600",
+        count: "text-emerald-700",
+      },
+    },
+  ];
+
+  // Placeholder handlers
+  const handleSendEmail = (r) => console.log("Email", r);
+  const handleSendSMS = (r) => console.log("SMS", r);
+  const handleCall = (r) => console.log("Call", r);
+
   return (
-    <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <div className="p-4 sm:p-6 bg-gray-100 rounded-xl min-h-screen">
+      {/* ── Header ── */}
       <div className="mb-8 pb-5 border-b border-slate-200/80">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>
             <p className="text-[11px] font-black text-blue-600 uppercase tracking-[0.22em] mb-2">
               Service Management
             </p>
-
             <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-none">
               Service Reminders
             </h1>
-
             <p className="text-sm font-medium text-slate-500 mt-3">
-              Manage and track upcoming vehicle services
+              Manage and track upcoming vehicle service reminders
             </p>
           </div>
-
           <button
             onClick={fetchReminders}
-            className="
-        self-start sm:self-auto
-        flex items-center gap-2
-        px-5 py-3
-        bg-blue-600 hover:bg-blue-700
-        text-white
-        rounded-2xl
-        text-sm font-bold
-        transition-all duration-300
-        shadow-md hover:shadow-xl
-      "
+            className="self-start sm:self-auto flex items-center gap-2 px-5 py-3 bg-blue-600 hover:bg-blue-700 rounded-2xl text-sm font-bold text-white transition-all duration-300 shadow-sm hover:shadow-md"
           >
             <svg
               className="w-4 h-4"
@@ -145,139 +467,118 @@ const ServiceReminders = () => {
                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
               />
             </svg>
-            Refresh Data
+            Refresh
           </button>
         </div>
       </div>
 
-      {/* Search & Filter Bar */}
-      <div className="mb-6 flex flex-col lg:flex-row gap-4">
-        <div className="relative flex-1">
-          <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input
-            type="text"
-            placeholder="Search license or customer..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 transition-all text-sm font-semibold text-slate-700 outline-none shadow-sm"
+      {/* ── Stat Cards ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-6">
+        {statCards.map((card) => (
+          <StatCard
+            key={card.value}
+            {...card}
+            active={statusFilter === card.value}
+            onClick={() => handleFilterChange(card.value)}
           />
-        </div>
-        <div className="w-full lg:w-auto">
-          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl">
-            {["Today", "Upcoming", "Overdue", "Completed"].map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`
-                  flex items-center justify-center px-4 py-2 
-                  rounded-lg text-[11px] font-black uppercase tracking-wider transition-all duration-200 
-                  ${
-                    filter === f
-                      ? "bg-white text-blue-600 shadow-sm"
-                      : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
-                  }
-                `}
-              >
-                {f}
-              </button>
-            ))}
-          </div>
+        ))}
+      </div>
+
+      {/* ── Search ── */}
+      <div className="mb-4">
+        <div className="relative">
+          <Search
+            size={15}
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+          />
+          <input
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+            placeholder="Search by name, phone, email or license plate..."
+            className="w-full pl-9 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-sm"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              <X size={15} />
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Reminders Grid */}
-      {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4 sm:gap-6">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div
-              key={i}
-              className="bg-white rounded-2xl border border-slate-100 p-6 animate-pulse"
-            >
-              <div className="h-4 bg-slate-100 rounded w-1/3 mb-4"></div>
-              <div className="h-6 bg-slate-100 rounded w-1/2 mb-2"></div>
-              <div className="h-20 bg-slate-50 rounded-xl mt-6"></div>
-            </div>
-          ))}
+      {/* ── Active Filter Chip ── */}
+      {statusFilter !== "All" && (
+        <div className="mb-4 flex items-center gap-2">
+          <span className="text-[11px] font-bold text-slate-500">
+            Filtering by:
+          </span>
+          <button
+            onClick={() => handleFilterChange("All")}
+            className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 border border-blue-200 rounded-full text-[11px] font-bold text-blue-700 hover:bg-blue-100 transition-colors"
+          >
+            {statusFilter} <X size={11} />
+          </button>
         </div>
-      ) : filteredReminders.length === 0 ? (
-        <div className="bg-white rounded-3xl border-2 border-dashed border-slate-200 p-12 text-center">
-          <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300">
-            <FiCalendar size={40} />
-          </div>
-          <h3 className="text-xl font-bold text-slate-900">
-            No reminders found
-          </h3>
-          <p className="text-slate-500 mt-2">
-            Try adjusting your search or filters.
+      )}
+
+      {/* ── Count ── */}
+      {!loading && filteredReminders.length > 0 && (
+        <div className="mb-3 px-1">
+          <p className="text-sm font-medium text-gray-500">
+            Total Reminders:{" "}
+            <span className="text-gray-900 font-bold">
+              {filteredReminders.length}
+            </span>
           </p>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  gap-4 sm:gap-6">
-          {filteredReminders.map((r) => (
-            <div
+      )}
+
+      {/* ── Cards ── */}
+      <div>
+        {loading ? (
+          [...Array(4)].map((_, i) => <SkeletonCard key={i} />)
+        ) : currentReminders.length === 0 ? (
+          <EmptyState hasSearch={!!searchQuery || statusFilter !== "All"} />
+        ) : (
+          currentReminders.map((r) => (
+            <ReminderCard
               key={r._id}
-              className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group flex flex-col"
-            >
-              <div className="p-5 flex-1">
-                <div className="flex justify-between items-start mb-5 gap-2">
-                  <div className="min-w-0">
-                    <h4 className="text-lg font-black text-slate-900 truncate leading-none mb-1">
-                      {r.licensePlate}
-                    </h4>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-tight truncate">
-                      {r.make} {r.model}
-                    </p>
-                  </div>
-                  {getStatusBadge(r.reminderStatus, r.nextServiceDate)}
-                </div>
+              r={r}
+              onSendEmail={handleSendEmail}
+              onSendSMS={handleSendSMS}
+              onCall={handleCall}
+            />
+          ))
+        )}
+      </div>
 
-                <div className="bg-slate-50 rounded-xl p-3 space-y-3 mb-5">
-                  <div className="flex items-center gap-3">
-                    <div className="shrink-0 w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-blue-500">
-                      <FiCalendar size={14} />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-[10px] text-slate-400 font-bold uppercase">
-                        Due Date
-                      </p>
-                      <p className="font-bold text-xs sm:text-sm text-slate-700">
-                        {format(new Date(r.nextServiceDate), "dd MMM yyyy")}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="shrink-0 w-8 h-8 rounded-lg bg-white shadow-sm flex items-center justify-center text-indigo-500">
-                      <FaUser size={14} />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-[10px] text-slate-400 font-bold uppercase">
-                        Customer
-                      </p>
-                      <p className="font-bold text-xs sm:text-sm text-slate-700 truncate">
-                        {r.customerName || "Walk-in Customer"}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2">
-                  <button className="flex items-center justify-center py-3 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all active:scale-95">
-                    <FiMail size={20} />
-                  </button>
-                  <button className="flex items-center justify-center py-3 rounded-xl bg-green-50 text-green-600 hover:bg-green-600 hover:text-white transition-all active:scale-95">
-                    <FiMessageCircle size={20} />
-                  </button>
-                  <button className="flex items-center justify-center py-3 rounded-xl bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all active:scale-95">
-                    <FiPhone size={20} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
+      {/* ── Pagination ── */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-2 mt-6">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="p-2 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
+          >
+            <ChevronLeft size={16} />
+          </button>
+          <span className="text-sm font-bold text-slate-600">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="p-2 rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
+          >
+            <ChevronRight size={16} />
+          </button>
         </div>
       )}
     </div>
   );
-};
-
-export default ServiceReminders;
+}

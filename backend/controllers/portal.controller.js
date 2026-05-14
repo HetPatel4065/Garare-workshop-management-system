@@ -13,6 +13,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import GarageSettings from "../models/GarageSettings.js";
 import { generateAndSaveInvoicePDF } from "../utils/generateInvoice.js";
+import { createNotification } from "../utils/notificationHelper.js";
 
 export const getPublicGarages = async (req, res) => {
   try {
@@ -121,8 +122,8 @@ export const registerCustomer = async (req, res) => {
       requestedAt: new Date()
     });
 
-    // Create Notification for Owner
-    await Notification.create({
+    // 🔔 Create Notification for Owner
+    await createNotification({
       ownerId: garageId,
       title: "New Customer Request",
       message: `New registration request from ${name} (${vehicleNumber || "No Vehicle"})`,

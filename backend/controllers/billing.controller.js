@@ -1,10 +1,13 @@
 import Invoice from "../models/Invoice.js";
+import { createNotification } from "../utils/notificationHelper.js";
 import Service from "../models/Service.js";
 import { calculateInvoiceTotals } from "../utils/calculateInvoice.js";
 import { generateAndSaveInvoicePDF } from "../utils/generateInvoice.js";
 import GarageSettings from "../models/GarageSettings.js";
 import Owner from "../models/Owner.js";
 import { sendEmail, buildDailyReportEmail } from "../utils/notifications.js";
+import Notification from "../models/Notification.js";
+import { emitToOwner } from "../utils/socket.js";
 
 // 🧾 CREATE INVOICE DRAFT
 export const createInvoiceDraft = async (req, res) => {
@@ -23,7 +26,7 @@ export const createInvoiceDraft = async (req, res) => {
 
     // 🛡️ CHECK IF INVOICE ALREADY EXISTS
     const existingInvoice = await Invoice.findOne({ serviceId, ownerId });
-    
+
     // If invoice exists and is already finalized/paid, just return it
     if (existingInvoice && existingInvoice.status !== "Draft") {
       return res.status(200).json({
@@ -89,7 +92,7 @@ export const createInvoiceDraft = async (req, res) => {
       existingInvoice.discountPercent = totals.discountPercent;
       existingInvoice.discountAmount = totals.discountAmount;
       existingInvoice.total = totals.finalTotal;
-      
+
       await existingInvoice.save();
       invoiceToReturn = existingInvoice;
     } else {
@@ -165,7 +168,7 @@ export const getAllInvoices = async (req, res) => {
         path: "serviceId",
         populate: [
           { path: "partsUsed.partId" },
-          { path: "vehicleId" } 
+          { path: "vehicleId" }
         ],
       })
       .sort({ createdAt: -1 });
@@ -244,6 +247,15 @@ export const finalizeInvoice = async (req, res) => {
     } catch (notifErr) {
       console.error("[NOTIFY] Email notification error:", notifErr.message);
     }
+
+    // 🔔 Create Dashboard Notification for Unpaid Invoice
+    await createNotification({
+      ownerId,
+      title: "Unpaid Invoice",
+      message: `Invoice ${invoice.invoiceNumber} for ₹${invoice.total} has been finalized and is awaiting payment.`,
+      type: "unpaid_invoice",
+      link: `/billing`
+    });
 
     res.status(200).json({
       message: "Invoice finalized and sent to customer",

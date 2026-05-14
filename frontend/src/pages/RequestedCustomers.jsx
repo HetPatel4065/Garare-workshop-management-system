@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { FaCar } from "react-icons/fa";
 import { useToast } from "../context/ToastContext";
+import SearchBar from "../components/UI/SearchBar";
 import Modal from "../components/UI/Modal";
 import ConfirmModal from "../components/UI/ConfirmModal";
 import { Meta } from "react-router-dom";
@@ -135,10 +136,9 @@ const StatCard = ({
   <button
     onClick={onClick}
     className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl border transition-all duration-200 text-left w-full
-      ${
-        active
-          ? `${colorClasses.activeBg} ${colorClasses.activeBorder} shadow-sm scale-[1.02]`
-          : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm"
+      ${active
+        ? `${colorClasses.activeBg} ${colorClasses.activeBorder} shadow-sm scale-[1.02]`
+        : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm"
       }`}
   >
     <div
@@ -211,23 +211,17 @@ function RequestCard({ req, onView, onApprove, onReject, onDelete }) {
         <MetaField
           label="Appointment"
           primary={
-            req.appointmentDate
-              ? new Date(req.appointmentDate).toLocaleDateString("en-IN", {
+            req.appointmentDate && req.status === "approved"
+              ? new Date(req.appointmentDate).getFullYear() > 2000
+                ? new Date(req.appointmentDate).toLocaleDateString("en-IN", {
                   day: "2-digit",
                   month: "short",
                   year: "numeric",
                 })
-              : "Not Scheduled"
+                : "Date Not Set"
+              : req.status === "approved" ? "Date Not Set" : "Not Scheduled"
           }
-          secondary={
-            req.appointmentTime
-              ? new Date(req.appointmentTime).toLocaleTimeString("en-IN", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: true,
-                })
-              : ""
-          }
+          secondary={req.appointmentTime || ""}
         />
       </div>
 
@@ -266,6 +260,16 @@ function RequestCard({ req, onView, onApprove, onReject, onDelete }) {
             </div>
           )}
 
+          {req.status === "approved" && (!req.appointmentDate || new Date(req.appointmentDate).getFullYear() < 2000) && (
+            <button
+              onClick={() => onApprove(req)} // Re-using approve modal for setting date
+              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 text-[12px] font-bold text-blue-600 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition active:scale-95"
+            >
+              <CalendarCheck size={14} />
+              Set Appointment
+            </button>
+          )}
+
           <button
             onClick={() => onDelete(req)}
             className="inline-flex items-center justify-center p-2.5 text-red-500 hover:text-red-600 hover:bg-red-50 bg-slate-50 border border-slate-200 rounded-xl transition active:scale-90"
@@ -300,7 +304,8 @@ const DetailRow = ({ icon, label, value }) => (
 export default function RequestedCustomers() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [activeQuery, setActiveQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
@@ -308,10 +313,8 @@ export default function RequestedCustomers() {
   const [rejectModalOpen, setRejectModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [inspectionDate, setInspectionDate] = useState(
-    new Date().toISOString().split("T")[0],
-  );
-  const [inspectionTime, setInspectionTime] = useState("10:00");
+  const [inspectionDate, setInspectionDate] = useState("");
+  const [inspectionTime, setInspectionTime] = useState("");
   const [rejectionReason, setRejectionReason] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -341,8 +344,21 @@ export default function RequestedCustomers() {
     fetchRequests();
   }, []);
 
+  const handleSearch = (e) => {
+    e?.preventDefault();
+    setActiveQuery(searchInput);
+    setSearchInput("");
+    setCurrentPage(1);
+  };
+
+  const handleClear = () => {
+    setSearchInput("");
+    setActiveQuery("");
+    setCurrentPage(1);
+  };
+
   const filteredRequests = requests.filter((req) => {
-    const query = searchQuery.toLowerCase();
+    const query = activeQuery.toLowerCase();
     const matchesSearch =
       req.customerName.toLowerCase().includes(query) ||
       req.vehicleNumber.toLowerCase().includes(query) ||
@@ -351,6 +367,7 @@ export default function RequestedCustomers() {
     const matchesStatus = statusFilter === "All" || req.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
+
 
   const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
   const currentRequests = filteredRequests.slice(
@@ -369,22 +386,39 @@ export default function RequestedCustomers() {
 
   const handleApprove = async () => {
     if (isSubmitting) return;
+    if (!inspectionDate || !inspectionTime) {
+      addToast("Please select both appointment date and time", "warning");
+      return;
+    }
     try {
       setIsSubmitting(true);
-      await axios.patch(
-        `${import.meta.env.VITE_API_URL}/requested-customers/${selectedRequest._id}/approve`,
-        { inspectionDate, inspectionTime },
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-      addToast("Customer approved and welcome email sent!", "success");
+
+      if (selectedRequest.status === 'approved') {
+        // Just update the appointment
+        await axios.patch(
+          `${import.meta.env.VITE_API_URL}/requested-customers/${selectedRequest._id}/appointment`,
+          { appointmentDate: inspectionDate, appointmentTime: inspectionTime },
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
+        addToast("Appointment scheduled successfully!", "success");
+      } else {
+        // Standard approval
+        await axios.patch(
+          `${import.meta.env.VITE_API_URL}/requested-customers/${selectedRequest._id}/approve`,
+          { inspectionDate, inspectionTime },
+          { headers: { Authorization: `Bearer ${token}` } },
+        );
+        addToast("Customer approved and welcome email sent!", "success");
+      }
+
       setApproveModalOpen(false);
       setDetailsModalOpen(false);
       fetchRequests();
     } catch (error) {
       addToast(
         error.response?.data?.message ||
-          error.response?.data?.error ||
-          "Approval failed",
+        error.response?.data?.error ||
+        "Operation failed",
         "error",
       );
     } finally {
@@ -540,45 +574,46 @@ export default function RequestedCustomers() {
 
       {/* ── Search ── */}
       <div className="mb-4">
-        <div className="relative">
-          <Search
-            size={15}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
-          />
-          <input
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setCurrentPage(1);
-            }}
-            placeholder="Search by name, phone, email or vehicle..."
-            className="w-full pl-9 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-700 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-sm"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-            >
-              <X size={15} />
-            </button>
-          )}
-        </div>
+        <SearchBar
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          onSearch={(term) => {
+            setActiveQuery(term);
+            setSearchInput("");
+            setCurrentPage(1);
+          }}
+          activeSearch={activeQuery}
+          onClearActive={handleClear}
+          placeholder="Search by name, phone, email or vehicle..."
+          className="w-full"
+        />
       </div>
 
       {/* ── Active Filter Chip ── */}
-      {statusFilter !== "All" && (
-        <div className="mb-4 flex items-center gap-2">
+      {(statusFilter !== "All" || activeQuery) && (
+        <div className="mb-4 flex flex-wrap items-center gap-2">
           <span className="text-[11px] font-bold text-slate-500">
-            Filtering by:
+            Active Filters:
           </span>
-          <button
-            onClick={() => handleFilterChange("All")}
-            className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 border border-blue-200 rounded-full text-[11px] font-bold text-blue-700 hover:bg-blue-100 transition-colors"
-          >
-            {statusFilter} <X size={11} />
-          </button>
+          {statusFilter !== "All" && (
+            <button
+              onClick={() => handleFilterChange("All")}
+              className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 border border-blue-200 rounded-full text-[11px] font-bold text-blue-700 hover:bg-blue-100 transition-colors"
+            >
+              Status: {statusFilter} <X size={11} />
+            </button>
+          )}
+          {activeQuery && (
+            <button
+              onClick={handleClear}
+              className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200 rounded-full text-[11px] font-bold text-amber-700 hover:bg-amber-100 transition-colors"
+            >
+              Search: "{activeQuery}" <X size={11} />
+            </button>
+          )}
         </div>
       )}
+
 
       {/* ── Count ── */}
       {!loading && filteredRequests.length > 0 && (
@@ -597,7 +632,7 @@ export default function RequestedCustomers() {
         {loading ? (
           [...Array(4)].map((_, i) => <SkeletonCard key={i} />)
         ) : currentRequests.length === 0 ? (
-          <EmptyState hasSearch={!!searchQuery || statusFilter !== "All"} />
+          <EmptyState hasSearch={!!activeQuery || statusFilter !== "All"} />
         ) : (
           currentRequests.map((req) => (
             <RequestCard
@@ -609,6 +644,8 @@ export default function RequestedCustomers() {
               }}
               onApprove={(r) => {
                 setSelectedRequest(r);
+                setInspectionDate(new Date().toISOString().split("T")[0]);
+                setInspectionTime("10:00");
                 setApproveModalOpen(true);
               }}
               onReject={(r) => {
@@ -696,6 +733,13 @@ export default function RequestedCustomers() {
                     label="Service Location"
                     value={selectedRequest.location}
                   />
+                  {selectedRequest.status === "approved" && (
+                    <DetailRow
+                      icon={<CalendarCheck size={16} className="text-emerald-600" />}
+                      label="Scheduled Appointment"
+                      value={selectedRequest.appointmentDate ? `${new Date(selectedRequest.appointmentDate).toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" })} at ${selectedRequest.appointmentTime || "TBD"}` : "Date Not Set"}
+                    />
+                  )}
                 </div>
               </div>
               <div>
@@ -761,7 +805,11 @@ export default function RequestedCustomers() {
                     <UserX size={14} /> Reject
                   </button>
                   <button
-                    onClick={() => setApproveModalOpen(true)}
+                    onClick={() => {
+                      setInspectionDate(new Date().toISOString().split("T")[0]);
+                      setInspectionTime("10:00");
+                      setApproveModalOpen(true);
+                    }}
                     className="flex flex-1 px-6 py-4 rounded-2xl font-bold text-[11.5px] bg-slate-900 text-white hover:bg-black transition-all shadow-xl shadow-slate-200 active:scale-[0.98] items-center justify-center gap-2"
                   >
                     <CheckCircle size={14} /> Approve Request
@@ -778,10 +826,13 @@ export default function RequestedCustomers() {
         isOpen={approveModalOpen}
         onClose={() => setApproveModalOpen(false)}
         onConfirm={handleApprove}
-        title="Confirm Approval"
-        message={`This will register ${selectedRequest?.customerName} as an active customer. Set an optional visit date and time for the welcome email.`}
-        confirmText="Confirm & Approve"
+        title={selectedRequest?.status === 'approved' ? "Set Appointment" : "Confirm Approval"}
+        message={selectedRequest?.status === 'approved'
+          ? `Set the visit date and time for ${selectedRequest?.customerName}.`
+          : `This will register ${selectedRequest?.customerName} as an active customer. Set an optional visit date and time for the welcome email.`}
+        confirmText={selectedRequest?.status === 'approved' ? "Save Appointment" : "Confirm & Approve"}
         type="success"
+        isLoading={isSubmitting}
       >
         <div className="mt-4 p-4 bg-emerald-50 border border-emerald-100 rounded-2xl space-y-4">
           <div className="flex items-center gap-2 mb-1">

@@ -5,14 +5,16 @@ import Notification from "../models/Notification.js";
 import Owner from "../models/Owner.js";
 import { sendWelcomeEmail, sendRejectionEmail } from "../utils/email.js";
 import mongoose from "mongoose";
+import { createNotification } from "../utils/notificationHelper.js";
+import { emitToCustomer } from "../utils/socket.js";
 
 // ➕ CREATE REQUEST (Portal/Registration)
 export const createRequestedCustomer = async (req, res) => {
   try {
     const data = { ...req.body };
-    
+
     if (!data.ownerId && req.user) {
-        data.ownerId = req.user.effectiveOwnerId;
+      data.ownerId = req.user.effectiveOwnerId;
     }
 
     if (!data.ownerId) {
@@ -32,8 +34,8 @@ export const createRequestedCustomer = async (req, res) => {
 
     const requestedCustomer = await RequestedCustomer.create(data);
 
-    // Create notification for owner
-    await Notification.create({
+    // 🔔 Create notification for owner
+    await createNotification({
       ownerId: data.ownerId,
       title: "New Customer Request",
       message: `${data.customerName} has requested registration for vehicle ${data.vehicleNumber}.`,
@@ -109,7 +111,7 @@ export const approveRequestedCustomer = async (req, res) => {
       ownerId,
       $or: [{ phone: request.phone }, { email: request.email }]
     });
-    
+
     let customerId;
     if (existingCustomer) {
       customerId = existingCustomer._id;
@@ -123,7 +125,7 @@ export const approveRequestedCustomer = async (req, res) => {
           email: request.email,
           address: { street: request.location },
           ownerId: ownerId,
-          status: "Active",
+          status: "Pending",
           isVerified: true
         });
         customerId = newCustomer._id;
@@ -155,11 +157,32 @@ export const approveRequestedCustomer = async (req, res) => {
       console.error("Vehicle Creation Failed:", vehErr);
       return res.status(400).json({ error: `Failed to create vehicle record: ${vehErr.message}` });
     }
-
     // 3. Update Requested Customer
-    request.status = "approved";
-    request.approvedAt = new Date();
-    await request.save();
+    let validDate = new Date();
+    if (inspectionDate) {
+      const parsed = new Date(inspectionDate);
+      if (!isNaN(parsed.getTime())) {
+        validDate = parsed;
+      }
+    }
+
+    const updatedRequest = await RequestedCustomer.findOneAndUpdate(
+      { _id: req.params.id, ownerId },
+      {
+        status: "approved",
+        approvedAt: new Date(),
+        appointmentDate: validDate,
+        appointmentTime: inspectionTime || "10:00 AM",
+      },
+      { new: true }
+    );
+
+    if (!updatedRequest) {
+      return res.status(404).json({ error: "Failed to update request status" });
+    }
+    
+    // Assign back to request for the email logic below
+    Object.assign(request, updatedRequest.toObject());
 
     // 4. Send Welcome Email & Notification (Async)
     try {
@@ -176,18 +199,53 @@ export const approveRequestedCustomer = async (req, res) => {
       console.error("Non-blocking Email Error:", emailErr);
     }
 
-    await Notification.create({
-      ownerId,
-      title: "Customer Approved",
-      message: `${request.customerName} has been approved and added to the system.`,
-      type: "success",
-      link: `/customers`
+    // 🔔 Emit to customer for real-time status update
+    emitToCustomer(request.email, "registration_update", {
+      status: "approved",
+      appointmentDate: validDate,
+      appointmentTime: inspectionTime || "10:00 AM",
+      customerName: request.customerName,
+      garageName: owner?.garageName || "The Garage"
     });
 
     res.status(200).json({ message: "Customer approved and moved to active records", request });
   } catch (err) {
     console.error("FULL APPROVAL ERROR:", err);
     res.status(500).json({ error: err.message || "Internal server error during approval" });
+  }
+};
+
+// 📅 UPDATE APPOINTMENT (For already approved/pending requests)
+export const updateAppointment = async (req, res) => {
+  try {
+    const ownerId = req.user.effectiveOwnerId;
+    const { appointmentDate, appointmentTime } = req.body;
+
+    if (!appointmentDate) {
+      return res.status(400).json({ error: "Appointment date is required" });
+    }
+
+    const request = await RequestedCustomer.findOneAndUpdate(
+      { _id: req.params.id, ownerId },
+      { 
+        appointmentDate: new Date(appointmentDate),
+        appointmentTime: appointmentTime || "10:00 AM"
+      },
+      { new: true }
+    );
+
+    // 🔔 Emit to customer
+    emitToCustomer(request.email, "registration_update", {
+      status: request.status,
+      appointmentDate: request.appointmentDate,
+      appointmentTime: request.appointmentTime,
+      customerName: request.customerName
+    });
+
+    res.status(200).json({ message: "Appointment updated successfully", request });
+  } catch (err) {
+    console.error("Update Appointment Error:", err);
+    res.status(500).json({ error: "Failed to update appointment" });
   }
 };
 
@@ -199,9 +257,9 @@ export const rejectRequestedCustomer = async (req, res) => {
 
     const request = await RequestedCustomer.findOneAndUpdate(
       { _id: req.params.id, ownerId },
-      { 
-        status: "rejected", 
-        rejectionReason 
+      {
+        status: "rejected",
+        rejectionReason
       },
       { new: true }
     );
@@ -222,6 +280,13 @@ export const rejectRequestedCustomer = async (req, res) => {
     } catch (emailErr) {
       console.error("Failed to send rejection email:", emailErr);
     }
+
+    // 🔔 Emit to customer
+    emitToCustomer(request.email, "registration_update", {
+      status: "rejected",
+      rejectionReason,
+      customerName: request.customerName
+    });
 
     res.status(200).json({ message: "Request rejected", request });
   } catch (err) {
@@ -247,21 +312,21 @@ export const deleteRequestedCustomer = async (req, res) => {
 
 // 📊 GET TODAY'S REQUESTS (For Dashboard)
 export const getTodaysInspections = async (req, res) => {
-    try {
-      const ownerId = req.user.effectiveOwnerId;
-      const start = new Date();
-      start.setHours(0, 0, 0, 0);
-      const end = new Date();
-      end.setHours(23, 59, 59, 999);
-  
-      const requests = await RequestedCustomer.find({
-        ownerId,
-        createdAt: { $gte: start, $lte: end },
-        status: "pending"
-      }).sort({ createdAt: -1 });
-  
-      res.status(200).json(requests);
-    } catch (err) {
-      res.status(500).json({ error: "Failed to fetch today's requests" });
-    }
-  };
+  try {
+    const ownerId = req.user.effectiveOwnerId;
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    const end = new Date();
+    end.setHours(23, 59, 59, 999);
+
+    const requests = await RequestedCustomer.find({
+      ownerId,
+      createdAt: { $gte: start, $lte: end },
+      status: "pending"
+    }).sort({ createdAt: -1 });
+
+    res.status(200).json(requests);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch today's requests" });
+  }
+};

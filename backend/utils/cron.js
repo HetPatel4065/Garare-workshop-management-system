@@ -14,6 +14,7 @@ import Notification from "../models/Notification.js";
 import RequestedCustomer from "../models/RequestedCustomer.js";
 import { buildDailyReportEmail, sendEmail, buildServiceReminderEmail } from "./notifications.js";
 import { sendInspectionReminderToOwner } from "./email.js";
+import { emitToOwner } from "./socket.js";
 
 
 export const initDailyReportCron = () => {
@@ -71,17 +72,17 @@ export const initDailyReportCron = () => {
         const html = buildDailyReportEmail({
           garageName: owner.garageName || "Your Garage",
           date: new Date().toLocaleDateString("en-IN", { dateStyle: "long" }),
-          stats: { 
-            newServices, 
-            completedServices, 
-            revenue: collectedToday, 
-            billing: billingToday, 
-            newCustomers, 
-            totalCustomers, 
-            totalVehicles, 
-            totalJobCards, 
-            totalStaff: totalAdvisors + totalMechanics, 
-            lowStockItems: lowStockItems.map(i => i.name) 
+          stats: {
+            newServices,
+            completedServices,
+            revenue: collectedToday,
+            billing: billingToday,
+            newCustomers,
+            totalCustomers,
+            totalVehicles,
+            totalJobCards,
+            totalStaff: totalAdvisors + totalMechanics,
+            lowStockItems: lowStockItems.map(i => i.name)
           },
         });
 
@@ -121,10 +122,17 @@ export const initServiceReminderCron = () => {
 
       for (const vehicle of vehicles) {
         try {
-          const settings = await GarageSettings.findOne({ ownerId: vehicle.garageId });
-          if (!settings?.notifications?.serviceReminders) continue;
+          const owner = await Owner.findById(vehicle.garageId);
+          if (!owner) continue;
 
-          const schedule = settings.notifications.reminderSchedule || [-7, -3, 0, 3];
+          // Fetch settings or use defaults
+          let settings = await GarageSettings.findOne({ ownerId: vehicle.garageId });
+          
+          // If no settings exist, we still want to send reminders by default
+          const isEnabled = settings ? settings.notifications?.serviceReminders : true;
+          if (!isEnabled) continue;
+
+          const schedule = settings?.notifications?.reminderSchedule || [-7, -3, 0, 3];
           const nextServiceDate = new Date(vehicle.nextServiceDate);
           nextServiceDate.setHours(0, 0, 0, 0);
 
@@ -146,9 +154,7 @@ export const initServiceReminderCron = () => {
             if (alreadySentToday) continue;
 
             const customer = vehicle.customerId;
-            const owner = await Owner.findById(vehicle.garageId);
-
-            if (!customer || !owner) continue;
+            if (!customer) continue;
 
             // Update Vehicle Reminder Status
             if (diffDays < 0) {
@@ -167,8 +173,8 @@ export const initServiceReminderCron = () => {
                 customerName: customer.name,
                 vehicleNumber: vehicle.licensePlate,
                 dueDate: nextServiceDate.toLocaleDateString("en-IN", { dateStyle: "long" }),
-                garageName: settings.garageName || owner.garageName || "Your Garage",
-                contactNumber: settings.contactNumber || owner.phone || "",
+                garageName: settings?.garageName || owner.garageName || "Your Garage",
+                contactNumber: settings?.contactNumber || owner.phone || owner.mobileNumber || "",
                 bookingLink: `https://yourgarageportal.com/book/${vehicle._id}`, // Placeholder
               });
 
@@ -176,8 +182,8 @@ export const initServiceReminderCron = () => {
                 to: customer.email,
                 subject: `Service Reminder: ${vehicle.licensePlate} is due soon!`,
                 html: emailHtml,
-                smtpConfig: settings.smtp,
-                fromName: settings.garageName || owner.garageName || "Service Center",
+                smtpConfig: settings?.smtp,
+                fromName: settings?.garageName || owner.garageName || "Service Center",
               });
 
               // Log the reminder
@@ -187,8 +193,28 @@ export const initServiceReminderCron = () => {
                 customerId: customer._id,
                 type: "Email",
                 status: "Sent",
-                message: `Automated ${diffDays} day reminder sent to ${customer.email}`,
+                message: `Automated ${diffDays} day reminder sent to customer (${customer.email})`,
               });
+            }
+
+            // 2. Notify Owner (via Email if enabled, otherwise just Dashboard)
+            if (owner.email && settings?.notifications?.emailReports) {
+               await sendEmail({
+                 to: owner.email,
+                 subject: `Service Reminder Sent: ${vehicle.licensePlate} (${customer.name})`,
+                 html: `
+                   <h3>Service Reminder Notification</h3>
+                   <p>A ${diffDays === 0 ? 'due date' : Math.abs(diffDays) + ' day'} service reminder has been automatically sent to your customer:</p>
+                   <ul>
+                     <li><strong>Customer:</strong> ${customer.name}</li>
+                     <li><strong>Vehicle:</strong> ${vehicle.licensePlate} (${vehicle.make} ${vehicle.model})</li>
+                     <li><strong>Due Date:</strong> ${nextServiceDate.toLocaleDateString("en-IN", { dateStyle: "long" })}</li>
+                   </ul>
+                   <p>Status: ${vehicle.reminderStatus}</p>
+                 `,
+                 smtpConfig: settings?.smtp,
+                 fromName: "Garage System Alert"
+               });
             }
 
             // 2. Create Dashboard Notification for Owner
@@ -206,13 +232,15 @@ export const initServiceReminderCron = () => {
               type = "error";
             }
 
-            await Notification.create({
+            const notification = await Notification.create({
               ownerId: owner._id,
               title,
               message: msg,
-              type,
-              link: `/vehicles/${vehicle._id}`,
+              type: "service_reminder",
+              link: `/reminders`,
             });
+
+            emitToOwner(owner._id, "new_notification", notification);
           }
         } catch (vErr) {
           console.error(`[CRON ERROR] Failed processing vehicle ${vehicle._id}:`, vErr.message);
@@ -258,13 +286,15 @@ export const initInspectionReminderCron = () => {
 
         if (todaysInspections.length > 0) {
           // 3. Send Dashboard Notification
-          await Notification.create({
+          const notification = await Notification.create({
             ownerId,
             title: "Today's Inspections",
             message: `You have ${todaysInspections.length} vehicle inspections scheduled for today.`,
             type: "info",
             link: "/requested-customers"
           });
+
+          emitToOwner(ownerId, "new_notification", notification);
 
           // 4. Send Email to Owner
           await sendInspectionReminderToOwner(

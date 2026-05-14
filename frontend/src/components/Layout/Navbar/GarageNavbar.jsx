@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 import {
   Search,
   Settings,
@@ -13,6 +19,8 @@ import {
   Users,
   Box,
   FileText,
+  ArrowRight,
+  Clock,
 } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -22,19 +30,22 @@ const Highlight = ({ text = "", query = "" }) => {
   if (!query || !text) return <span>{text || ""}</span>;
 
   // Escape special characters for regex
-  const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const parts = String(text).split(new RegExp(`(${escapedQuery})`, "gi"));
 
   return (
     <span>
       {parts.map((part, i) =>
         part.toLowerCase() === query.toLowerCase() ? (
-          <mark key={i} className="bg-blue-500/40 text-blue-200 rounded-sm px-0.5 font-bold no-underline">
+          <mark
+            key={i}
+            className="bg-blue-500/40 text-blue-200 rounded-sm px-0.5 font-bold no-underline"
+          >
             {part}
           </mark>
         ) : (
           part
-        )
+        ),
       )}
     </span>
   );
@@ -88,19 +99,24 @@ const ResultsDropdown = ({
 
   useEffect(() => {
     const handler = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setShowResults(false);
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target))
+        setShowResults(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, [setShowResults]);
 
   const iconBox = (color, children) => (
-    <div className={`w-8 h-8 rounded-lg ${color} flex items-center justify-center shrink-0 shadow-sm border border-white/5`}>
+    <div
+      className={`w-8 h-8 rounded-lg ${color} flex items-center justify-center shrink-0 shadow-sm border border-white/5`}
+    >
       {children}
     </div>
   );
 
-  const hasAnyResults = Object.values(searchResults).some(arr => arr.length > 0);
+  const hasAnyResults = Object.values(searchResults).some(
+    (arr) => arr.length > 0,
+  );
 
   return (
     <div
@@ -114,31 +130,49 @@ const ResultsDropdown = ({
               <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
               <div className="absolute inset-0 bg-blue-500/10 blur-xl rounded-full" />
             </div>
-            <span className="font-medium tracking-tight">Scanning records...</span>
+            <span className="font-medium tracking-tight">
+              Scanning records...
+            </span>
           </div>
         ) : (
           <>
             {!hasAnyResults ? (
               <div className="py-12 text-center text-gray-500 flex flex-col items-center gap-3">
                 <Search size={24} className="opacity-10" />
-                <p className="text-sm">No exact matches for <span className="text-gray-300 font-bold">"{searchQuery}"</span></p>
+                <p className="text-sm">
+                  No exact matches for{" "}
+                  <span className="text-gray-300 font-bold">
+                    "{searchQuery}"
+                  </span>
+                </p>
               </div>
             ) : (
               <div className="divide-y divide-white/5">
                 <ResultSection
                   title="Customers"
                   items={searchResults.customers}
-                  onSelect={(i) => handleSelect({ ...i, path: "/customers", searchParam: i.name })}
+                  onSelect={(i) =>
+                    handleSelect({
+                      ...i,
+                      path: "/customers",
+                      searchParam: i.name,
+                    })
+                  }
                   renderItem={(c) => (
                     <>
-                      {iconBox("bg-blue-500/10", <User size={14} className="text-blue-400" />)}
+                      {iconBox(
+                        "bg-blue-500/10",
+                        <User size={14} className="text-blue-400" />,
+                      )}
                       <div className="min-w-0">
                         <p className="text-sm font-semibold text-gray-200 truncate group-hover:text-blue-400 transition-colors">
                           <Highlight text={c.name} query={searchQuery} />
                         </p>
                         <p className="text-[11px] text-gray-500 flex items-center gap-2">
                           <span>{c.phone}</span>
-                          {c.email && <span className="w-1 h-1 bg-gray-700 rounded-full" />}
+                          {c.email && (
+                            <span className="w-1 h-1 bg-gray-700 rounded-full" />
+                          )}
                           <span className="truncate">{c.email}</span>
                         </p>
                       </div>
@@ -149,15 +183,31 @@ const ResultsDropdown = ({
                 <ResultSection
                   title="Vehicles"
                   items={searchResults.vehicles}
-                  onSelect={(i) => handleSelect({ ...i, path: "/vehicles", searchParam: i.licensePlate })}
+                  onSelect={(i) =>
+                    handleSelect({
+                      ...i,
+                      path: "/vehicles",
+                      searchParam: i.licensePlate,
+                    })
+                  }
                   renderItem={(v) => (
                     <>
-                      {iconBox("bg-emerald-500/10", <span className="text-emerald-400 font-black text-[10px]">{v.licensePlate?.slice(-4)}</span>)}
+                      {iconBox(
+                        "bg-emerald-500/10",
+                        <span className="text-emerald-400 font-black text-[10px]">
+                          {v.licensePlate?.slice(-4)}
+                        </span>,
+                      )}
                       <div className="min-w-0">
                         <p className="text-sm font-semibold text-gray-200 truncate group-hover:text-emerald-400 transition-colors">
-                          <Highlight text={`${v.make} ${v.model}`} query={searchQuery} />
+                          <Highlight
+                            text={`${v.make} ${v.model}`}
+                            query={searchQuery}
+                          />
                         </p>
-                        <p className="text-[11px] text-gray-500 font-mono tracking-tighter uppercase">{v.licensePlate}</p>
+                        <p className="text-[11px] text-gray-500 font-mono tracking-tighter uppercase">
+                          {v.licensePlate}
+                        </p>
                       </div>
                     </>
                   )}
@@ -166,15 +216,35 @@ const ResultsDropdown = ({
                 <ResultSection
                   title="Inventory / Parts"
                   items={searchResults.inventory}
-                  onSelect={(i) => handleSelect({ ...i, path: "/inventory", searchParam: i.name })}
+                  onSelect={(i) =>
+                    handleSelect({
+                      ...i,
+                      path: "/inventory",
+                      searchParam: i.name,
+                    })
+                  }
                   renderItem={(i) => (
                     <>
-                      {iconBox("bg-amber-500/10", <Box size={14} className="text-amber-400" />)}
+                      {iconBox(
+                        "bg-amber-500/10",
+                        <Box size={14} className="text-amber-400" />,
+                      )}
                       <div className="min-w-0">
                         <p className="text-sm font-semibold text-gray-200 truncate group-hover:text-amber-400 transition-colors">
                           <Highlight text={i.name} query={searchQuery} />
                         </p>
-                        <p className="text-[11px] text-gray-500">SKU: {i.sku} • Stock: <span className={i.stock < 5 ? "text-red-400 font-bold" : "text-amber-400/70"}>{i.stock}</span></p>
+                        <p className="text-[11px] text-gray-500">
+                          SKU: {i.sku} • Stock:{" "}
+                          <span
+                            className={
+                              i.stock < 5
+                                ? "text-red-400 font-bold"
+                                : "text-amber-400/70"
+                            }
+                          >
+                            {i.stock}
+                          </span>
+                        </p>
                       </div>
                     </>
                   )}
@@ -183,15 +253,26 @@ const ResultsDropdown = ({
                 <ResultSection
                   title="Services"
                   items={searchResults.services}
-                  onSelect={(i) => handleSelect({ ...i, path: "/services", searchParam: i.serviceName })}
+                  onSelect={(i) =>
+                    handleSelect({
+                      ...i,
+                      path: "/services",
+                      searchParam: i.serviceName,
+                    })
+                  }
                   renderItem={(s) => (
                     <>
-                      {iconBox("bg-purple-500/10", <Wrench size={14} className="text-purple-400" />)}
+                      {iconBox(
+                        "bg-purple-500/10",
+                        <Wrench size={14} className="text-purple-400" />,
+                      )}
                       <div className="min-w-0">
                         <p className="text-sm font-semibold text-gray-200 truncate group-hover:text-purple-400 transition-colors">
                           <Highlight text={s.serviceName} query={searchQuery} />
                         </p>
-                        <p className="text-[11px] text-gray-500">Vehicle: {s.vehicleId?.licensePlate || "N/A"}</p>
+                        <p className="text-[11px] text-gray-500">
+                          Vehicle: {s.vehicleId?.licensePlate || "N/A"}
+                        </p>
                       </div>
                     </>
                   )}
@@ -200,15 +281,26 @@ const ResultsDropdown = ({
                 <ResultSection
                   title="Job Cards"
                   items={searchResults.jobCards}
-                  onSelect={(i) => handleSelect({ ...i, path: "/job-cards", searchParam: i.jobCardId })}
+                  onSelect={(i) =>
+                    handleSelect({
+                      ...i,
+                      path: "/job-cards",
+                      searchParam: i.jobCardId,
+                    })
+                  }
                   renderItem={(jc) => (
                     <>
-                      {iconBox("bg-rose-500/10", <ClipboardList size={14} className="text-rose-400" />)}
+                      {iconBox(
+                        "bg-rose-500/10",
+                        <ClipboardList size={14} className="text-rose-400" />,
+                      )}
                       <div className="min-w-0">
                         <p className="text-sm font-semibold text-gray-200 truncate group-hover:text-rose-400 transition-colors">
                           <Highlight text={jc.jobCardId} query={searchQuery} />
                         </p>
-                        <p className="text-[11px] text-gray-500 capitalize">{jc.status?.replace("-", " ")} • {jc.customerName}</p>
+                        <p className="text-[11px] text-gray-500 capitalize">
+                          {jc.status?.replace("-", " ")} • {jc.customerName}
+                        </p>
                       </div>
                     </>
                   )}
@@ -217,15 +309,26 @@ const ResultsDropdown = ({
                 <ResultSection
                   title="Staff Members"
                   items={searchResults.staff}
-                  onSelect={(i) => handleSelect({ ...i, path: "/staff-members", searchParam: i.name })}
+                  onSelect={(i) =>
+                    handleSelect({
+                      ...i,
+                      path: "/staff-members",
+                      searchParam: i.name,
+                    })
+                  }
                   renderItem={(st) => (
                     <>
-                      {iconBox("bg-indigo-500/10", <Users size={14} className="text-indigo-400" />)}
+                      {iconBox(
+                        "bg-indigo-500/10",
+                        <Users size={14} className="text-indigo-400" />,
+                      )}
                       <div className="min-w-0">
                         <p className="text-sm font-semibold text-gray-200 truncate group-hover:text-indigo-400 transition-colors">
                           <Highlight text={st.name} query={searchQuery} />
                         </p>
-                        <p className="text-[11px] text-gray-500 capitalize">{st.role || st.type}</p>
+                        <p className="text-[11px] text-gray-500 capitalize">
+                          {st.role || st.type}
+                        </p>
                       </div>
                     </>
                   )}
@@ -239,6 +342,7 @@ const ResultsDropdown = ({
   );
 };
 
+import { useNotifications } from "../../../context/NotificationContext";
 
 export default function TopNavbar({
   userName = "User",
@@ -247,13 +351,33 @@ export default function TopNavbar({
   setShowNotifications,
 }) {
   const { logout, user } = useAuth();
+  const { notifications, unreadCount, markAsRead } = useNotifications();
   const navigate = useNavigate();
   const location = useLocation();
   const token = sessionStorage.getItem("token");
-  const notifications = []; // This should come from a context or state in the future
-  const hasNotifications = notifications.length > 0;
 
-  const queryFromUrl = useMemo(() => new URLSearchParams(location.search).get("q") || "", [location.search]);
+  // Filter notifications based on relevance (User requirements: unpaid invoices, new requests, reminders)
+  const relevantNotifications = useMemo(() => {
+    return notifications.filter((n) => {
+      const type = String(n.type).toLowerCase();
+      return [
+        "unpaid_invoice",
+        "new_customer",
+        "service_reminder",
+        "low_stock",
+        "warning",
+        "info",
+        "error",
+      ].includes(type);
+    });
+  }, [notifications]);
+
+  const hasNotifications = unreadCount > 0;
+
+  const queryFromUrl = useMemo(
+    () => new URLSearchParams(location.search).get("q") || "",
+    [location.search],
+  );
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -276,7 +400,9 @@ export default function TopNavbar({
   const mobileSearchRef = useRef();
 
   const firstName = (user?.name || userName).split(" ")[0];
-  const roleLabel = user?.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : "User";
+  const roleLabel = user?.role
+    ? user.role.charAt(0).toUpperCase() + user.role.slice(1)
+    : "User";
   const isSettingsActive = location.pathname === "/settings";
 
   useEffect(() => {
@@ -288,59 +414,73 @@ export default function TopNavbar({
   // Remove the sync effect that puts the URL query back into the search bar
   // This allows the search bar to stay empty after navigation as requested.
 
-  const performSearch = useCallback(async (query) => {
-    if (!query.trim() || query.length < 2) {
-      setSearchResults({ customers: [], vehicles: [], services: [], inventory: [], jobCards: [], staff: [] });
-      setShowResults(false);
-      return;
-    }
+  const performSearch = useCallback(
+    async (query) => {
+      if (!query.trim() || query.length < 2) {
+        setSearchResults({
+          customers: [],
+          vehicles: [],
+          services: [],
+          inventory: [],
+          jobCards: [],
+          staff: [],
+        });
+        setShowResults(false);
+        return;
+      }
 
-    setIsSearching(true);
-    setShowResults(true);
+      setIsSearching(true);
+      setShowResults(true);
 
-    try {
-      const headers = { Authorization: `Bearer ${token}` };
-      const api = import.meta.env.VITE_API_URL;
+      try {
+        const headers = { Authorization: `Bearer ${token}` };
+        const api = import.meta.env.VITE_API_URL;
 
-      const endpoints = [
-        `${api}/customers`, // Fetch all and filter if backend search is loose/missing
-        `${api}/vehicles`,
-        `${api}/services`,
-        `${api}/inventory`,
-        `${api}/job-cards`,
-        `${api}/auth/staff`,
-      ];
+        const endpoints = [
+          `${api}/customers`, // Fetch all and filter if backend search is loose/missing
+          `${api}/vehicles`,
+          `${api}/services`,
+          `${api}/inventory`,
+          `${api}/job-cards`,
+          `${api}/auth/staff`,
+        ];
 
-      const responses = await Promise.all(
-        endpoints.map(url => fetch(url, { headers }).then(res => res.ok ? res.json() : []))
-      );
+        const responses = await Promise.all(
+          endpoints.map((url) =>
+            fetch(url, { headers }).then((res) => (res.ok ? res.json() : [])),
+          ),
+        );
 
-      const [cust, veh, serv, inv, jc, staff] = responses;
+        const [cust, veh, serv, inv, jc, staff] = responses;
 
-      const filter = (arr, fields) => {
-        if (!Array.isArray(arr)) return [];
-        return arr.filter(item =>
-          fields.some(f => {
-            const val = String(item[f] || "").toLowerCase();
-            return val.includes(query.toLowerCase());
-          })
-        ).slice(0, 5);
-      };
+        const filter = (arr, fields) => {
+          if (!Array.isArray(arr)) return [];
+          return arr
+            .filter((item) =>
+              fields.some((f) => {
+                const val = String(item[f] || "").toLowerCase();
+                return val.includes(query.toLowerCase());
+              }),
+            )
+            .slice(0, 5);
+        };
 
-      setSearchResults({
-        customers: filter(cust, ["name", "phone", "email"]),
-        vehicles: filter(veh, ["make", "model", "licensePlate"]),
-        inventory: filter(inv, ["name", "sku", "carModel"]),
-        services: filter(serv, ["serviceName"]),
-        jobCards: filter(jc, ["jobCardId", "customerName", "licensePlate"]),
-        staff: filter(staff, ["name", "email", "role"]),
-      });
-    } catch (err) {
-      console.error("Search error:", err);
-    } finally {
-      setIsSearching(false);
-    }
-  }, [token]);
+        setSearchResults({
+          customers: filter(cust, ["name", "phone", "email"]),
+          vehicles: filter(veh, ["make", "model", "licensePlate"]),
+          inventory: filter(inv, ["name", "sku", "carModel"]),
+          services: filter(serv, ["serviceName"]),
+          jobCards: filter(jc, ["jobCardId", "customerName", "licensePlate"]),
+          staff: filter(staff, ["name", "email", "role"]),
+        });
+      } catch (err) {
+        console.error("Search error:", err);
+      } finally {
+        setIsSearching(false);
+      }
+    },
+    [token],
+  );
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -353,17 +493,22 @@ export default function TopNavbar({
 
   useEffect(() => {
     const handler = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setMenuOpen(false);
-      if (searchRef.current && !searchRef.current.contains(e.target)) setShowResults(false);
-      if (notifRef.current && !notifRef.current.contains(e.target)) setShowNotifications(false);
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target))
+        setMenuOpen(false);
+      if (searchRef.current && !searchRef.current.contains(e.target))
+        setShowResults(false);
+      if (notifRef.current && !notifRef.current.contains(e.target))
+        setShowNotifications(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, [setShowNotifications]);
 
   const handleSearchSubmit = (e) => {
-    if (e.key === "Enter" && searchQuery.trim()) {
-      e.preventDefault();
+    if (e && e.key && e.key !== "Enter") return;
+    
+    if (searchQuery.trim()) {
+      if (e && e.preventDefault) e.preventDefault();
       const term = searchQuery.trim();
       setShowResults(false);
       setMobileSearchOpen(false);
@@ -388,12 +533,18 @@ export default function TopNavbar({
             <Menu size={22} />
           </button>
 
-          <div className="flex-1 max-w-2xl hidden md:block relative" ref={searchRef}>
+          <div
+            className="flex-1 max-w-2xl hidden md:block relative"
+            ref={searchRef}
+          >
             <div className="relative group">
               <Search
                 size={18}
-                className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 pointer-events-none ${showResults ? "text-blue-500" : "text-gray-500 group-focus-within:text-blue-400"
-                  }`}
+                className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 pointer-events-none ${
+                  showResults
+                    ? "text-blue-500"
+                    : "text-gray-500 group-focus-within:text-blue-400"
+                }`}
               />
               <input
                 type="text"
@@ -404,7 +555,7 @@ export default function TopNavbar({
                 placeholder="Search everything (Customer, Vehicle, Parts, Staff...)"
                 className="
                   w-full bg-white/5 border border-white/10
-                  rounded-2xl py-3 pl-12 pr-10
+                  rounded-2xl py-3 pl-12 pr-28
                   text-sm text-gray-100 placeholder:text-gray-500
                   outline-none focus:bg-white/8 focus:border-blue-500/40
                   focus:ring-8 focus:ring-blue-500/5
@@ -412,21 +563,29 @@ export default function TopNavbar({
                 "
               />
               <AnimatePresence>
-                {searchQuery && (
-                  <motion.button
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.8 }}
-                    onClick={() => {
-                      setSearchQuery("");
-                      setShowResults(false);
-                      if (location.pathname === "/search") navigate("/search");
-                    }}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors p-1"
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+                  {searchQuery && (
+                    <motion.button
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      onClick={() => {
+                        setSearchQuery("");
+                        setShowResults(false);
+                        if (location.pathname === "/search") navigate("/search");
+                      }}
+                      className="text-gray-500 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-white/5"
+                    >
+                      <X size={16} />
+                    </motion.button>
+                  )}
+                  <button
+                    onClick={handleSearchSubmit}
+                    className="px-3 py-1.5 bg-blue-600 text-white text-[10px] font-bold rounded-xl hover:bg-blue-700 transition-all active:scale-95 uppercase tracking-wider"
                   >
-                    <X size={16} />
-                  </motion.button>
-                )}
+                    Search
+                  </button>
+                </div>
               </AnimatePresence>
             </div>
 
@@ -455,25 +614,34 @@ export default function TopNavbar({
           <div className="flex items-center gap-1.5 sm:gap-3" ref={dropdownRef}>
             <button
               onClick={() => setMobileSearchOpen((v) => !v)}
-              className={`md:hidden p-2.5 rounded-xl transition-all duration-300 ${mobileSearchOpen ? "bg-blue-500/10 text-blue-400" : "text-gray-400 hover:text-white hover:bg-white/5"
-                }`}
+              className={`md:hidden p-2.5 rounded-xl transition-all duration-300 ${
+                mobileSearchOpen
+                  ? "bg-blue-500/10 text-blue-400"
+                  : "text-gray-400 hover:text-white hover:bg-white/5"
+              }`}
             >
               <Search size={20} />
             </button>
 
             <button
               onClick={() => navigate("/settings")}
-              className={`hidden sm:flex p-2.5 rounded-xl transition-all duration-300 ${isSettingsActive ? "bg-white/10 text-blue-400" : "text-gray-400 hover:text-white hover:bg-white/5"
-                }`}
+              className={`hidden sm:flex p-2.5 rounded-xl transition-all duration-300 ${
+                isSettingsActive
+                  ? "bg-white/10 text-blue-400"
+                  : "text-gray-400 hover:text-white hover:bg-white/5"
+              }`}
             >
               <Settings size={20} />
             </button>
 
             <div className="relative" ref={notifRef}>
               <button
-                onClick={() => setShowNotifications(!showNotifications)}
-                className={`p-2.5 rounded-xl transition-all duration-300 ${showNotifications ? "bg-blue-500/10 text-blue-400" : "text-gray-400 hover:text-white hover:bg-white/5"
-                  }`}
+                onClick={() => navigate("/notifications")}
+                className={`p-2.5 rounded-xl transition-all duration-300 ${
+                  showNotifications
+                    ? "bg-blue-500/10 text-blue-400"
+                    : "text-gray-400 hover:text-white hover:bg-white/5"
+                }`}
               >
                 <Bell size={20} />
                 {hasNotifications && (
@@ -495,12 +663,99 @@ export default function TopNavbar({
                         NEW
                       </span>
                     </div>
-                    <div className="max-h-100 overflow-y-auto p-12 text-center">
-                      <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/5 shadow-inner">
-                        <Bell size={28} className="text-gray-700" />
-                      </div>
-                      <p className="text-sm text-gray-400 font-medium tracking-tight">No new notifications</p>
-                      <p className="text-[11px] text-gray-600 mt-1">We'll let you know when something happens</p>
+                    <div className="max-h-100 overflow-y-auto">
+                      {relevantNotifications.length === 0 ? (
+                        <div className="p-12 text-center">
+                          <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/5 shadow-inner">
+                            <Bell size={28} className="text-gray-700" />
+                          </div>
+                          <p className="text-sm text-gray-400 font-medium tracking-tight">
+                            No notifications
+                          </p>
+                          <p className="text-[11px] text-gray-600 mt-1">
+                            We'll let you know when something happens
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="py-2">
+                          {relevantNotifications.map((n) => (
+                            <button
+                              key={n._id}
+                              onClick={() => {
+                                markAsRead(n._id);
+                                const type = String(n.type).toLowerCase();
+                                if (type === "new_customer")
+                                  navigate("/requested-customers");
+                                if (type === "unpaid_invoice")
+                                  navigate("/billing");
+                                if (
+                                  type === "service_reminder" ||
+                                  ["warning", "info", "error"].includes(type)
+                                )
+                                  navigate("/reminders");
+                                setShowNotifications(false);
+                              }}
+                              className={`w-full flex items-start gap-4 px-5 py-4 hover:bg-white/5 transition-colors text-left border-b border-white/5 last:border-0 ${!n.read ? "bg-blue-500/5" : ""}`}
+                            >
+                              <div
+                                className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm border border-white/5 ${
+                                  n.type === "unpaid_invoice"
+                                    ? "bg-rose-500/10 text-rose-400"
+                                    : n.type === "new_customer"
+                                      ? "bg-blue-500/10 text-blue-400"
+                                      : n.type === "service_reminder"
+                                        ? "bg-amber-500/10 text-amber-400"
+                                        : n.type === "low_stock"
+                                          ? "bg-orange-500/10 text-orange-400"
+                                          : "bg-indigo-500/10 text-indigo-400"
+                                }`}
+                              >
+                                {n.type === "unpaid_invoice" ? (
+                                  <FileText size={18} />
+                                ) : n.type === "new_customer" ? (
+                                  <User size={18} />
+                                ) : n.type === "service_reminder" ? (
+                                  <Clock size={18} />
+                                ) : n.type === "low_stock" ? (
+                                  <Box size={18} />
+                                ) : (
+                                  <Bell size={18} />
+                                )}
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center justify-between gap-2 mb-1">
+                                  <p className="text-xs font-black text-gray-200 uppercase tracking-widest truncate">
+                                    {n.title}
+                                  </p>
+                                  <span className="text-[10px] text-gray-600 font-bold whitespace-nowrap">
+                                    {new Date(n.createdAt).toLocaleTimeString(
+                                      [],
+                                      { hour: "2-digit", minute: "2-digit" },
+                                    )}
+                                  </span>
+                                </div>
+                                <p className="text-[11px] text-gray-500 leading-relaxed line-clamp-2">
+                                  {n.message}
+                                </p>
+                              </div>
+                              {!n.read && (
+                                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 shadow-lg shadow-blue-500/50" />
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-3 border-t border-white/5 bg-gray-950/50">
+                      <button
+                        onClick={() => {
+                          navigate("/notifications");
+                          setShowNotifications(false);
+                        }}
+                        className="w-full py-2.5 rounded-xl bg-white/5 text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center gap-2"
+                      >
+                        View All Notifications <ArrowRight size={14} />
+                      </button>
                     </div>
                   </motion.div>
                 )}
@@ -538,11 +793,18 @@ export default function TopNavbar({
                     className="absolute right-0 top-full mt-3 w-60 bg-gray-900 border border-white/10 rounded-2xl shadow-2xl py-2 z-50 overflow-hidden ring-1 ring-white/5"
                   >
                     <div className="px-4 py-3.5 border-b border-white/5 mb-1 sm:hidden">
-                      <p className="text-sm font-bold text-white">{user?.name}</p>
-                      <p className="text-[10px] text-gray-500 font-bold capitalize tracking-wider">{user?.role}</p>
+                      <p className="text-sm font-bold text-white">
+                        {user?.name}
+                      </p>
+                      <p className="text-[10px] text-gray-500 font-bold capitalize tracking-wider">
+                        {user?.role}
+                      </p>
                     </div>
                     <button
-                      onClick={() => { navigate("/profile"); setMenuOpen(false); }}
+                      onClick={() => {
+                        navigate("/profile");
+                        setMenuOpen(false);
+                      }}
                       className="w-full px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/5 flex items-center gap-3 transition-colors"
                     >
                       <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400">
@@ -551,7 +813,10 @@ export default function TopNavbar({
                       <span className="font-medium">My Profile</span>
                     </button>
                     <button
-                      onClick={() => { navigate("/settings"); setMenuOpen(false); }}
+                      onClick={() => {
+                        navigate("/settings");
+                        setMenuOpen(false);
+                      }}
                       className="w-full px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/5 flex items-center gap-3 transition-colors"
                     >
                       <div className="w-8 h-8 rounded-lg bg-gray-500/10 flex items-center justify-center text-gray-400">
@@ -595,7 +860,10 @@ export default function TopNavbar({
             >
               <div className="flex items-center gap-3" ref={mobileSearchRef}>
                 <div className="relative flex-1">
-                  <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                  <Search
+                    size={18}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
+                  />
                   <input
                     autoFocus
                     type="text"
@@ -603,8 +871,14 @@ export default function TopNavbar({
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={handleSearchSubmit}
                     placeholder="Search customers, vehicles, parts..."
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/5"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-12 pr-24 text-sm text-white focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/5"
                   />
+                  <button
+                    onClick={handleSearchSubmit}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-blue-600 text-white text-[10px] font-bold rounded-xl hover:bg-blue-700 transition-all active:scale-95 uppercase tracking-wider"
+                  >
+                    Search
+                  </button>
                 </div>
                 <button
                   onClick={() => setMobileSearchOpen(false)}

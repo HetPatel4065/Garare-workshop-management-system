@@ -447,7 +447,7 @@ export default function Vehicles() {
           <select
             value={filterFuel}
             onChange={(e) => setFilterFuel(e.target.value)}
-            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-sm"
+            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-sm"
           >
             <option value="All">All Fuel Types</option>
             {FUEL_TYPES.map((f) => (

@@ -1,6 +1,7 @@
 import JobCard from "../models/JobCard.js";
 import Vehicle from "../models/Vehicle.js";
 import Customer from "../models/Customer.js";
+import { createNotification } from "../utils/notificationHelper.js";
 
 export const createJobCard = async (req, res) => {
   try {
@@ -27,11 +28,26 @@ export const createJobCard = async (req, res) => {
 
     const savedJobCard = await newJobCard.save();
 
+    // 🚀 Activate Customer if status was 'Pending' (First Entry)
+    if (vehicle.customerId && vehicle.customerId.status === "Pending") {
+      await Customer.findByIdAndUpdate(vehicle.customerId._id, { status: "Active" });
+      console.log(`Customer ${vehicle.customerId.name} activated via Job Card entry.`);
+    }
+
     // Populate refs to return
     await savedJobCard.populate("customerId", "name");
     await savedJobCard.populate("vehicleId", "make model licensePlate displayName");
     await savedJobCard.populate("advisorId", "name");
     await savedJobCard.populate("mechanicId", "name");
+
+    // 🔔 Notify Owner/Staff
+    await createNotification({
+      ownerId,
+      title: "New Job Card Created",
+      message: `Job Card ${savedJobCard.jobCardId} has been created for ${vehicle.licensePlate} (${vehicle.customerId.name}).`,
+      type: "info",
+      link: "/job-cards"
+    });
 
     res.status(201).json(savedJobCard);
   } catch (error) {
@@ -103,6 +119,17 @@ export const updateJobCard = async (req, res) => {
       { jobId: jobCard._id },
       { $set: { advisorId: jobCard.advisorId, mechanicId: jobCard.mechanicId } }
     );
+
+    // 🔔 Notify if status changed
+    if (req.body.status && req.body.status !== currentJobCard.status) {
+      await createNotification({
+        ownerId,
+        title: "Job Card Status Updated",
+        message: `Job Card ${jobCard.jobCardId} (${jobCard.licensePlate}) status changed to: ${jobCard.status.replace("-", " ")}.`,
+        type: "info",
+        link: "/job-cards"
+      });
+    }
 
     res.json(jobCard);
   } catch (error) {

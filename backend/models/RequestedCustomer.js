@@ -48,8 +48,11 @@ const requestedCustomerSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    appointmentDate:{
+    appointmentDate: {
       type: Date,
+    },
+    appointmentTime: {
+      type: String,
     },
     approvedAt: Date,
   },

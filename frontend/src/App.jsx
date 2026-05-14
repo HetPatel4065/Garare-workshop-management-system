@@ -26,6 +26,7 @@ import PortalDashboard from "./pages/portal/PortalDashboard";
 import AdminLogin from "./pages/AdminLogin";
 import HelpCenter from "./pages/HelpCenter";
 import SearchPage from "./pages/SearchPage";
+import Notifications from "./pages/Notifications";
 
 // Components
 import ToastContainer from "./components/UI/ToastContainer";
@@ -236,6 +237,14 @@ function App() {
               element={
                 <PageTransition>
                   <SearchPage />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/notifications"
+              element={
+                <PageTransition>
+                  <Notifications />
                 </PageTransition>
               }
             />

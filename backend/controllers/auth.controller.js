@@ -2,6 +2,8 @@ import User from "../models/User.js";
 import Owner from "../models/Owner.js";
 import Advisor from "../models/Advisor.js";
 import Mechanic from "../models/Mechanic.js";
+import GarageSettings from "../models/GarageSettings.js";
+import { createNotification } from "../utils/notificationHelper.js";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 
@@ -103,6 +105,20 @@ export const register = async (req, res) => {
         logo: req.file ? req.file.path.replace(/\\/g, "/") : null,
       };
       user = await Owner.create(garageData);
+
+      // ⚙️ INITIALIZE DEFAULT SETTINGS FOR NEW OWNER
+      await GarageSettings.create({
+        ownerId: user._id,
+        garageName: user.garageName,
+        contactNumber: user.mobileNumber,
+        businessAddress: user.address,
+        notifications: {
+          emailReports: true, // Default to true so they get reports
+          serviceReminders: true, // Default to true
+          lowStock: true,
+          reminderSchedule: [-7, -3, 0, 3]
+        }
+      });
     } else if (role === "advisor") {
       user = await Advisor.create(userData);
     } else if (role === "mechanic") {
@@ -110,6 +126,17 @@ export const register = async (req, res) => {
     } else {
       // Fallback for any other user roles
       user = await User.create(userData);
+    }
+
+    // 🔔 Notify Owner of new staff registration
+    if (role !== "owner" && validatedOwnerId) {
+      await createNotification({
+        ownerId: validatedOwnerId,
+        title: "New Staff Member Registered",
+        message: `${name} has registered as a ${role} in your garage.`,
+        type: "info",
+        link: "/staff-members"
+      });
     }
 
     console.log("Register Success:", {

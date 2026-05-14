@@ -202,6 +202,15 @@ export const updateSettings = async (req, res) => {
     if (defaultDiscountPercent !== undefined)
       settingsUpdate.defaultDiscountPercent = Number(defaultDiscountPercent);
 
+    // Handle SMTP config if sent
+    if (req.body.smtp) {
+      try {
+        settingsUpdate.smtp = typeof req.body.smtp === "string" ? JSON.parse(req.body.smtp) : req.body.smtp;
+      } catch (err) {
+        console.error("SMTP Parse Error:", err);
+      }
+    }
+
     if (req.files) {
       if (req.files.logo && req.files.logo[0]) {
         settingsUpdate.logo = req.files.logo[0].path.replace(/\\/g, "/");

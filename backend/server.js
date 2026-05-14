@@ -29,9 +29,12 @@ import notificationRoutes from "./routes/notification.routes.js";
 import requestedCustomerRoutes from "./routes/requestedCustomer.routes.js";
 import initializeAdmin from "./utils/adminLogin.js";
 import { initDailyReportCron, initServiceReminderCron, initInspectionReminderCron } from "./utils/cron.js";
+import http from "http";
+import { initSocket } from "./utils/socket.js";
 
 
 const app = express();
+const server = http.createServer(app);
 
 // 3. Global Security & Utility Middlewares
 app.use(
@@ -75,19 +78,33 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "Engine Running", uptime: process.uptime() });
 });
 
+// Root route
+app.get("/", (req, res) => {
+  res.send("Garage Workshop Management API is running...");
+});
+
 // 6. Error Handling (MUST be the last middleware)
 app.use(errorHandler);
 
 // 7. Database Connection & Server Start
 const PORT = process.env.PORT || 5000;
+const MONGO_URI = process.env.MONGO_URI;
+
+if (!MONGO_URI) {
+  console.error("MONGO_URI is not defined in .env file");
+  process.exit(1);
+}
 
 mongoose
-  .connect(process.env.MONGO_URI)
+  .connect(MONGO_URI)
   .then(async () => {
     console.log("✅ MongoDB Connected: Garage Database Ready");
 
     // 👤 Initialize/Sync Admin
     await initializeAdmin();
+
+    // Initialize Socket.io
+    initSocket(server);
 
     // ⏰ Start Scheduled Tasks
     initDailyReportCron();
@@ -95,7 +112,7 @@ mongoose
     initInspectionReminderCron();
 
 
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       console.log(`Server launched on http://localhost:${PORT}`);
     });
   })

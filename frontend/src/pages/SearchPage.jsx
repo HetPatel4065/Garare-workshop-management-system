@@ -222,12 +222,20 @@ export default function SearchPage() {
           <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-none">
             Search Results
           </h1>
-          <p className="text-sm font-medium text-gray-500 mt-1">
-            Showing results for:{" "}
-            <span className="font-bold text-gray-900 underline underline-offset-4 decoration-blue-500/30">
-              "{query}"
-            </span>
-          </p>
+          <div className="flex items-center gap-3 mt-1">
+            <p className="text-sm font-medium text-gray-500">
+              Showing results for:{" "}
+              <span className="font-bold text-gray-900 underline underline-offset-4 decoration-blue-500/30">
+                "{query}"
+              </span>
+            </p>
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="text-[10px] font-bold text-blue-600 hover:text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg uppercase tracking-wider transition-colors"
+            >
+              Reset Global Search
+            </button>
+          </div>
         </div>
       </div>
 
