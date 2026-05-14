@@ -140,7 +140,7 @@ export default function Login() {
                 `}
               >
                 {/* Gradient top bar */}
-                <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${card.gradient}`} />
+                <div className={`absolute top-0 left-0 right-0 h-1 bg-linear-to-r ${card.gradient}`} />
 
                 <div className="flex items-start gap-4">
                   {/* Icon */}
