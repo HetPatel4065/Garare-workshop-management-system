@@ -24,6 +24,7 @@ import SearchBar from "../components/UI/SearchBar";
 import Modal from "../components/UI/Modal";
 import ConfirmModal from "../components/UI/ConfirmModal";
 import { Meta } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 // ─── MetaField (mirrors CustomerCard) ────────────────────────────
 function MetaField({
@@ -325,7 +326,7 @@ export default function RequestedCustomers() {
   const itemsPerPage = 10;
 
   const { addToast } = useToast();
-  const token = sessionStorage.getItem("token");
+  const { token } = useAuth();
 
   const fetchRequests = async () => {
     setLoading(true);

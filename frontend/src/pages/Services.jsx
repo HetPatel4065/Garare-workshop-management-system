@@ -11,8 +11,7 @@ import { useAuth } from "../context/AuthContext";
 import { Plus } from "lucide-react";
 
 export default function Services() {
-  const token = sessionStorage.getItem("token");
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const role = user?.role || "mechanic";
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [services, setServices] = useState([]);

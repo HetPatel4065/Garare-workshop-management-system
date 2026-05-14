@@ -12,10 +12,9 @@ import VehicleHistoryModal from "../components/Customers/VehicleHistoryModal";
 import { Plus } from "lucide-react";
 
 export default function Customers() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const navigate = useNavigate();
   const role = user?.role || "mechanic";
-  const token = sessionStorage.getItem("token");
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [customers, setCustomers] = useState([]);
   const location = useLocation();

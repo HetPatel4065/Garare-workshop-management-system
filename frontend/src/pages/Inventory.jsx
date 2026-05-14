@@ -33,11 +33,11 @@ export default function Inventory() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const { addToast } = useToast();
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const role = user?.role || "user";
   const isMechanic = role === "mechanic";
 
-  const getToken = () => sessionStorage.getItem("token");
+  const getToken = () => token;
 
   // 🔄 Fetch inventory
   const fetchInventory = async () => {

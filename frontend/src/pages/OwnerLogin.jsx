@@ -93,7 +93,7 @@ export default function OwnerLogin() {
         {/* ── Card ─────────────────────────────────────────────── */}
         <div className="bg-white rounded-2xl border border-emerald-100 shadow-xl shadow-emerald-100/60 overflow-hidden">
           {/* Accent bar */}
-          <div className="h-1 w-full bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-500" />
+          <div className="h-1 w-full bg-linear-to-r from-emerald-400 via-emerald-500 to-teal-500" />
 
           <div className="p-6 sm:p-8">
             {/* Error banner */}

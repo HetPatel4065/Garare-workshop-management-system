@@ -102,7 +102,7 @@ export default function StaffLogin() {
 
         {/* ── Card ─────────────────────────────────────────────── */}
         <div className="bg-white rounded-2xl border border-violet-100 shadow-xl shadow-violet-100/60 overflow-hidden">
-          <div className="h-1 w-full bg-gradient-to-r from-violet-400 via-violet-500 to-purple-500" />
+          <div className="h-1 w-full bg-linear-to-r from-violet-400 via-violet-500 to-purple-500" />
 
           <div className="p-6 sm:p-8">
             {/* Error banner */}

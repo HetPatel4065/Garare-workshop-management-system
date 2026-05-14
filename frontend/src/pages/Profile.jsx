@@ -16,6 +16,7 @@ import {
   CreditCard,
   MessageSquare,
   Hash,
+  Copy,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
@@ -57,10 +58,9 @@ function InputField({
   );
 }
 export default function Profile({ isAdvisor }) {
-  const { user, refreshUser } = useAuth();
+  const { user, refreshUser, token } = useAuth();
   const { addToast } = useToast();
   const navigate = useNavigate();
-  const token = sessionStorage.getItem("token");
 
   // Access Control: Only owners can access profile
   useEffect(() => {
@@ -75,6 +75,7 @@ export default function Profile({ isAdvisor }) {
   const [isSaving, setIsSaving] = useState(false);
   const [canEdit, setCanEdit] = useState(true);
   const [hasChanges, setHasChanges] = useState(false);
+  const [garageId, setGarageId] = useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -108,6 +109,7 @@ export default function Profile({ isAdvisor }) {
 
       if (res.ok) {
         setCanEdit(data.canEdit ?? true);
+        setGarageId(data.garageId || "");
         setFormData({
           name: data.name || "",
           email: data.email || "",
@@ -244,6 +246,30 @@ export default function Profile({ isAdvisor }) {
           <p className="text-sm font-medium text-gray-500 mt-1">
             Account & Garage Settings
           </p>
+          {/* Garage ID Badge — owner only */}
+          {garageId && (
+            <div className="mt-4 flex flex-wrap items-center gap-2 w-fit">
+              <div className="flex items-center gap-2 bg-white border border-slate-200 px-3 py-2 rounded-2xl shadow-sm">
+                <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
+                  Garage ID
+                </span>
+                <code className="text-xs font-black text-slate-900 tracking-wide bg-slate-50 border border-slate-200 rounded-lg px-2 py-1">
+                  {garageId}
+                </code>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(garageId);
+                  addToast("Garage ID copied!", "info");
+                }}
+                className="p-2 flex items-center justify-center bg-white border border-slate-200 rounded-2xl shadow-sm text-slate-500 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-all duration-300 active:scale-90"
+                title="Copy Garage ID"
+              >
+                <Copy size={15} strokeWidth={2.5} />
+              </button>
+            </div>
+          )}
         </div>
         {canEdit && (
           <button
@@ -315,6 +341,16 @@ export default function Profile({ isAdvisor }) {
                       onChange={handleChange}
                       disabled={!canEdit}
                       icon={<Mail size={16} />}
+                      required
+                    />
+                    <InputField
+                      label="Mobile Number"
+                      name="mobileNumber"
+                      value={formData.mobileNumber || "+91 "}
+                      onChange={handlePhone}
+                      disabled={!canEdit}
+                      icon={<Phone size={16} />}
+                      placeholder="+91 XXXXX XXXXX"
                       required
                     />
                   </div>
@@ -493,18 +529,6 @@ export default function Profile({ isAdvisor }) {
                           required
                         />
                       </div>
-
-                      <InputField
-                        label="Contact Phone"
-                        name="mobileNumber"
-                        value={formData.mobileNumber || "+91 "}
-                        onChange={handlePhone}
-                        disabled={!canEdit}
-                        icon={<Phone size={18} className="text-blue-500" />}
-                        placeholder="+91 XXXXX XXXXX"
-                        required
-                      />
-
                       <InputField
                         label="WhatsApp Number"
                         name="whatsappNumber"

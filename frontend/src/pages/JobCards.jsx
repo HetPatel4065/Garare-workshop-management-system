@@ -28,7 +28,7 @@ export default function JobCards() {
   const { user, token: authToken } = useAuth();
   const { addToast } = useToast();
   const navigate = useNavigate();
-  const token = authToken || sessionStorage.getItem("token");
+  const token = authToken || localStorage.getItem("garage_token");
   const role = user?.role || localStorage.getItem("role") || "user";
 
   const [vehicles, setVehicles] = useState([]);

@@ -11,6 +11,7 @@ import { useToast } from "../context/ToastContext";
 import InvoicePreview from "../components/Billing/InvoicePreview";
 import UnbilledServiceCard from "../components/Services/UnbilledServiceCard";
 import { ClipboardClock, FileText, ReceiptIndianRupee } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 const EmptyState = ({ icon, title, description }) => (
   <div className="text-center py-32 bg-gray-50/50 rounded-[40px] border-2 border-dashed border-gray-300 flex flex-col items-center">
@@ -46,7 +47,7 @@ export default function Billing() {
   const [isPending, startTransition] = useTransition();
   const { addToast } = useToast();
 
-  const token = sessionStorage.getItem("token");
+  const { token } = useAuth();
 
   // 📋 Fetch all existing invoices
   const fetchInvoices = useCallback(
@@ -168,7 +169,7 @@ export default function Billing() {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          Authorization: `Bearer ${token}`,
         },
       });
 

@@ -350,11 +350,10 @@ export default function TopNavbar({
   showNotifications,
   setShowNotifications,
 }) {
-  const { logout, user } = useAuth();
+  const { logout, user, token } = useAuth();
   const { notifications, unreadCount, markAsRead } = useNotifications();
   const navigate = useNavigate();
   const location = useLocation();
-  const token = sessionStorage.getItem("token");
 
   // Filter notifications based on relevance (User requirements: unpaid invoices, new requests, reminders)
   const relevantNotifications = useMemo(() => {
@@ -506,7 +505,7 @@ export default function TopNavbar({
 
   const handleSearchSubmit = (e) => {
     if (e && e.key && e.key !== "Enter") return;
-    
+
     if (searchQuery.trim()) {
       if (e && e.preventDefault) e.preventDefault();
       const term = searchQuery.trim();
@@ -572,7 +571,8 @@ export default function TopNavbar({
                       onClick={() => {
                         setSearchQuery("");
                         setShowResults(false);
-                        if (location.pathname === "/search") navigate("/search");
+                        if (location.pathname === "/search")
+                          navigate("/search");
                       }}
                       className="text-gray-500 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-white/5"
                     >
@@ -622,145 +622,154 @@ export default function TopNavbar({
             >
               <Search size={20} />
             </button>
+            {user?.role !== "mechanic" && user?.role !== "advisor" && (
+              <div className="flex flex-row">
+                <button
+                  onClick={() => navigate("/settings")}
+                  className={`hidden sm:flex p-2.5 rounded-xl transition-all duration-300 ${
+                    isSettingsActive
+                      ? "bg-white/10 text-blue-400"
+                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                  }`}
+                >
+                  <Settings size={20} />
+                </button>
 
-            <button
-              onClick={() => navigate("/settings")}
-              className={`hidden sm:flex p-2.5 rounded-xl transition-all duration-300 ${
-                isSettingsActive
-                  ? "bg-white/10 text-blue-400"
-                  : "text-gray-400 hover:text-white hover:bg-white/5"
-              }`}
-            >
-              <Settings size={20} />
-            </button>
-
-            <div className="relative" ref={notifRef}>
-              <button
-                onClick={() => navigate("/notifications")}
-                className={`p-2.5 rounded-xl transition-all duration-300 ${
-                  showNotifications
-                    ? "bg-blue-500/10 text-blue-400"
-                    : "text-gray-400 hover:text-white hover:bg-white/5"
-                }`}
-              >
-                <Bell size={20} />
-                {hasNotifications && (
-                  <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-blue-500 rounded-full ring-2 ring-gray-900 shadow-lg shadow-blue-500/20" />
-                )}
-              </button>
-
-              <AnimatePresence>
-                {showNotifications && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 15, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    className="absolute right-0 top-full mt-3 w-80 sm:w-96 bg-gray-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50"
+                <div className="relative" ref={notifRef}>
+                  <button
+                    onClick={() => navigate("/notifications")}
+                    className={`p-2.5 rounded-xl transition-all duration-300 ${
+                      showNotifications
+                        ? "bg-blue-500/10 text-blue-400"
+                        : "text-gray-400 hover:text-white hover:bg-white/5"
+                    }`}
                   >
-                    <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between bg-gray-900/50 backdrop-blur-xl">
-                      <h3 className="font-bold text-gray-100">Notifications</h3>
-                      <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full font-black uppercase tracking-wider">
-                        NEW
-                      </span>
-                    </div>
-                    <div className="max-h-100 overflow-y-auto">
-                      {relevantNotifications.length === 0 ? (
-                        <div className="p-12 text-center">
-                          <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/5 shadow-inner">
-                            <Bell size={28} className="text-gray-700" />
-                          </div>
-                          <p className="text-sm text-gray-400 font-medium tracking-tight">
-                            No notifications
-                          </p>
-                          <p className="text-[11px] text-gray-600 mt-1">
-                            We'll let you know when something happens
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="py-2">
-                          {relevantNotifications.map((n) => (
-                            <button
-                              key={n._id}
-                              onClick={() => {
-                                markAsRead(n._id);
-                                const type = String(n.type).toLowerCase();
-                                if (type === "new_customer")
-                                  navigate("/requested-customers");
-                                if (type === "unpaid_invoice")
-                                  navigate("/billing");
-                                if (
-                                  type === "service_reminder" ||
-                                  ["warning", "info", "error"].includes(type)
-                                )
-                                  navigate("/reminders");
-                                setShowNotifications(false);
-                              }}
-                              className={`w-full flex items-start gap-4 px-5 py-4 hover:bg-white/5 transition-colors text-left border-b border-white/5 last:border-0 ${!n.read ? "bg-blue-500/5" : ""}`}
-                            >
-                              <div
-                                className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm border border-white/5 ${
-                                  n.type === "unpaid_invoice"
-                                    ? "bg-rose-500/10 text-rose-400"
-                                    : n.type === "new_customer"
-                                      ? "bg-blue-500/10 text-blue-400"
-                                      : n.type === "service_reminder"
-                                        ? "bg-amber-500/10 text-amber-400"
-                                        : n.type === "low_stock"
-                                          ? "bg-orange-500/10 text-orange-400"
-                                          : "bg-indigo-500/10 text-indigo-400"
-                                }`}
-                              >
-                                {n.type === "unpaid_invoice" ? (
-                                  <FileText size={18} />
-                                ) : n.type === "new_customer" ? (
-                                  <User size={18} />
-                                ) : n.type === "service_reminder" ? (
-                                  <Clock size={18} />
-                                ) : n.type === "low_stock" ? (
-                                  <Box size={18} />
-                                ) : (
-                                  <Bell size={18} />
-                                )}
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-center justify-between gap-2 mb-1">
-                                  <p className="text-xs font-black text-gray-200 uppercase tracking-widest truncate">
-                                    {n.title}
-                                  </p>
-                                  <span className="text-[10px] text-gray-600 font-bold whitespace-nowrap">
-                                    {new Date(n.createdAt).toLocaleTimeString(
-                                      [],
-                                      { hour: "2-digit", minute: "2-digit" },
-                                    )}
-                                  </span>
-                                </div>
-                                <p className="text-[11px] text-gray-500 leading-relaxed line-clamp-2">
-                                  {n.message}
-                                </p>
-                              </div>
-                              {!n.read && (
-                                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 shadow-lg shadow-blue-500/50" />
-                              )}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-3 border-t border-white/5 bg-gray-950/50">
-                      <button
-                        onClick={() => {
-                          navigate("/notifications");
-                          setShowNotifications(false);
-                        }}
-                        className="w-full py-2.5 rounded-xl bg-white/5 text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center gap-2"
+                    <Bell size={20} />
+                    {hasNotifications && (
+                      <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-blue-500 rounded-full ring-2 ring-gray-900 shadow-lg shadow-blue-500/20" />
+                    )}
+                  </button>
+
+                  <AnimatePresence>
+                    {showNotifications && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        className="absolute right-0 top-full mt-3 w-80 sm:w-96 bg-gray-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50"
                       >
-                        View All Notifications <ArrowRight size={14} />
-                      </button>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+                        <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between bg-gray-900/50 backdrop-blur-xl">
+                          <h3 className="font-bold text-gray-100">
+                            Notifications
+                          </h3>
+                          <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full font-black uppercase tracking-wider">
+                            NEW
+                          </span>
+                        </div>
+                        <div className="max-h-100 overflow-y-auto">
+                          {relevantNotifications.length === 0 ? (
+                            <div className="p-12 text-center">
+                              <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/5 shadow-inner">
+                                <Bell size={28} className="text-gray-700" />
+                              </div>
+                              <p className="text-sm text-gray-400 font-medium tracking-tight">
+                                No notifications
+                              </p>
+                              <p className="text-[11px] text-gray-600 mt-1">
+                                We'll let you know when something happens
+                              </p>
+                            </div>
+                          ) : (
+                            <div className="py-2">
+                              {relevantNotifications.map((n) => (
+                                <button
+                                  key={n._id}
+                                  onClick={() => {
+                                    markAsRead(n._id);
+                                    const type = String(n.type).toLowerCase();
+                                    if (type === "new_customer")
+                                      navigate("/requested-customers");
+                                    if (type === "unpaid_invoice")
+                                      navigate("/billing");
+                                    if (
+                                      type === "service_reminder" ||
+                                      ["warning", "info", "error"].includes(
+                                        type,
+                                      )
+                                    )
+                                      navigate("/reminders");
+                                    setShowNotifications(false);
+                                  }}
+                                  className={`w-full flex items-start gap-4 px-5 py-4 hover:bg-white/5 transition-colors text-left border-b border-white/5 last:border-0 ${!n.read ? "bg-blue-500/5" : ""}`}
+                                >
+                                  <div
+                                    className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm border border-white/5 ${
+                                      n.type === "unpaid_invoice"
+                                        ? "bg-rose-500/10 text-rose-400"
+                                        : n.type === "new_customer"
+                                          ? "bg-blue-500/10 text-blue-400"
+                                          : n.type === "service_reminder"
+                                            ? "bg-amber-500/10 text-amber-400"
+                                            : n.type === "low_stock"
+                                              ? "bg-orange-500/10 text-orange-400"
+                                              : "bg-indigo-500/10 text-indigo-400"
+                                    }`}
+                                  >
+                                    {n.type === "unpaid_invoice" ? (
+                                      <FileText size={18} />
+                                    ) : n.type === "new_customer" ? (
+                                      <User size={18} />
+                                    ) : n.type === "service_reminder" ? (
+                                      <Clock size={18} />
+                                    ) : n.type === "low_stock" ? (
+                                      <Box size={18} />
+                                    ) : (
+                                      <Bell size={18} />
+                                    )}
+                                  </div>
+                                  <div className="min-w-0 flex-1">
+                                    <div className="flex items-center justify-between gap-2 mb-1">
+                                      <p className="text-xs font-black text-gray-200 uppercase tracking-widest truncate">
+                                        {n.title}
+                                      </p>
+                                      <span className="text-[10px] text-gray-600 font-bold whitespace-nowrap">
+                                        {new Date(
+                                          n.createdAt,
+                                        ).toLocaleTimeString([], {
+                                          hour: "2-digit",
+                                          minute: "2-digit",
+                                        })}
+                                      </span>
+                                    </div>
+                                    <p className="text-[11px] text-gray-500 leading-relaxed line-clamp-2">
+                                      {n.message}
+                                    </p>
+                                  </div>
+                                  {!n.read && (
+                                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 shadow-lg shadow-blue-500/50" />
+                                  )}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        <div className="p-3 border-t border-white/5 bg-gray-950/50">
+                          <button
+                            onClick={() => {
+                              navigate("/notifications");
+                              setShowNotifications(false);
+                            }}
+                            className="w-full py-2.5 rounded-xl bg-white/5 text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center gap-2"
+                          >
+                            View All Notifications <ArrowRight size={14} />
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </div>
+            )}
 
             <div className="w-px h-6 bg-white/10 mx-1 hidden sm:block" />
 
@@ -787,53 +796,37 @@ export default function TopNavbar({
               <AnimatePresence>
                 {menuOpen && (
                   <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    initial={{ opacity: 0, y: 8, scale: 0.96 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    className="absolute right-0 top-full mt-3 w-60 bg-gray-900 border border-white/10 rounded-2xl shadow-2xl py-2 z-50 overflow-hidden ring-1 ring-white/5"
+                    exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                    transition={{ duration: 0.15, ease: "easeOut" }}
+                    className="absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-xl border border-white/10 bg-zinc-900 p-1.5 shadow-2xl ring-1 ring-black/50 z-50"
                   >
-                    <div className="px-4 py-3.5 border-b border-white/5 mb-1 sm:hidden">
-                      <p className="text-sm font-bold text-white">
+                    {/* User Profile Section (Mobile Only) */}
+                    <div className="px-3 py-2.5 mb-1 sm:hidden">
+                      <p className="text-sm font-semibold text-zinc-100 truncate">
                         {user?.name}
                       </p>
-                      <p className="text-[10px] text-gray-500 font-bold capitalize tracking-wider">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
                         {user?.role}
                       </p>
                     </div>
-                    <button
-                      onClick={() => {
-                        navigate("/profile");
-                        setMenuOpen(false);
-                      }}
-                      className="w-full px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/5 flex items-center gap-3 transition-colors"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400">
-                        <User size={16} />
-                      </div>
-                      <span className="font-medium">My Profile</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        navigate("/settings");
-                        setMenuOpen(false);
-                      }}
-                      className="w-full px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/5 flex items-center gap-3 transition-colors"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-gray-500/10 flex items-center justify-center text-gray-400">
-                        <Settings size={16} />
-                      </div>
-                      <span className="font-medium">Settings</span>
-                    </button>
-                    <div className="h-px bg-white/5 my-1.5 mx-3" />
-                    <button
-                      onClick={logout}
-                      className="w-full px-4 py-3 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 flex items-center gap-3 transition-colors group"
-                    >
-                      <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center text-red-400 group-hover:bg-red-500/20 transition-all">
-                        <LogOut size={16} />
-                      </div>
-                      <span className="font-bold">Sign Out</span>
-                    </button>
+
+                    {/* Divider - Only shows if mobile profile is present */}
+                    <div className="h-px bg-white/5 my-1 mx-1 sm:hidden" />
+
+                    {/* Action Buttons */}
+                    <div className="space-y-1">
+                      <button
+                        onClick={logout}
+                        className="group flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-400 transition-all hover:bg-red-500/10 hover:text-red-400"
+                      >
+                        <div className="flex h-8 w-8 items-center justify-center rounded-md bg-zinc-800 transition-colors group-hover:bg-red-500/20 group-hover:text-red-400">
+                          <LogOut size={16} />
+                        </div>
+                        Sign Out
+                      </button>
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>

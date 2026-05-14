@@ -16,10 +16,10 @@ import { FaCar } from "react-icons/fa";
 import VehicleCard from "../components/Vehicles/VehicleCard";
 
 export default function Vehicles() {
-  const { token: authToken, user } = useAuth();
+  const { user, token: authToken } = useAuth();
   const { addToast } = useToast();
   const navigate = useNavigate();
-  const token = authToken || sessionStorage.getItem("token");
+  const token = authToken || localStorage.getItem("garage_token");
   const role = user?.role || localStorage.getItem("role") || "user";
   const [vehicles, setVehicles] = useState([]);
   const [customers, setCustomers] = useState([]);

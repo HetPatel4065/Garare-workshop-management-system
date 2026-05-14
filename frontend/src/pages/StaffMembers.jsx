@@ -131,9 +131,8 @@ const StatCard = ({
 );
 
 export default function StaffMembers() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const { addToast } = useToast();
-  const token = sessionStorage.getItem("token");
 
   const canManage = ["admin", "owner"].includes(user?.role);
   const navigate = useNavigate();

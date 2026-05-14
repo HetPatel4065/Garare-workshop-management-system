@@ -159,7 +159,7 @@ export const sendLoginOTP = async (req, res) => {
     if (!customer) {
       // If no active customer, check if there's a requested customer (pending or rejected)
       requestedCustomer = await RequestedCustomer.findOne({ email }).populate("ownerId", "garageName").sort({ requestedAt: -1 });
-      
+
       if (!requestedCustomer) {
         return res.status(404).json({ success: false, message: "No account or registration request found with this email" });
       }
@@ -230,20 +230,20 @@ export const verifyLoginOTP = async (req, res) => {
     const customer = await Customer.findOne({ email }).populate("ownerId", "garageName address mobileNumber logo");
 
     if (!customer) {
-        // If no customer record, they must be a requested customer
-        const requested = await RequestedCustomer.findOne({ email }).populate("ownerId", "garageName address mobileNumber logo").sort({ requestedAt: -1 });
-        
-        await OTP.deleteOne({ email });
+      // If no customer record, they must be a requested customer
+      const requested = await RequestedCustomer.findOne({ email }).populate("ownerId", "garageName address mobileNumber logo").sort({ requestedAt: -1 });
 
-        return res.status(200).json({
-            success: true,
-            isRequested: true,
-            status: requested.status,
-            rejectionReason: requested.rejectionReason,
-            customerName: requested.customerName,
-            garageName: requested.ownerId?.garageName,
-            requestedAt: requested.requestedAt
-        });
+      await OTP.deleteOne({ email });
+
+      return res.status(200).json({
+        success: true,
+        isRequested: true,
+        status: requested.status,
+        rejectionReason: requested.rejectionReason,
+        customerName: requested.customerName,
+        garageName: requested.ownerId?.garageName,
+        requestedAt: requested.requestedAt
+      });
     }
 
     // Generate Token

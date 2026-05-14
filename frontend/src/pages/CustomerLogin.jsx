@@ -1,15 +1,3 @@
-/**
- * CustomerLogin.jsx — standalone full-page customer portal login.
- *
- * Preserves ALL existing portal auth logic:
- *   Step 1 → enter email → POST /portal/login-otp
- *   Step 2 → enter OTP  → POST /portal/verify-login
- *   Step 3 → status screen (pending / approved / rejected)
- *
- * On success: stores portal_token in sessionStorage → navigates to /portal/dashboard
- * This is wired to /customer/login and /portal/login in App.jsx.
- */
-
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -45,9 +33,11 @@ function StepDot({ active, done }) {
   return (
     <div
       className={`w-2 h-2 rounded-full transition-all duration-300 ${
-        done  ? "bg-blue-600 scale-100" :
-        active ? "bg-blue-500 scale-125" :
-        "bg-slate-200"
+        done
+          ? "bg-blue-600 scale-100"
+          : active
+            ? "bg-blue-500 scale-125"
+            : "bg-slate-200"
       }`}
     />
   );
@@ -57,17 +47,17 @@ function StepDot({ active, done }) {
 export default function CustomerLogin() {
   const navigate = useNavigate();
 
-  const [step,               setStep]               = useState(1);
-  const [email,              setEmail]              = useState("");
-  const [otp,                setOtp]                = useState("");
-  const [loading,            setLoading]            = useState(false);
-  const [error,              setError]              = useState("");
-  const [countdown,          setCountdown]          = useState(0);
+  const [step, setStep] = useState(1);
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [countdown, setCountdown] = useState(0);
   const [registrationStatus, setRegistrationStatus] = useState(null);
 
   const greeting = useMemo(
     () => GREETINGS[Math.floor(Math.random() * GREETINGS.length)],
-    []
+    [],
   );
 
   // ── OTP resend countdown ──────────────────────────────────────────────────
@@ -81,7 +71,7 @@ export default function CustomerLogin() {
   useEffect(() => {
     if (step !== 3 || !email) return;
     const socketUrl = import.meta.env.VITE_BASE_URL || "http://localhost:5000";
-    const socket    = io(socketUrl, { transports: ["websocket"] });
+    const socket = io(socketUrl, { transports: ["websocket"] });
 
     socket.on("connect", () => socket.emit("join", email));
     socket.on("registration_update", (data) => setRegistrationStatus(data));
@@ -97,15 +87,15 @@ export default function CustomerLogin() {
     try {
       const { data } = await axios.post(
         `${import.meta.env.VITE_API_URL}/portal/login-otp`,
-        { email }
+        { email },
       );
       if (data.success) {
         if (data.isRequested) {
           setRegistrationStatus({
-            status:       data.status,
-            reason:       data.rejectionReason,
+            status: data.status,
+            reason: data.rejectionReason,
             customerName: data.customerName,
-            garageName:   data.garageName,
+            garageName: data.garageName,
             appointmentDate: data.appointmentDate,
             appointmentTime: data.appointmentTime,
           });
@@ -116,7 +106,9 @@ export default function CustomerLogin() {
         }
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Account not found or not active.");
+      setError(
+        err.response?.data?.message || "Account not found or not active.",
+      );
     } finally {
       setLoading(false);
     }
@@ -125,22 +117,25 @@ export default function CustomerLogin() {
   // ── Step 2: Verify OTP ────────────────────────────────────────────────────
   const handleVerifyOTP = async (e) => {
     e.preventDefault();
-    if (!otp) { setError("Please enter the OTP."); return; }
+    if (!otp) {
+      setError("Please enter the OTP.");
+      return;
+    }
     setError("");
     setLoading(true);
     try {
       const { data } = await axios.post(
         `${import.meta.env.VITE_API_URL}/portal/verify-login`,
-        { email, otp }
+        { email, otp },
       );
 
       if (data.success) {
         if (data.isRequested) {
           setRegistrationStatus({
-            status:          data.status,
-            reason:          data.rejectionReason,
-            customerName:    data.customerName,
-            garageName:      data.garageName,
+            status: data.status,
+            reason: data.rejectionReason,
+            customerName: data.customerName,
+            garageName: data.garageName,
             appointmentDate: data.appointmentDate,
             appointmentTime: data.appointmentTime,
           });
@@ -150,18 +145,26 @@ export default function CustomerLogin() {
 
         // ✅ Auth success — store portal token
         sessionStorage.setItem("portal_token", data.token);
-        sessionStorage.setItem("portal_user",  JSON.stringify(data.user));
+        sessionStorage.setItem("portal_user", JSON.stringify(data.user));
 
         // Store linked garage for multi-garage support
         const garage = data.user?.garage;
         if (garage) {
           try {
-            const stored = JSON.parse(localStorage.getItem("linkedGarages") || "[]");
+            const stored = JSON.parse(
+              localStorage.getItem("linkedGarages") || "[]",
+            );
             if (!stored.find((g) => g.id === garage._id)) {
-              stored.push({ id: garage._id, garageName: garage.garageName, email });
+              stored.push({
+                id: garage._id,
+                garageName: garage.garageName,
+                email,
+              });
               localStorage.setItem("linkedGarages", JSON.stringify(stored));
             }
-          } catch { /* non-critical */ }
+          } catch {
+            /* non-critical */
+          }
         }
 
         navigate("/portal/dashboard", { replace: true });
@@ -179,7 +182,9 @@ export default function CustomerLogin() {
     setError("");
     setLoading(true);
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/portal/login-otp`, { email });
+      await axios.post(`${import.meta.env.VITE_API_URL}/portal/login-otp`, {
+        email,
+      });
       setCountdown(30);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to resend OTP.");
@@ -192,7 +197,6 @@ export default function CustomerLogin() {
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-md">
-
         {/* ── Brand ─────────────────────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, y: -16 }}
@@ -239,11 +243,10 @@ export default function CustomerLogin() {
 
         {/* ── Card ──────────────────────────────────────────────── */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 overflow-hidden">
-          <div className="h-1 w-full bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-500" />
+          <div className="h-1 w-full bg-linear-to-r from-blue-400 via-blue-500 to-indigo-500" />
 
           <div className="p-6 sm:p-8">
             <AnimatePresence mode="wait">
-
               {/* ── STEP 1: Email ───────────────────────────────── */}
               {step === 1 && (
                 <motion.form
@@ -288,9 +291,15 @@ export default function CustomerLogin() {
                     className="w-full h-11 flex items-center justify-center gap-2 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-blue-600/25 transition-all mt-2"
                   >
                     {loading ? (
-                      <><Loader2 className="w-4 h-4 animate-spin" /><span>Sending…</span></>
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Sending…</span>
+                      </>
                     ) : (
-                      <><Mail className="w-4 h-4" /><span>Send Login Code</span></>
+                      <>
+                        <Mail className="w-4 h-4" />
+                        <span>Send Login Code</span>
+                      </>
                     )}
                   </button>
                 </motion.form>
@@ -330,7 +339,9 @@ export default function CustomerLogin() {
                       maxLength={6}
                       required
                       value={otp}
-                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                      onChange={(e) =>
+                        setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+                      }
                       placeholder="000000"
                       className="w-full h-14 rounded-xl border border-slate-200 bg-slate-50 text-center text-2xl font-black tracking-[0.5rem] text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 focus:bg-white transition-all"
                     />
@@ -350,7 +361,10 @@ export default function CustomerLogin() {
                     className="w-full h-11 flex items-center justify-center gap-2 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-blue-600/25 transition-all"
                   >
                     {loading ? (
-                      <><Loader2 className="w-4 h-4 animate-spin" /><span>Verifying…</span></>
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Verifying…</span>
+                      </>
                     ) : (
                       "Login Now"
                     )}
@@ -360,7 +374,11 @@ export default function CustomerLogin() {
                   <div className="flex items-center justify-between pt-1">
                     <button
                       type="button"
-                      onClick={() => { setStep(1); setOtp(""); setError(""); }}
+                      onClick={() => {
+                        setStep(1);
+                        setOtp("");
+                        setError("");
+                      }}
                       className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-600 transition-colors"
                     >
                       <ArrowLeft className="w-3.5 h-3.5" /> Change email
@@ -371,7 +389,9 @@ export default function CustomerLogin() {
                       disabled={countdown > 0 || loading}
                       className="text-sm font-medium text-blue-600 hover:text-blue-700 disabled:text-slate-400 disabled:cursor-not-allowed transition-colors"
                     >
-                      {countdown > 0 ? `Resend in ${countdown}s` : "Resend code"}
+                      {countdown > 0
+                        ? `Resend in ${countdown}s`
+                        : "Resend code"}
                     </button>
                   </div>
                 </motion.form>
@@ -392,8 +412,8 @@ export default function CustomerLogin() {
                       registrationStatus.status === "rejected"
                         ? "bg-rose-50"
                         : registrationStatus.status === "approved"
-                        ? "bg-emerald-50"
-                        : "bg-amber-50"
+                          ? "bg-emerald-50"
+                          : "bg-amber-50"
                     }`}
                   >
                     {registrationStatus.status === "rejected" ? (
@@ -411,52 +431,65 @@ export default function CustomerLogin() {
                       {registrationStatus.status === "rejected"
                         ? "Registration Rejected"
                         : registrationStatus.status === "approved"
-                        ? "Request Approved!"
-                        : "Request Pending"}
+                          ? "Request Approved!"
+                          : "Request Pending"}
                     </h2>
                     <p className="text-sm text-slate-500">
                       {registrationStatus.status === "rejected"
                         ? `Hi ${registrationStatus.customerName}, unfortunately your request at ${registrationStatus.garageName} was not approved.`
                         : registrationStatus.status === "approved"
-                        ? `Great news ${registrationStatus.customerName}! Your request at ${registrationStatus.garageName} has been approved.`
-                        : `Hi ${registrationStatus.customerName}, your request at ${registrationStatus.garageName} is still being reviewed. We'll update you soon.`}
+                          ? `Great news ${registrationStatus.customerName}! Your request at ${registrationStatus.garageName} has been approved.`
+                          : `Hi ${registrationStatus.customerName}, your request at ${registrationStatus.garageName} is still being reviewed. We'll update you soon.`}
                     </p>
                   </div>
 
                   {/* Appointment details */}
-                  {registrationStatus.status === "approved" && registrationStatus.appointmentDate && (
-                    <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl text-center">
-                      <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-2">
-                        Confirmed Appointment
-                      </p>
-                      <p className="text-base font-bold text-slate-900">
-                        {new Date(registrationStatus.appointmentDate).toLocaleDateString("en-IN", {
-                          day: "2-digit", month: "long", year: "numeric",
-                        })}
-                      </p>
-                      {registrationStatus.appointmentTime && (
-                        <div className="flex items-center justify-center gap-2 mt-1 text-emerald-700 font-semibold text-sm">
-                          <Clock className="w-3.5 h-3.5" />
-                          <span>{registrationStatus.appointmentTime}</span>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  {registrationStatus.status === "approved" &&
+                    registrationStatus.appointmentDate && (
+                      <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl text-center">
+                        <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-2">
+                          Confirmed Appointment
+                        </p>
+                        <p className="text-base font-bold text-slate-900">
+                          {new Date(
+                            registrationStatus.appointmentDate,
+                          ).toLocaleDateString("en-IN", {
+                            day: "2-digit",
+                            month: "long",
+                            year: "numeric",
+                          })}
+                        </p>
+                        {registrationStatus.appointmentTime && (
+                          <div className="flex items-center justify-center gap-2 mt-1 text-emerald-700 font-semibold text-sm">
+                            <Clock className="w-3.5 h-3.5" />
+                            <span>{registrationStatus.appointmentTime}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                   {/* Rejection reason */}
-                  {registrationStatus.status === "rejected" && registrationStatus.reason && (
-                    <div className="p-3.5 bg-rose-50 border border-rose-100 rounded-xl text-left">
-                      <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-1">
-                        Reason
-                      </p>
-                      <p className="text-sm text-rose-700">{registrationStatus.reason}</p>
-                    </div>
-                  )}
+                  {registrationStatus.status === "rejected" &&
+                    registrationStatus.reason && (
+                      <div className="p-3.5 bg-rose-50 border border-rose-100 rounded-xl text-left">
+                        <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-1">
+                          Reason
+                        </p>
+                        <p className="text-sm text-rose-700">
+                          {registrationStatus.reason}
+                        </p>
+                      </div>
+                    )}
 
                   {/* Action button */}
                   {registrationStatus.status === "approved" ? (
                     <button
-                      onClick={() => { setStep(1); setOtp(""); setError(""); setRegistrationStatus(null); }}
+                      onClick={() => {
+                        setStep(1);
+                        setOtp("");
+                        setError("");
+                        setRegistrationStatus(null);
+                      }}
                       className="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-all shadow-lg shadow-blue-600/25"
                     >
                       Proceed to Login
@@ -471,7 +504,6 @@ export default function CustomerLogin() {
                   )}
                 </motion.div>
               )}
-
             </AnimatePresence>
           </div>
         </div>
@@ -488,9 +520,19 @@ export default function CustomerLogin() {
             </Link>
           </p>
           <div className="flex items-center justify-center gap-4 text-xs text-slate-400">
-            <Link to="/login"        className="hover:text-slate-600 transition-colors">Staff / Owner Login</Link>
+            <Link
+              to="/login"
+              className="hover:text-slate-600 transition-colors"
+            >
+              Staff / Owner Login
+            </Link>
             <span>·</span>
-            <Link to="/admin/login"  className="hover:text-orange-500 transition-colors">Admin</Link>
+            <Link
+              to="/admin/login"
+              className="hover:text-orange-500 transition-colors"
+            >
+              Admin
+            </Link>
           </div>
         </div>
       </div>

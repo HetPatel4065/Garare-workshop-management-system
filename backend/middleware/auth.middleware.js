@@ -12,7 +12,7 @@ const auth = async (req, res, next) => {
   try {
     const token = req.header("Authorization")?.replace("Bearer ", "");
 
-    if (!token) {
+    if (!token || token === "null" || token === "undefined") {
       return res
         .status(401)
         .json({ message: "No authentication token, access denied" });

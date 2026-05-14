@@ -168,9 +168,8 @@ const capitalizeWords = (value) => {
 };
 
 export default function Settings() {
-  const { refreshUser, user } = useAuth();
+  const { refreshUser, user, token } = useAuth();
   const { addToast } = useToast();
-  const token = sessionStorage.getItem("token");
 
   // Role-based logic
   const isAdmin = user?.role === "admin";
@@ -653,7 +652,7 @@ export default function Settings() {
                 Garage Control Panel
               </p>
 
-              {garageId && ["owner", "admin"].includes(user?.role) && (
+              {garageId && isAdmin && (
                 <div className="mt-4 flex flex-wrap items-center gap-2 w-fit">
                   <div className="flex items-center gap-2 bg-white border border-slate-200 px-3 py-2 rounded-2xl shadow-sm">
                     <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">

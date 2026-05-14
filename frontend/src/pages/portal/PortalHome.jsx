@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useTransition } from "react";
+import React, { useState, useEffect, useTransition, useRef } from "react";
 import axios from "axios";
 import {
   Search,
@@ -6,18 +6,47 @@ import {
   Phone,
   ArrowRight,
   Wrench,
-  Loader2,
   Sparkles,
-  Navigation,
-  Clock,
-  Navigation2,
+  ChevronRight,
+  Star,
+  Shield,
+  Zap,
+  X,
+  Building2,
+  Users,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import RegistrationModal from "./RegistrationModal";
 import PortalLogin from "./PortalLogin";
 import { useNavigate } from "react-router-dom";
 
-const PortalHome = () => {
+/* ─── Skeleton card ─── */
+function Skeleton() {
+  return (
+    <div className="bg-white rounded-2xl border border-slate-100 p-5 animate-pulse space-y-4">
+      <div className="flex justify-between">
+        <div className="w-11 h-11 bg-slate-100 rounded-xl" />
+        <div className="w-14 h-6 bg-slate-100 rounded-full" />
+      </div>
+      <div className="space-y-2">
+        <div className="h-4 bg-slate-100 rounded-md w-3/5" />
+        <div className="h-3 bg-slate-100 rounded-md w-2/5" />
+      </div>
+      <div className="pt-3 border-t border-slate-100 flex justify-between">
+        <div className="h-3 bg-slate-100 rounded-md w-1/3" />
+        <div className="w-7 h-7 bg-slate-100 rounded-xl" />
+      </div>
+    </div>
+  );
+}
+
+/* ─── Main Component ─── */
+export default function PortalHome() {
   const navigate = useNavigate();
   const [garages, setGarages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,10 +56,15 @@ const PortalHome = () => {
   const [selectedGarage, setSelectedGarage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isGaragesModalOpen, setIsGaragesModalOpen] = useState(false);
-  const [allocating, setAllocating] = useState(false);
   const [loginPrefill, setLoginPrefill] = useState("");
-  const [serverLinkedGarages, setServerLinkedGarages] = useState([]);
+
+  const { scrollY } = useScroll();
+  const headerBg = useTransform(
+    scrollY,
+    [0, 60],
+    ["rgba(255,255,255,0.7)", "rgba(255,255,255,0.95)"],
+  );
+
   const getPortalToken = () =>
     sessionStorage.getItem("portal_token") || sessionStorage.getItem("token");
   const isAuthenticated = !!getPortalToken();
@@ -39,312 +73,345 @@ const PortalHome = () => {
     fetchGarages();
   }, []);
 
-  const handleSmartAllocation = () => {
-    setAllocating(true);
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          triggerAllocation(
-            position.coords.latitude,
-            position.coords.longitude,
-          );
-        },
-        () => {
-          triggerAllocation();
-        },
-      );
-    } else {
-      triggerAllocation();
-    }
-  };
-
-  const triggerAllocation = async (lat, lng) => {
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/portal/allocate-garage`,
-        { lat, lng },
-        {
-          headers: { Authorization: `Bearer ${getPortalToken()}` },
-        },
-      );
-      if (response.data.success) {
-        const { type, garage, garages: payloadGarages } = response.data.data;
-        if (type === "ACTIVE" || type === "LAST_USED_SINGLE") {
-          handleEnterGarage(garage.garageId);
-        } else {
-          setServerLinkedGarages(payloadGarages);
-          setIsGaragesModalOpen(true);
-          setAllocating(false);
-        }
-      }
-    } catch (err) {
-      console.error("Allocation failed", err);
-      setAllocating(false);
-    }
-  };
-
-  const handleEnterGarage = async (garageId) => {
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/portal/select-garage`,
-        { targetGarageId: garageId },
-        {
-          headers: { Authorization: `Bearer ${getPortalToken()}` },
-        },
-      );
-
-      if (response.data.success) {
-        sessionStorage.setItem("portal_token", response.data.token);
-        sessionStorage.setItem("portal_user", JSON.stringify(response.data.user));
-        navigate("/portal/dashboard");
-      }
-    } catch (err) {
-      console.error("Error selecting garage:", err);
-      setAllocating(false);
-    }
-  };
-
   const fetchGarages = async () => {
     try {
-      const response = await axios.get(
+      const res = await axios.get(
         `${import.meta.env.VITE_API_URL}/portal/garages`,
       );
-      if (response.data.success) {
-        setGarages(response.data.data);
-      }
-    } catch (error) {
-      console.error("Error fetching garages:", error);
+      if (res.data.success) setGarages(res.data.data);
+    } catch {
+      /* silent */
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredGarages = React.useMemo(() => {
-    return garages.filter(
-      (garage) =>
-        garage.garageName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (garage.address &&
-          garage.address.toLowerCase().includes(searchQuery.toLowerCase())),
-    );
-  }, [garages, searchQuery]);
+  const clearSearch = () => {
+    setInputValue("");
+    startTransition(() => setSearchQuery(""));
+  };
 
+  const filtered = React.useMemo(
+    () =>
+      garages.filter(
+        (g) =>
+          g.garageName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          g.address?.toLowerCase().includes(searchQuery.toLowerCase()),
+      ),
+    [garages, searchQuery],
+  );
+
+  /* ═══════════════ RENDER ═══════════════ */
   return (
-    <div className="min-h-screen bg-slate-50/50 font-sans selection:bg-blue-100 selection:text-blue-600">
-      {/* 1. Refined Sticky Header */}
-      <header className="bg-white/70 backdrop-blur-xl sticky top-0 z-40 border-b border-slate-200/50 px-6 py-3">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div
-            className="flex items-center gap-2.5 group cursor-pointer"
+    <div className="min-h-screen bg-slate-50/50 font-sans selection:bg-blue-100 selection:text-blue-700">
+      {/* ── Header ── */}
+      <motion.header
+        style={{ backgroundColor: headerBg }}
+        className="sticky top-0 z-40 backdrop-blur-xl border-b border-slate-200/60 px-6 py-3.5"
+      >
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <button
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="flex items-center gap-3 group"
           >
-            <div className="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-200 group-hover:rotate-12 transition-transform">
-              <Wrench className="w-5 h-5 text-white" />
+            <div className="bg-blue-600 p-2.5 rounded-[10px] shadow-sm shadow-blue-200 group-hover:bg-blue-700 group-hover:shadow-blue-300 transition-all duration-200">
+              <Wrench className="w-4 h-4 text-white" strokeWidth={2.5} />
             </div>
-            <h1 className="text-xl font-black text-slate-900 tracking-tighter">
+            <span className="font-black text-[1.1rem] tracking-tight text-slate-900">
               Garage<span className="text-blue-600">Pro</span>
-            </h1>
-          </div>
+            </span>
+          </button>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            {!isAuthenticated && (
+              <button
+                onClick={() => setIsLoginModalOpen(true)}
+                className="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors px-3 py-2 rounded-xl hover:bg-slate-100"
+              >
+                Sign in
+              </button>
+            )}
             <button
               onClick={() =>
                 isAuthenticated
                   ? navigate("/portal/dashboard")
                   : setIsLoginModalOpen(true)
               }
-              className={`px-5 py-2.5 rounded-xl font-bold transition-all text-sm ${
-                isAuthenticated
-                  ? "bg-blue-600 text-white shadow-lg shadow-blue-200 hover:bg-blue-700"
-                  : "bg-slate-900 text-white shadow-lg shadow-slate-200 hover:bg-slate-800"
-              }`}
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-200/70 transition-all duration-200 active:scale-95"
             >
-              {isAuthenticated ? "My Dashboard" : "Customer Login"}
+              {isAuthenticated ? "Dashboard" : "Get Started"}
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
-      </header>
+      </motion.header>
 
-      <main className="max-w-7xl mx-auto px-6 py-16">
-        {/* 2. Hero Section - More whitespace & better typography */}
-        <div className="max-w-3xl mx-auto text-center mb-16">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-wider mb-6"
-          >
-            <Sparkles className="w-3.5 h-3.5" /> Trusted by India's Garages
-          </motion.div>
+      <main>
+        {/* ── Hero ── */}
+        <section className="relative overflow-hidden">
+          {/* Decorative blobs — subtle, no color change */}
+          <div className="absolute -top-32 -right-32 w-125 h-125 bg-blue-50 rounded-full opacity-60 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-16 -left-24 w-90 h-90 bg-indigo-50 rounded-full opacity-50 blur-3xl pointer-events-none" />
 
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight leading-[1.1]"
-          >
-            Premium care for <br />
-            <span className="text-blue-600">your vehicle.</span>
-          </motion.h2>
+          <div className="relative max-w-7xl mx-auto px-6 pt-16 pb-14 text-center">
+            {/* Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-[11px] font-black uppercase tracking-widest mb-7"
+            >
+              <Sparkles className="w-3 h-3" />
+              Trusted across India
+            </motion.div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-lg text-slate-500 leading-relaxed mb-10 px-4"
-          >
-            Connect with top-rated mechanics, track your service history, and
-            book your next appointment in seconds.
-          </motion.p>
+            {/* Headline */}
+            <motion.h1
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.07 }}
+              className="text-[3rem] md:text-[4rem] font-black text-slate-900 tracking-tight leading-[1.06] mb-5"
+            >
+              Your vehicle deserves
+              <br />
+              <span className="text-blue-600">expert care.</span>
+            </motion.h1>
 
-          {/* 3. Floating Search Bar */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="relative group"
-          >
-            <div className="absolute -inset-1 bg-linear-to-r from-blue-600 to-indigo-600 rounded-4xl blur-xl opacity-10 group-focus-within:opacity-20 transition-opacity"></div>
-            <div className="relative">
-              <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
-              <input
-                type="text"
-                placeholder="Enter garage name or city..."
-                className={`w-full pl-14 pr-6 py-5 bg-white rounded-[1.8rem] border-0 shadow-2xl shadow-slate-200 focus:ring-2 focus:ring-blue-500 transition-all text-slate-700 text-lg placeholder:text-slate-400 ${isPending ? "opacity-70" : ""}`}
-                value={inputValue}
-                onChange={(e) => {
-                  setInputValue(e.target.value);
-                  startTransition(() => {
-                    setSearchQuery(e.target.value);
-                  });
-                }}
-              />
-            </div>
-          </motion.div>
-        </div>
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.12 }}
+              className="text-[15px] text-slate-500 leading-relaxed mb-9 max-w-md mx-auto"
+            >
+              Find verified mechanics, book appointments, and track your full
+              service history — all in one place.
+            </motion.p>
 
-        {/* 4. Garage Cards Container */}
-        <section>
-          {loading ? (
-            <div className="flex flex-col items-center justify-center py-20">
-              <div className="relative">
-                <div className="w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
-                <Wrench className="absolute inset-0 m-auto w-6 h-6 text-blue-600" />
+            {/* Search bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.16 }}
+              className="max-w-lg mx-auto mb-10"
+            >
+              <div className="relative group">
+                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400 group-focus-within:text-blue-500 transition-colors pointer-events-none" />
+                <input
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => {
+                    setInputValue(e.target.value);
+                    startTransition(() => setSearchQuery(e.target.value));
+                  }}
+                  placeholder="Search garage name or city…"
+                  className="w-full pl-12 pr-11 py-3.5 bg-white border border-slate-200 rounded-2xl text-slate-700 text-[14.5px] placeholder:text-slate-400 focus:outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-50 shadow-sm hover:border-slate-300 transition-all duration-200"
+                />
+                <AnimatePresence>
+                  {inputValue && (
+                    <motion.button
+                      initial={{ opacity: 0, scale: 0.7 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.7 }}
+                      onClick={clearSearch}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition-colors"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </motion.button>
+                  )}
+                </AnimatePresence>
               </div>
-              <p className="mt-6 text-slate-400 font-bold tracking-wide uppercase text-xs">
-                Scanning Network...
-              </p>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ── Grid section ── */}
+        <section className="max-w-7xl mx-auto px-6 pb-20">
+          {/* Section label */}
+          <AnimatePresence>
+            {!loading && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex items-center justify-between mb-5"
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="text-[13px] font-bold text-slate-800">
+                    {searchQuery
+                      ? `Results for "${searchQuery}"`
+                      : "All Garages"}
+                  </span>
+                  <span className="text-[11px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+                    {filtered.length}
+                  </span>
+                </div>
+                {searchQuery && (
+                  <button
+                    onClick={clearSearch}
+                    className="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors"
+                  >
+                    <X className="w-3 h-3" /> Clear
+                  </button>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Skeleton */}
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} />
+              ))}
             </div>
-          ) : filteredGarages.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          ) : filtered.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               <AnimatePresence mode="popLayout">
-                {filteredGarages.map((garage, index) => (
-                  <motion.div
+                {filtered.map((garage, index) => (
+                  <motion.article
                     key={garage._id}
                     layout
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    exit={{ opacity: 0, scale: 0.97 }}
+                    transition={{
+                      duration: 0.2,
+                      delay: Math.min(index * 0.035, 0.28),
+                    }}
                     onClick={() => {
                       setSelectedGarage(garage);
                       setIsModalOpen(true);
                     }}
-                    className="group cursor-pointer relative bg-white rounded-2xl p-6 border border-slate-400 hover:border-blue-500 hover:ring-4 hover:ring-blue-50 transition-all duration-300"
+                    className="group relative bg-white rounded-2xl border border-slate-100 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-50 transition-all duration-300 cursor-pointer overflow-hidden"
                   >
-                    {/* Top Section: Logo & Badge */}
-                    <div className="flex justify-between items-start mb-6">
-                      <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        {garage.logo ? (
-                          <img
-                            src={`${import.meta.env.VITE_BASE_URL?.replace(/\/$/, "")}/${String(garage.logo).replace(/^\//, "")}`}
-                            alt=""
-                            className="w-8 h-8 object-contain"
+                    {/* Top accent */}
+                    <div className="absolute inset-x-0 top-0 h-0.75 bg-linear-to-r from-blue-500 to-indigo-500 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 rounded-t-2xl" />
+
+                    <div className="p-5">
+                      {/* Top row */}
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="w-11 h-11 rounded-xl border border-slate-100 bg-slate-50 group-hover:bg-blue-50 group-hover:border-blue-100 flex items-center justify-center transition-all duration-300 shrink-0">
+                          {garage.logo ? (
+                            <img
+                              src={`${import.meta.env.VITE_BASE_URL?.replace(/\/$/, "")}/${String(garage.logo).replace(/^\//, "")}`}
+                              alt={garage.garageName}
+                              className="w-7 h-7 object-contain"
+                            />
+                          ) : (
+                            <Wrench
+                              className="w-4 h-4 text-slate-300 group-hover:text-blue-400 transition-colors"
+                              strokeWidth={2}
+                            />
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-100 shrink-0">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider">
+                            Open
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Name & address */}
+                      <div className="mb-4 min-w-0">
+                        <h3 className="text-[14.5px] font-bold text-slate-900 mb-1.5 group-hover:text-blue-700 transition-colors leading-snug truncate">
+                          {garage.garageName}
+                        </h3>
+                        <div className="flex items-start gap-1.5 text-slate-400 text-[12px]">
+                          <MapPin
+                            className="w-3.5 h-3.5 shrink-0 mt-px"
+                            strokeWidth={2}
                           />
-                        ) : (
-                          <Wrench className="w-5 h-5 text-slate-400 group-hover:text-blue-600" />
-                        )}
+                          <span className="truncate">
+                            {garage.address || "Location not specified"}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex flex-col items-end gap-1">
-                        <span className="bg-green-100 text-green-600 text-xs font-bold px-2 py-1 rounded-md">
-                          ONLINE
-                        </span>
-                      </div>
-                    </div>
 
-                    {/* Middle Section: Info */}
-                    <div className="mb-6">
-                      <h3 className="text-lg font-bold text-slate-900 mb-1 group-hover:text-blue-600 transition-colors">
-                        {garage.garageName}
-                      </h3>
-                      <div className="flex items-center gap-2 text-slate-500 text-sm">
-                        <MapPin className="w-3.5 h-3.5" />
-                        <span className="truncate">
-                          {garage.address || "Location not set"}
-                        </span>
-                      </div>
-                    </div>
+                      {/* Footer */}
+                      <div className="flex items-center justify-between pt-3.5 border-t border-slate-50">
+                        <div className="flex items-center gap-2 text-[12px] text-slate-500">
+                          <div className="w-6 h-6 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center">
+                            <Phone
+                              className="w-3 h-3 text-slate-400"
+                              strokeWidth={2}
+                            />
+                          </div>
+                          <span className="font-medium tabular-nums">
+                            {garage.mobileNumber}
+                          </span>
+                        </div>
 
-                    {/* Bottom Section: Phone & Visual Indicator / Quick Actions */}
-                    <div className="flex items-center justify-between pt-4 border-t border-slate-200">
-                      <div className="flex items-center gap-2 text-slate-600 text-[13px]">
-                        <Phone className="w-4 h-4" />
-                        <span>{garage.mobileNumber}</span>
-                      </div>
-                      <div className="flex items-center gap-2 overflow-hidden px-2 py-1.5 rounded-full bg-slate-50 text-slate-400 group-hover:text-blue-600 group-hover:bg-blue-50 transition-all duration-300">
-                        <span className="max-w-0 overflow-hidden whitespace-nowrap text-xs font-bold transition-all duration-300 group-hover:max-w-20 group-hover:ml-2">
-                          Let's Go
-                        </span>
-
-                        <div className="w-5 h-5 flex items-center justify-center">
-                          <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+                        <div className="flex items-center gap-1.5 overflow-hidden">
+                          <span className="text-[12px] font-semibold text-blue-600 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap">
+                            View
+                          </span>
+                          <div className="w-7 h-7 rounded-xl border border-slate-100 bg-slate-50 group-hover:bg-blue-600 group-hover:border-blue-600 flex items-center justify-center transition-all duration-300 shrink-0">
+                            <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-white transition-colors" />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </motion.div>
+                  </motion.article>
                 ))}
               </AnimatePresence>
             </div>
           ) : (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-center py-20 bg-white rounded-[3rem] shadow-sm border-2 border-dashed border-slate-200"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col items-center justify-center py-24 bg-white rounded-3xl border-2 border-dashed border-slate-200"
             >
-              <div className="bg-slate-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Search className="w-8 h-8 text-slate-300" />
+              <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center mb-4 border border-slate-100">
+                <Search className="w-6 h-6 text-slate-300" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900">
-                No results found
-              </h3>
-              <p className="text-slate-400 text-sm mt-1">
-                Try adjusting your search filters.
+              <p className="text-sm font-bold text-slate-800 mb-1">
+                No garages found
               </p>
+              <p className="text-sm text-slate-400 mb-5">
+                No results for "{searchQuery}"
+              </p>
+              <button
+                onClick={clearSearch}
+                className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors underline underline-offset-2"
+              >
+                Clear search
+              </button>
             </motion.div>
           )}
         </section>
       </main>
 
-      {/* 5. Minimalist Footer */}
-      <footer className="border-t border-slate-200 bg-white py-12">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="flex items-center gap-2 opacity-50 grayscale hover:grayscale-0 transition-all cursor-default">
-            <Wrench className="w-5 h-5" />
-            <span className="font-black text-slate-900">GARAGEPRO</span>
+      {/* ── Footer ── */}
+      <footer className="bg-white border-t border-slate-100 py-10">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="flex items-center gap-2 opacity-40 hover:opacity-70 transition-opacity">
+            <div className="bg-slate-900 p-1.5 rounded-lg">
+              <Wrench className="w-3.5 h-3.5 text-white" />
+            </div>
+            <span className="text-sm font-black text-slate-900 tracking-tight">
+              GaragePro
+            </span>
           </div>
-          <div className="flex gap-8 text-sm font-medium text-slate-400">
-            <a href="#" className="hover:text-blue-600">
-              Privacy Policy
-            </a>
-            <a href="#" className="hover:text-blue-600">
-              Terms of Service
-            </a>
-            <a href="#" className="hover:text-blue-600">
-              Contact Support
-            </a>
-          </div>
-          <p className="text-slate-400 text-sm">
+          <nav className="flex gap-6">
+            {["Privacy Policy", "Terms of Service", "Contact Support"].map(
+              (l) => (
+                <a
+                  key={l}
+                  href="#"
+                  className="text-[13px] text-slate-400 font-medium hover:text-blue-600 transition-colors"
+                >
+                  {l}
+                </a>
+              ),
+            )}
+          </nav>
+          <p className="text-[12px] text-slate-400">
             &copy; 2026 GaragePro Ecosystem
           </p>
         </div>
       </footer>
 
+      {/* ── Modals ── */}
       <RegistrationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -360,6 +427,4 @@ const PortalHome = () => {
       />
     </div>
   );
-};
-
-export default PortalHome;
+}
