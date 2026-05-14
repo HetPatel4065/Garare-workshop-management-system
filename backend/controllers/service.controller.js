@@ -280,12 +280,26 @@ export const updateService = async (req, res) => {
 
         // If status just changed to Completed, or if dates are explicitly provided
         if (updateData.status === "Completed" || updateData.serviceDate || updateData.nextServiceDate) {
-          updateVehicleData.serviceDate = updateData.serviceDate || new Date();
-          updateVehicleData.nextServiceDate = updateData.nextServiceDate || calculateNextServiceDate(updateVehicleData.serviceDate, vehicle.reminderInterval || 6);
-          updateVehicleData.reminderStatus = "Completed"; // Mark current cycle as completed
+          const completedDate = updateData.serviceDate || new Date();
+          const newNextServiceDate =
+            updateData.nextServiceDate ||
+            calculateNextServiceDate(completedDate, vehicle.reminderInterval || 6);
 
-          // After 1 day, it can go back to "Pending" for the next cycle, 
-          // but for now, "Completed" tells the owner that the service was done.
+          updateVehicleData.serviceDate = completedDate;
+          updateVehicleData.nextServiceDate = newNextServiceDate;
+
+          const nextNorm = new Date(newNextServiceDate);
+          nextNorm.setHours(0, 0, 0, 0);
+          const todayNorm = new Date();
+          todayNorm.setHours(0, 0, 0, 0);
+
+          if (newNextServiceDate && nextNorm > todayNorm) {
+            // New cycle is upcoming → reset reminder workflow to Pending
+            updateVehicleData.reminderStatus = "Pending";
+          } else {
+            // No future cycle (or edge-case past date) → mark as Completed
+            updateVehicleData.reminderStatus = "Completed";
+          }
         }
 
         if (Object.keys(updateVehicleData).length > 0) {

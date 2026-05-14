@@ -136,9 +136,10 @@ const StatCard = ({
   <button
     onClick={onClick}
     className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl border transition-all duration-200 text-left w-full
-      ${active
-        ? `${colorClasses.activeBg} ${colorClasses.activeBorder} shadow-sm scale-[1.02]`
-        : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm"
+      ${
+        active
+          ? `${colorClasses.activeBg} ${colorClasses.activeBorder} shadow-sm scale-[1.02]`
+          : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm"
       }`}
   >
     <div
@@ -214,12 +215,14 @@ function RequestCard({ req, onView, onApprove, onReject, onDelete }) {
             req.appointmentDate && req.status === "approved"
               ? new Date(req.appointmentDate).getFullYear() > 2000
                 ? new Date(req.appointmentDate).toLocaleDateString("en-IN", {
-                  day: "2-digit",
-                  month: "short",
-                  year: "numeric",
-                })
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })
                 : "Date Not Set"
-              : req.status === "approved" ? "Date Not Set" : "Not Scheduled"
+              : req.status === "approved"
+                ? "Date Not Set"
+                : "Not Scheduled"
           }
           secondary={req.appointmentTime || ""}
         />
@@ -260,15 +263,17 @@ function RequestCard({ req, onView, onApprove, onReject, onDelete }) {
             </div>
           )}
 
-          {req.status === "approved" && (!req.appointmentDate || new Date(req.appointmentDate).getFullYear() < 2000) && (
-            <button
-              onClick={() => onApprove(req)} // Re-using approve modal for setting date
-              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 text-[12px] font-bold text-blue-600 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition active:scale-95"
-            >
-              <CalendarCheck size={14} />
-              Set Appointment
-            </button>
-          )}
+          {req.status === "approved" &&
+            (!req.appointmentDate ||
+              new Date(req.appointmentDate).getFullYear() < 2000) && (
+              <button
+                onClick={() => onApprove(req)} // Re-using approve modal for setting date
+                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 text-[12px] font-bold text-blue-600 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition active:scale-95"
+              >
+                <CalendarCheck size={14} />
+                Set Appointment
+              </button>
+            )}
 
           <button
             onClick={() => onDelete(req)}
@@ -320,7 +325,7 @@ export default function RequestedCustomers() {
   const itemsPerPage = 10;
 
   const { addToast } = useToast();
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   const fetchRequests = async () => {
     setLoading(true);
@@ -368,7 +373,6 @@ export default function RequestedCustomers() {
     return matchesSearch && matchesStatus;
   });
 
-
   const totalPages = Math.ceil(filteredRequests.length / itemsPerPage);
   const currentRequests = filteredRequests.slice(
     (currentPage - 1) * itemsPerPage,
@@ -393,7 +397,7 @@ export default function RequestedCustomers() {
     try {
       setIsSubmitting(true);
 
-      if (selectedRequest.status === 'approved') {
+      if (selectedRequest.status === "approved") {
         // Just update the appointment
         await axios.patch(
           `${import.meta.env.VITE_API_URL}/requested-customers/${selectedRequest._id}/appointment`,
@@ -417,8 +421,8 @@ export default function RequestedCustomers() {
     } catch (error) {
       addToast(
         error.response?.data?.message ||
-        error.response?.data?.error ||
-        "Operation failed",
+          error.response?.data?.error ||
+          "Operation failed",
         "error",
       );
     } finally {
@@ -614,7 +618,6 @@ export default function RequestedCustomers() {
         </div>
       )}
 
-
       {/* ── Count ── */}
       {!loading && filteredRequests.length > 0 && (
         <div className="mb-3 px-1">
@@ -735,9 +738,15 @@ export default function RequestedCustomers() {
                   />
                   {selectedRequest.status === "approved" && (
                     <DetailRow
-                      icon={<CalendarCheck size={16} className="text-emerald-600" />}
+                      icon={
+                        <CalendarCheck size={16} className="text-emerald-600" />
+                      }
                       label="Scheduled Appointment"
-                      value={selectedRequest.appointmentDate ? `${new Date(selectedRequest.appointmentDate).toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" })} at ${selectedRequest.appointmentTime || "TBD"}` : "Date Not Set"}
+                      value={
+                        selectedRequest.appointmentDate
+                          ? `${new Date(selectedRequest.appointmentDate).toLocaleDateString("en-IN", { day: "2-digit", month: "long", year: "numeric" })} at ${selectedRequest.appointmentTime || "TBD"}`
+                          : "Date Not Set"
+                      }
                     />
                   )}
                 </div>
@@ -826,11 +835,21 @@ export default function RequestedCustomers() {
         isOpen={approveModalOpen}
         onClose={() => setApproveModalOpen(false)}
         onConfirm={handleApprove}
-        title={selectedRequest?.status === 'approved' ? "Set Appointment" : "Confirm Approval"}
-        message={selectedRequest?.status === 'approved'
-          ? `Set the visit date and time for ${selectedRequest?.customerName}.`
-          : `This will register ${selectedRequest?.customerName} as an active customer. Set an optional visit date and time for the welcome email.`}
-        confirmText={selectedRequest?.status === 'approved' ? "Save Appointment" : "Confirm & Approve"}
+        title={
+          selectedRequest?.status === "approved"
+            ? "Set Appointment"
+            : "Confirm Approval"
+        }
+        message={
+          selectedRequest?.status === "approved"
+            ? `Set the visit date and time for ${selectedRequest?.customerName}.`
+            : `This will register ${selectedRequest?.customerName} as an active customer. Set an optional visit date and time for the welcome email.`
+        }
+        confirmText={
+          selectedRequest?.status === "approved"
+            ? "Save Appointment"
+            : "Confirm & Approve"
+        }
         type="success"
         isLoading={isSubmitting}
       >

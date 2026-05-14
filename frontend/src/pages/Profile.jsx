@@ -9,7 +9,9 @@ import {
   Loader2,
   Upload,
   X,
-  Save,Percent,Tag,
+  Save,
+  Percent,
+  Tag,
   Image as ImageIcon,
   CreditCard,
   MessageSquare,
@@ -58,7 +60,7 @@ export default function Profile({ isAdvisor }) {
   const { user, refreshUser } = useAuth();
   const { addToast } = useToast();
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   // Access Control: Only owners can access profile
   useEffect(() => {
@@ -290,7 +292,7 @@ export default function Profile({ isAdvisor }) {
               <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-300">
                 <section className="space-y-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-1.5 h-6 bg-black rounded-full"/>
+                    <div className="w-1.5 h-6 bg-black rounded-full" />
                     <h3 className="text-lg font-bold text-slate-800">
                       Personal Information
                     </h3>
@@ -560,12 +562,14 @@ export default function Profile({ isAdvisor }) {
         isOpen={isCropperOpen}
         image={tempImage}
         onCropComplete={async (croppedBlob) => {
-          const file = new File([croppedBlob], "logo.jpg", { type: "image/jpeg" });
-          
+          const file = new File([croppedBlob], "logo.jpg", {
+            type: "image/jpeg",
+          });
+
           // Use a local variable for the updated file to ensure handleSave uses the latest
           setIsCropperOpen(false);
           setTempImage(null);
-          
+
           // Immediate upload to server
           setIsSaving(true);
           try {
@@ -577,11 +581,14 @@ export default function Profile({ isAdvisor }) {
             // Append the new cropped logo
             data.append("logo", file);
 
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/v1/settings`, {
-              method: "PUT",
-              headers: { Authorization: `Bearer ${token}` },
-              body: data,
-            });
+            const res = await fetch(
+              `${import.meta.env.VITE_API_URL}/v1/settings`,
+              {
+                method: "PUT",
+                headers: { Authorization: `Bearer ${token}` },
+                body: data,
+              },
+            );
 
             if (res.ok) {
               addToast("Logo updated and applied successfully!");
@@ -590,7 +597,10 @@ export default function Profile({ isAdvisor }) {
               fetchProfile();
             } else {
               const err = await res.json();
-              addToast(`Error: ${err.message || "Failed to update logo"}`, "error");
+              addToast(
+                `Error: ${err.message || "Failed to update logo"}`,
+                "error",
+              );
             }
           } catch (err) {
             console.error("Logo upload error:", err);

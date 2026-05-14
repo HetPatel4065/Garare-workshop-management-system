@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
-
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -20,9 +19,14 @@ import {
   ChevronDown,
   Calendar,
   MapPin,
+  ShieldCheck,
+  Store,
+  HardHat,
 } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
+import { ROLE_LABELS } from "../../../utils/roles";
+
 
 const NAV_SECTIONS = [
   {
@@ -97,7 +101,7 @@ const NAV_SECTIONS = [
         name: "Notifications",
         path: "/notifications",
         icon: Bell,
-        roles: ["admin", "owner"],
+        roles: ["admin", "owner", "advisor", "mechanic"],
       },
     ],
   },
@@ -129,9 +133,10 @@ export default function GarageSidebar({ isOpen, onClose, showNotifications }) {
   const [collapsed, setCollapsed] = useState(() => {
     return localStorage.getItem("sidebar_collapsed") === "true";
   });
-  const [openSections, setOpenSections] = useState(() =>
-    NAV_SECTIONS.map(() => true),
-  );
+  const [openSections, setOpenSections] = useState(() => {
+    const saved = localStorage.getItem("sidebar_open_sections");
+    return saved ? JSON.parse(saved) : NAV_SECTIONS.map(() => true);
+  });
 
   const sidebarRef = React.useRef(null);
   const memoizedSections = useMemo(() => NAV_SECTIONS, []);
@@ -155,6 +160,11 @@ export default function GarageSidebar({ isOpen, onClose, showNotifications }) {
     const width = collapsed ? "80px" : "260px";
     document.documentElement.style.setProperty("--sidebar-width", width);
   }, [collapsed]);
+
+  // Persist open sections state
+  useEffect(() => {
+    localStorage.setItem("sidebar_open_sections", JSON.stringify(openSections));
+  }, [openSections]);
 
   // Restore scroll position
   useEffect(() => {
@@ -365,7 +375,7 @@ export default function GarageSidebar({ isOpen, onClose, showNotifications }) {
 
                           {/* Tooltip */}
                           {isCollapsedDesktop && (
-                            <div className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-[100] border border-white/10 shadow-xl">
+                            <div className="absolute left-full ml-3 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-100 border border-white/10 shadow-xl">
                               {item.name}
                             </div>
                           )}
@@ -392,7 +402,7 @@ export default function GarageSidebar({ isOpen, onClose, showNotifications }) {
               {user?.name?.[0]?.toUpperCase() || "U"}
             </div>
             {(!collapsed || !isDesktop) && (
-              <div className="min-w-0 text-left">
+              <div className="min-w-0 text-left flex-1">
                 <p className="text-xs font-bold text-white truncate">
                   {user?.name || "User"}
                 </p>
@@ -400,6 +410,17 @@ export default function GarageSidebar({ isOpen, onClose, showNotifications }) {
                   {user?.email}
                 </p>
               </div>
+            )}
+            {(!collapsed || !isDesktop) && (
+              <span className={`shrink-0 text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full ${
+                role === "admin"    ? "bg-orange-500/20 text-orange-400" :
+                role === "owner"    ? "bg-emerald-500/20 text-emerald-400" :
+                role === "advisor"  ? "bg-violet-500/20 text-violet-400" :
+                role === "mechanic" ? "bg-violet-500/20 text-violet-400" :
+                "bg-blue-500/20 text-blue-400"
+              }`}>
+                {ROLE_LABELS[role] ?? role}
+              </span>
             )}
           </button>
         </div>

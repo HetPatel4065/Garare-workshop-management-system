@@ -46,7 +46,7 @@ export default function Billing() {
   const [isPending, startTransition] = useTransition();
   const { addToast } = useToast();
 
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   // 📋 Fetch all existing invoices
   const fetchInvoices = useCallback(
@@ -168,7 +168,7 @@ export default function Billing() {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
       });
 
@@ -200,7 +200,9 @@ export default function Billing() {
   const filterInvoices = useCallback(
     (list) =>
       list.filter((i) => {
-        const query = (isTyping ? searchQuery : searchQuery || queryParam).toLowerCase();
+        const query = (
+          isTyping ? searchQuery : searchQuery || queryParam
+        ).toLowerCase();
         const customerName = (i.customerId?.name || "").toLowerCase();
         const status = (i.status || "").toLowerCase();
         const invoiceNumber = (i.invoiceNumber || "").toLowerCase();
@@ -243,7 +245,9 @@ export default function Billing() {
 
   const filteredUnbilled = useMemo(() => {
     return unbilledServices.filter((s) => {
-      const query = (isTyping ? searchQuery : searchQuery || queryParam).toLowerCase();
+      const query = (
+        isTyping ? searchQuery : searchQuery || queryParam
+      ).toLowerCase();
       const customerName =
         (typeof s.customerId === "object" ? s.customerId?.name : "Unknown") ||
         "";

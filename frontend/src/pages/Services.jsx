@@ -11,7 +11,7 @@ import { useAuth } from "../context/AuthContext";
 import { Plus } from "lucide-react";
 
 export default function Services() {
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
   const { user } = useAuth();
   const role = user?.role || "mechanic";
   const [isReadOnly, setIsReadOnly] = useState(false);
@@ -301,7 +301,9 @@ export default function Services() {
               setActiveSearch(cleanTerm);
               setSearchQuery("");
               if (cleanTerm) {
-                navigate(`/services?q=${encodeURIComponent(cleanTerm)}`, { replace: true });
+                navigate(`/services?q=${encodeURIComponent(cleanTerm)}`, {
+                  replace: true,
+                });
               } else {
                 navigate("/services", { replace: true });
               }

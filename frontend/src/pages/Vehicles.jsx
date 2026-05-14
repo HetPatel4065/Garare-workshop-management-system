@@ -19,7 +19,7 @@ export default function Vehicles() {
   const { token: authToken, user } = useAuth();
   const { addToast } = useToast();
   const navigate = useNavigate();
-  const token = authToken || localStorage.getItem("token");
+  const token = authToken || sessionStorage.getItem("token");
   const role = user?.role || localStorage.getItem("role") || "user";
   const [vehicles, setVehicles] = useState([]);
   const [customers, setCustomers] = useState([]);

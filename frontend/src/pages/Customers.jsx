@@ -15,7 +15,7 @@ export default function Customers() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const role = user?.role || "mechanic";
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [customers, setCustomers] = useState([]);
   const location = useLocation();
@@ -336,7 +336,9 @@ export default function Customers() {
               setActiveSearch(cleanTerm);
               setSearchQuery("");
               if (cleanTerm) {
-                navigate(`/customers?q=${encodeURIComponent(cleanTerm)}`, { replace: true });
+                navigate(`/customers?q=${encodeURIComponent(cleanTerm)}`, {
+                  replace: true,
+                });
               } else {
                 navigate("/customers", { replace: true });
               }

@@ -50,24 +50,30 @@ function MetaField({
 }
 
 // ─── Status Badge ─────────────────────────────────────────────────
+// Mirrors the same dual-condition used in filteredReminders:
+// "Completed" only when reminderStatus flag is set AND the scheduled date has passed.
 function getStatusMeta(reminderStatus, nextServiceDate) {
-  const nextDate = new Date(nextServiceDate);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+  const nextDateNorm = new Date(nextServiceDate);
+  nextDateNorm.setHours(0, 0, 0, 0);
 
-  if (reminderStatus === "Completed")
+  const isPastOrToday = nextDateNorm <= today;
+  const isCompleted = reminderStatus === "Completed" && isPastOrToday;
+
+  if (isCompleted)
     return {
       label: "Completed",
       style: "text-emerald-700 bg-emerald-50 border-emerald-200",
       dot: "bg-emerald-500",
     };
-  if (nextDate < today)
+  if (nextDateNorm < today)
     return {
       label: "Overdue",
       style: "text-rose-700 bg-rose-50 border-rose-200",
       dot: "bg-rose-500 animate-pulse",
     };
-  if (nextDate.toDateString() === today.toDateString())
+  if (nextDateNorm.toDateString() === today.toDateString())
     return {
       label: "Due Today",
       style: "text-amber-700 bg-amber-50 border-amber-200",
@@ -179,10 +185,13 @@ const StatCard = ({
 
 // ─── Reminder Card (mirrors RequestCard layout) ───────────────────
 function ReminderCard({ r, onSendEmail, onSendSMS, onCall }) {
-  const nextDate = new Date(r.nextServiceDate);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const isOverdue = nextDate < today && r.reminderStatus !== "Completed";
+  const nextDateNorm = new Date(r.nextServiceDate);
+  nextDateNorm.setHours(0, 0, 0, 0);
+  // Consistent with filter: completed only when flag set AND date has passed
+  const isCompleted = r.reminderStatus === "Completed" && nextDateNorm <= today;
+  const isOverdue = nextDateNorm < today && !isCompleted;
 
   return (
     <div className="bg-white rounded-3xl p-4 sm:p-5 mb-4 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] transition-all duration-300 border border-slate-100 shadow-sm relative overflow-hidden group">
@@ -203,7 +212,7 @@ function ReminderCard({ r, onSendEmail, onSendSMS, onCall }) {
       </div>
 
       {/* ── META GRID ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-4 mb-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-4 mb-4">
         <MetaField label="Customer" primary={r.customerId?.name || r.customerName || "Walk-in"} />
         <MetaField label="Phone" primary={r.customerId?.phone || "—"} />
         <MetaField label="Email" primary={r.customerId?.email || "—"} noCapitalize />
@@ -212,10 +221,6 @@ function ReminderCard({ r, onSendEmail, onSendSMS, onCall }) {
           primary={format(new Date(r.nextServiceDate), "dd MMM yyyy")}
           secondary={isOverdue ? "Overdue" : ""}
         />
-        <MetaField
-          label="Service Type"
-          primary={r.serviceType || "General Service"}
-        />
       </div>
 
       {/* ── DIVIDER ── */}
@@ -223,12 +228,36 @@ function ReminderCard({ r, onSendEmail, onSendSMS, onCall }) {
 
       {/* ── BOTTOM ROW: Actions ── */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-2">
-        {/* Left: last service info */}
-        <p className="text-[11px] font-semibold text-slate-400">
-          {r.lastServiceDate
-            ? `Last serviced: ${format(new Date(r.lastServiceDate), "dd MMM yyyy")}`
-            : "No previous service recorded"}
-        </p>
+        {/* Left: previous service record */}
+        {r.lastServiceDate ? (
+          <div className="flex items-start gap-2">
+            <div className="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center shrink-0 mt-0.5">
+              <Car size={11} className="text-slate-400" />
+            </div>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-wide text-slate-400 leading-none mb-0.5">
+                Previous Service
+              </p>
+              {r.lastServiceName && (
+                <p className="text-[12px] font-bold text-slate-700 capitalize leading-tight">
+                  {r.lastServiceName}
+                </p>
+              )}
+              <p className="text-[11px] font-semibold text-slate-400">
+                {format(new Date(r.lastServiceDate), "dd MMM yyyy")}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
+              <Car size={11} className="text-slate-300" />
+            </div>
+            <p className="text-[11px] font-semibold text-slate-400 italic">
+              No previous service recorded
+            </p>
+          </div>
+        )}
 
         {/* Right: contact actions */}
         <div className="flex items-center gap-2">
@@ -296,17 +325,34 @@ export default function ServiceReminders() {
   }, []);
 
   // ── Filter logic ──
+  // A vehicle is truly "Completed" only when:
+  //   (1) reminderStatus === "Completed"  AND
+  //   (2) nextServiceDate is today or in the past
+  // This prevents vehicles whose *next* service cycle is still upcoming from
+  // being incorrectly shown as Completed just because the DB flag was set.
   const filteredReminders = reminders.filter((r) => {
     if (!r.nextServiceDate) return false;
 
     const nextDate = new Date(r.nextServiceDate);
+    // Normalise to start-of-day in local time for reliable comparisons
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    const nextDateNorm = new Date(nextDate);
+    nextDateNorm.setHours(0, 0, 0, 0);
 
-    const isToday = nextDate.toDateString() === today.toDateString();
-    const isOverdue = nextDate < today && r.reminderStatus !== "Completed";
-    const isUpcoming = nextDate > today && r.reminderStatus !== "Completed";
-    const isCompleted = r.reminderStatus === "Completed";
+    const isPastOrToday = nextDateNorm <= today;
+    const isFuture = nextDateNorm > today;
+    const isToday = nextDateNorm.toDateString() === today.toDateString();
+
+    // "Completed" requires the flag AND the scheduled date to have passed
+    const isCompleted = r.reminderStatus === "Completed" && isPastOrToday;
+
+    // Overdue: past its date, not yet marked completed
+    const isOverdue = nextDateNorm < today && !isCompleted;
+
+    // Upcoming: any future-dated entry, OR completed-flagged entries with a future date
+    // (edge case: service marked completed but nextServiceDate was rescheduled forward)
+    const isUpcoming = isFuture && !isCompleted;
 
     const query = searchQuery.toLowerCase();
     const matchesSearch =
@@ -318,26 +364,35 @@ export default function ServiceReminders() {
 
     if (!matchesSearch) return false;
 
-    if (statusFilter === "Today") return isToday;
+    if (statusFilter === "Today") return isToday && !isCompleted;
     if (statusFilter === "Overdue") return isOverdue;
     if (statusFilter === "Upcoming") return isUpcoming;
     if (statusFilter === "Completed") return isCompleted;
     return true; // "All"
   });
 
-  // ── Status counts ──
+  // ── Status counts (mirrors filteredReminders classification logic) ──
   const statusCounts = reminders.reduce(
     (acc, r) => {
       if (!r.nextServiceDate) return acc;
-      const nextDate = new Date(r.nextServiceDate);
+
       const today = new Date();
       today.setHours(0, 0, 0, 0);
+      const nextDateNorm = new Date(r.nextServiceDate);
+      nextDateNorm.setHours(0, 0, 0, 0);
+
+      const isPastOrToday = nextDateNorm <= today;
+      const isFuture = nextDateNorm > today;
+      const isToday = nextDateNorm.toDateString() === today.toDateString();
+      const isCompleted = r.reminderStatus === "Completed" && isPastOrToday;
+      const isOverdue = nextDateNorm < today && !isCompleted;
+      const isUpcoming = isFuture && !isCompleted;
 
       acc.All += 1;
-      if (r.reminderStatus === "Completed") acc.Completed += 1;
-      else if (nextDate < today) acc.Overdue += 1;
-      else if (nextDate.toDateString() === today.toDateString()) acc.Today += 1;
-      else acc.Upcoming += 1;
+      if (isCompleted) acc.Completed += 1;
+      else if (isOverdue) acc.Overdue += 1;
+      else if (isToday) acc.Today += 1;
+      else if (isUpcoming) acc.Upcoming += 1;
 
       return acc;
     },

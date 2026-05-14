@@ -2,281 +2,217 @@ import { useState, useEffect } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "./context/AuthContext";
+import { getDashboardRoute } from "./utils/roles";
 
-// Pages
-import LandingPage from "./pages/LandingPage";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import Dashboard from "./pages/Dashboard";
-import ProtectedRoute from "./context/ProtectedRoutes";
-import Settings from "./pages/Settings";
-import Inventory from "./pages/Inventory";
-import JobCards from "./pages/JobCards";
-import Customers from "./pages/Customers";
-import RequestedCustomers from "./pages/RequestedCustomers";
-import Profile from "./pages/Profile";
-import Billing from "./pages/Billing";
-import StaffMembers from "./pages/StaffMembers";
-import Services from "./pages/Services";
-import Vehicles from "./pages/Vehicles";
-import ServiceReminders from "./pages/ServiceReminders";
-import PortalLogin from "./pages/portal/PortalLogin";
-import PortalHome from "./pages/portal/PortalHome";
-import PortalDashboard from "./pages/portal/PortalDashboard";
-import AdminLogin from "./pages/AdminLogin";
-import HelpCenter from "./pages/HelpCenter";
-import SearchPage from "./pages/SearchPage";
-import Notifications from "./pages/Notifications";
+// ── Pages ──────────────────────────────────────────────────────────────────────
+import LandingPage         from "./pages/LandingPage";
+import Login               from "./pages/Login";           // Role selector hub
+import OwnerLogin          from "./pages/OwnerLogin";
+import StaffLogin          from "./pages/StaffLogin";
+import AdminLogin          from "./pages/AdminLogin";
+import CustomerLogin       from "./pages/CustomerLogin";
+import Signup              from "./pages/Signup";
+import Unauthorized        from "./pages/Unauthorized";
+import Dashboard           from "./pages/Dashboard";
+import ProtectedRoute      from "./context/ProtectedRoutes";
+import Settings            from "./pages/Settings";
+import Inventory           from "./pages/Inventory";
+import JobCards            from "./pages/JobCards";
+import Customers           from "./pages/Customers";
+import RequestedCustomers  from "./pages/RequestedCustomers";
+import Profile             from "./pages/Profile";
+import Billing             from "./pages/Billing";
+import StaffMembers        from "./pages/StaffMembers";
+import Services            from "./pages/Services";
+import Vehicles            from "./pages/Vehicles";
+import ServiceReminders    from "./pages/ServiceReminders";
+import PortalLogin         from "./pages/portal/PortalLogin";  // modal — used in PortalHome
+import PortalHome          from "./pages/portal/PortalHome";
+import PortalDashboard     from "./pages/portal/PortalDashboard";
+import HelpCenter          from "./pages/HelpCenter";
+import SearchPage          from "./pages/SearchPage";
+import Notifications       from "./pages/Notifications";
 
-// Components
+// ── Components ─────────────────────────────────────────────────────────────────
 import ToastContainer from "./components/UI/ToastContainer";
-import GarageLayout from "./components/Layout/GarageLayout";
+import GarageLayout   from "./components/Layout/GarageLayout";
 
-// --- ELITE PAGE TRANSITION COMPONENT ---
+// ── Page transition wrapper ────────────────────────────────────────────────────
 const PageTransition = ({ children }) => (
   <motion.div
     initial={{ opacity: 0, y: 8 }}
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: -8 }}
-    transition={{
-      duration: 0.25,
-      ease: "easeInOut",
-    }}
+    transition={{ duration: 0.25, ease: "easeInOut" }}
     className="h-full w-full"
   >
     {children}
   </motion.div>
 );
 
-function App() {
+// ── Helper: public route that redirects if already authenticated ───────────────
+function PublicOnlyRoute({ children }) {
   const { user, token, loading, isVerified } = useAuth();
-  const location = useLocation();
-  const [portalToken, setPortalToken] = useState(
-    sessionStorage.getItem("portal_token"),
-  );
-
-  useEffect(() => {
-    setPortalToken(sessionStorage.getItem("portal_token"));
-  }, [location]);
 
   if (loading) {
     return (
       <div className="h-screen w-screen bg-gray-950 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-gray-400 font-medium animate-pulse">Initializing…</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (token && user && isVerified) {
+    return <Navigate to={getDashboardRoute(user?.role)} replace />;
+  }
+
+  return children;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+function App() {
+  const { user, token, loading, isVerified } = useAuth();
+  const location = useLocation();
+
+  const [portalToken, setPortalToken] = useState(
+    sessionStorage.getItem("portal_token")
+  );
+
+  useEffect(() => {
+    setPortalToken(sessionStorage.getItem("portal_token"));
+  }, [location]);
+
+  // ── Global loading screen (token being verified on boot) ────────────────
+  if (loading) {
+    return (
+      <div className="h-screen w-screen bg-gray-950 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
           <p className="text-gray-400 font-medium animate-pulse">
-            Initializing System...
+            Initializing System…
           </p>
         </div>
       </div>
     );
   }
 
-  const isAuthenticated = !!token && !!user && isVerified;
-
-  const getDashboardPath = (role) => {
-    if (role === "customer") return "/portal/dashboard";
-    return "/dashboard";
-  };
-
   return (
     <>
       <ToastContainer />
-      {/* 1. mode="wait" ensures smooth exit-before-entry */}
+
       <AnimatePresence mode="wait">
-        {/* 2. KEY is the most important part for sub-route transitions */}
         <Routes location={location} key={location.pathname}>
-          {/* Public Routes */}
+
+          {/* ── Landing ──────────────────────────────────────────────── */}
           <Route
             path="/"
-            element={
-              <PageTransition>
-                <LandingPage />
-              </PageTransition>
-            }
+            element={<PageTransition><LandingPage /></PageTransition>}
           />
 
+          {/* ── Role selector hub (shows when not authenticated) ─────── */}
           <Route
             path="/login"
             element={
-              !isAuthenticated ? (
-                <PageTransition>
-                  <Login />
-                </PageTransition>
-              ) : (
-                <Navigate to={getDashboardPath(user?.role)} replace />
-              )
+              <PublicOnlyRoute>
+                <PageTransition><Login /></PageTransition>
+              </PublicOnlyRoute>
             }
           />
 
+          {/* ── Dedicated login pages ────────────────────────────────── */}
           <Route
-            path="/signup"
+            path="/owner/login"
             element={
-              !isAuthenticated ? (
-                <PageTransition>
-                  <Signup />
-                </PageTransition>
-              ) : (
-                <Navigate to={getDashboardPath(user?.role)} replace />
-              )
+              <PublicOnlyRoute>
+                <PageTransition><OwnerLogin /></PageTransition>
+              </PublicOnlyRoute>
             }
           />
-
+          <Route
+            path="/staff/login"
+            element={
+              <PublicOnlyRoute>
+                <PageTransition><StaffLogin /></PageTransition>
+              </PublicOnlyRoute>
+            }
+          />
           <Route
             path="/admin/login"
             element={
-              !isAuthenticated ? (
-                <PageTransition>
-                  <AdminLogin />
-                </PageTransition>
-              ) : (
-                <Navigate to={getDashboardPath(user?.role)} replace />
-              )
+              <PublicOnlyRoute>
+                <PageTransition><AdminLogin /></PageTransition>
+              </PublicOnlyRoute>
             }
           />
 
-          {/* Portal Routes */}
+          {/* ── Signup ───────────────────────────────────────────────── */}
           <Route
-            path="/portal"
+            path="/signup"
             element={
-              <PageTransition>
-                <PortalHome />
-              </PageTransition>
+              <PublicOnlyRoute>
+                <PageTransition><Signup /></PageTransition>
+              </PublicOnlyRoute>
             }
           />
+
+          {/* ── Customer login alias → standalone CustomerLogin page ─ */}
+          <Route path="/customer/login" element={<PageTransition><CustomerLogin /></PageTransition>} />
+
+          {/* ── Unauthorized 403 ─────────────────────────────────────── */}
+          <Route
+            path="/unauthorized"
+            element={<PageTransition><Unauthorized /></PageTransition>}
+          />
+
+          {/* ── Customer Portal (separate OTP auth) ──────────────────── */}
+          <Route
+            path="/portal"
+            element={<PageTransition><PortalHome /></PageTransition>}
+          />
+          {/* /portal/login → standalone CustomerLogin (not the modal) */}
           <Route
             path="/portal/login"
-            element={
-              <PageTransition>
-                <PortalLogin />
-              </PageTransition>
-            }
+            element={<PageTransition><CustomerLogin /></PageTransition>}
           />
           <Route
             path="/portal/dashboard"
             element={
               portalToken ? (
-                <PageTransition>
-                  <PortalDashboard />
-                </PageTransition>
+                <PageTransition><PortalDashboard /></PageTransition>
               ) : (
                 <Navigate to="/portal" replace />
               )
             }
           />
 
-          {/* Protected Garage Routes with Persistent Layout */}
+          {/* ── Protected Garage Routes (persistent layout) ───────────── */}
           <Route
             element={
               <ProtectedRoute>
-                {/* Note: GarageLayout itself doesn't need PageTransition here 
-                    because its children (the sub-routes) will handle it */}
                 <GarageLayout />
               </ProtectedRoute>
             }
           >
-            {/* 3. Wrap EVERY sub-route component with PageTransition */}
-            <Route
-              path="/dashboard"
-              element={
-                <PageTransition>
-                  <Dashboard />
-                </PageTransition>
-              }
-            />
-            <Route
-              path="/inventory"
-              element={
-                <PageTransition>
-                  <Inventory />
-                </PageTransition>
-              }
-            />
-            <Route
-              path="/job-cards"
-              element={
-                <PageTransition>
-                  <JobCards />
-                </PageTransition>
-              }
-            />
-            <Route
-              path="/customers"
-              element={
-                <PageTransition>
-                  <Customers />
-                </PageTransition>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <PageTransition>
-                  <Profile />
-                </PageTransition>
-              }
-            />
-            <Route
-              path="/services"
-              element={
-                <PageTransition>
-                  <Services />
-                </PageTransition>
-              }
-            />
-            <Route
-              path="/vehicles"
-              element={
-                <PageTransition>
-                  <Vehicles />
-                </PageTransition>
-              }
-            />
-            <Route
-              path="/search"
-              element={
-                <PageTransition>
-                  <SearchPage />
-                </PageTransition>
-              }
-            />
-            <Route
-              path="/notifications"
-              element={
-                <PageTransition>
-                  <Notifications />
-                </PageTransition>
-              }
-            />
+            {/* All roles */}
+            <Route path="/dashboard"     element={<PageTransition><Dashboard /></PageTransition>} />
+            <Route path="/customers"     element={<PageTransition><Customers /></PageTransition>} />
+            <Route path="/vehicles"      element={<PageTransition><Vehicles /></PageTransition>} />
+            <Route path="/job-cards"     element={<PageTransition><JobCards /></PageTransition>} />
+            <Route path="/services"      element={<PageTransition><Services /></PageTransition>} />
+            <Route path="/inventory"     element={<PageTransition><Inventory /></PageTransition>} />
+            <Route path="/search"        element={<PageTransition><SearchPage /></PageTransition>} />
+            <Route path="/notifications" element={<PageTransition><Notifications /></PageTransition>} />
+            <Route path="/profile"       element={<PageTransition><Profile /></PageTransition>} />
 
-            {/* Role Restricted Routes */}
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute allowedRoles={["owner", "admin", "advisor"]}>
-                  <PageTransition>
-                    <Settings />
-                  </PageTransition>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/requested-customers"
-              element={
-                <ProtectedRoute allowedRoles={["owner", "admin"]}>
-                  <PageTransition>
-                    <RequestedCustomers />
-                  </PageTransition>
-                </ProtectedRoute>
-              }
-            />
+            {/* Owner / Admin only */}
             <Route
               path="/billing"
               element={
                 <ProtectedRoute allowedRoles={["owner", "admin"]}>
-                  <PageTransition>
-                    <Billing />
-                  </PageTransition>
+                  <PageTransition><Billing /></PageTransition>
                 </ProtectedRoute>
               }
             />
@@ -284,9 +220,15 @@ function App() {
               path="/staff-members"
               element={
                 <ProtectedRoute allowedRoles={["owner", "admin"]}>
-                  <PageTransition>
-                    <StaffMembers />
-                  </PageTransition>
+                  <PageTransition><StaffMembers /></PageTransition>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/requested-customers"
+              element={
+                <ProtectedRoute allowedRoles={["owner", "admin"]}>
+                  <PageTransition><RequestedCustomers /></PageTransition>
                 </ProtectedRoute>
               }
             />
@@ -294,30 +236,36 @@ function App() {
               path="/reminders"
               element={
                 <ProtectedRoute allowedRoles={["owner", "admin"]}>
-                  <PageTransition>
-                    <ServiceReminders />
-                  </PageTransition>
+                  <PageTransition><ServiceReminders /></PageTransition>
                 </ProtectedRoute>
               }
             />
             <Route
               path="/help"
               element={
-                <ProtectedRoute allowedRoles={["owner", "admin"]}>
-                  <PageTransition>
-                    <HelpCenter />
-                  </PageTransition>
+                <ProtectedRoute allowedRoles={["owner", "admin", "advisor"]}>
+                  <PageTransition><HelpCenter /></PageTransition>
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Owner / Admin / Advisor */}
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute allowedRoles={["owner", "admin", "advisor"]}>
+                  <PageTransition><Settings /></PageTransition>
                 </ProtectedRoute>
               }
             />
           </Route>
 
-          {/* Page not found */}
+          {/* ── 404 ──────────────────────────────────────────────────── */}
           <Route
             path="*"
             element={
               <PageTransition>
-                <div className="h-screen w-screen flex flex-col items-center justify-center gap-6">
+                <div className="h-screen w-screen flex flex-col items-center justify-center gap-6 bg-gray-50">
                   <h1 className="text-6xl font-bold text-gray-800">404</h1>
                   <p className="text-gray-500 text-lg">Page Not Found</p>
                   <button

@@ -37,7 +37,7 @@ export default function Inventory() {
   const role = user?.role || "user";
   const isMechanic = role === "mechanic";
 
-  const getToken = () => localStorage.getItem("token");
+  const getToken = () => sessionStorage.getItem("token");
 
   // 🔄 Fetch inventory
   const fetchInventory = async () => {
@@ -179,7 +179,7 @@ export default function Inventory() {
       addToast(err.message, "error");
     }
   };
- 
+
   // 📦 Open stock modal
   const handleUpdateStock = (item) => {
     setStockItem(item);
@@ -232,26 +232,25 @@ export default function Inventory() {
   return (
     <div className="p-4 sm:p-6 bg-gray-100 rounded-xl cursor-auto">
       <div className="mb-8 pb-5 border-b border-slate-200/80">
-  <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-    
-    <div>
-      <p className="text-[11px] font-black text-blue-600 uppercase tracking-[0.22em] mb-2">
-        Inventory Management
-      </p>
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          <div>
+            <p className="text-[11px] font-black text-blue-600 uppercase tracking-[0.22em] mb-2">
+              Inventory Management
+            </p>
 
-      <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-none">
-        Inventory
-      </h1>
+            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-none">
+              Inventory
+            </h1>
 
-      <p className="text-sm font-medium text-slate-500 mt-3">
-        Manage your spare parts, stock levels, and supplier information
-      </p>
-    </div>
+            <p className="text-sm font-medium text-slate-500 mt-3">
+              Manage your spare parts, stock levels, and supplier information
+            </p>
+          </div>
 
-    {role !== "mechanic" && (
-      <button
-        onClick={handleAdd}
-        className="
+          {role !== "mechanic" && (
+            <button
+              onClick={handleAdd}
+              className="
           self-start sm:self-auto
           flex items-center gap-2
           px-5 py-3
@@ -262,13 +261,13 @@ export default function Inventory() {
           transition-all duration-300
           shadow-md hover:shadow-xl
         "
-      >
-        <Plus size={17} />
-        Add Items
-      </button>
-    )}
-  </div>
-</div>
+            >
+              <Plus size={17} />
+              Add Items
+            </button>
+          )}
+        </div>
+      </div>
 
       {/* Search & Sort Bar */}
       <div className="mb-6 flex flex-col lg:flex-row gap-4">
@@ -285,7 +284,9 @@ export default function Inventory() {
               setActiveSearch(cleanTerm);
               setSearchQuery("");
               if (cleanTerm) {
-                navigate(`/inventory?q=${encodeURIComponent(cleanTerm)}`, { replace: true });
+                navigate(`/inventory?q=${encodeURIComponent(cleanTerm)}`, {
+                  replace: true,
+                });
               } else {
                 navigate("/inventory", { replace: true });
               }

@@ -1,4 +1,6 @@
 import jwt from "jsonwebtoken";
+// NOTE: requireRole is a lighter alternative to authorize() when you only need
+// to check the user's role (not granular permissions).
 import User from "../models/User.js";
 import Owner from "../models/Owner.js";
 import Advisor from "../models/Advisor.js";
@@ -168,4 +170,30 @@ const authorize = (requiredPermission) => {
   };
 };
 
-export { auth, authorize };
+// 🔑 REQUIRE ROLE MIDDLEWARE
+// Usage: router.get('/admin-only', auth, requireRole('admin'), handler)
+// Usage: router.get('/owner-or-admin', auth, requireRole('admin', 'owner'), handler)
+const requireRole = (...roles) => {
+  return (req, res, next) => {
+    try {
+      const user = req.user;
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+      const userRole = user.role?.toLowerCase();
+      const allowed  = roles.map((r) => r.toLowerCase());
+      if (!allowed.includes(userRole)) {
+        return res.status(403).json({
+          error:    "Access denied: insufficient role",
+          required: allowed,
+          current:  userRole,
+        });
+      }
+      next();
+    } catch (error) {
+      res.status(500).json({ error: "Role check failed" });
+    }
+  };
+};
+
+export { auth, authorize, requireRole };

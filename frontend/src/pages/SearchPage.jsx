@@ -27,7 +27,7 @@ export default function SearchPage() {
       setLoading(true);
       setError(null);
       try {
-        const token = localStorage.getItem("token") || "";
+        const token = sessionStorage.getItem("token") || "";
         const headers = {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,

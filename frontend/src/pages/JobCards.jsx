@@ -28,7 +28,7 @@ export default function JobCards() {
   const { user, token: authToken } = useAuth();
   const { addToast } = useToast();
   const navigate = useNavigate();
-  const token = authToken || localStorage.getItem("token");
+  const token = authToken || sessionStorage.getItem("token");
   const role = user?.role || localStorage.getItem("role") || "user";
 
   const [vehicles, setVehicles] = useState([]);
@@ -454,26 +454,25 @@ export default function JobCards() {
   return (
     <div className="p-4 sm:p-6 bg-gray-100 rounded-xl cursor-auto min-h-fit">
       <div className="mb-8 pb-5 border-b border-slate-200/80">
-  <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-    
-    <div>
-      <p className="text-[11px] font-black text-blue-600 uppercase tracking-[0.22em] mb-2">
-        Job Card Management
-      </p>
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          <div>
+            <p className="text-[11px] font-black text-blue-600 uppercase tracking-[0.22em] mb-2">
+              Job Card Management
+            </p>
 
-      <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-none">
-        Job Cards
-      </h1>
+            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-none">
+              Job Cards
+            </h1>
 
-      <p className="text-sm font-medium text-slate-500 mt-3">
-        Manage workshop instructions and job cards directly
-      </p>
-    </div>
+            <p className="text-sm font-medium text-slate-500 mt-3">
+              Manage workshop instructions and job cards directly
+            </p>
+          </div>
 
-    {role !== "mechanic" && role !== "advisor" && (
-      <button
-        onClick={handleAddNew}
-        className="
+          {role !== "mechanic" && role !== "advisor" && (
+            <button
+              onClick={handleAddNew}
+              className="
           self-start sm:self-auto
           flex items-center gap-2
           px-5 py-3
@@ -484,13 +483,13 @@ export default function JobCards() {
           transition-all duration-300
           shadow-md hover:shadow-xl
         "
-      >
-        <Plus size={17} />
-        Add Job Card
-      </button>
-    )}
-  </div>
-</div>
+            >
+              <Plus size={17} />
+              Add Job Card
+            </button>
+          )}
+        </div>
+      </div>
 
       {/* Search & Filter Bar */}
       <div className="mb-6 flex flex-col lg:flex-row gap-4">
@@ -507,7 +506,9 @@ export default function JobCards() {
               setActiveSearch(cleanTerm);
               setSearchQuery("");
               if (cleanTerm) {
-                navigate(`/job-cards?q=${encodeURIComponent(cleanTerm)}`, { replace: true });
+                navigate(`/job-cards?q=${encodeURIComponent(cleanTerm)}`, {
+                  replace: true,
+                });
               } else {
                 navigate("/job-cards", { replace: true });
               }

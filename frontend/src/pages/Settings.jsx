@@ -170,7 +170,7 @@ const capitalizeWords = (value) => {
 export default function Settings() {
   const { refreshUser, user } = useAuth();
   const { addToast } = useToast();
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   // Role-based logic
   const isAdmin = user?.role === "admin";

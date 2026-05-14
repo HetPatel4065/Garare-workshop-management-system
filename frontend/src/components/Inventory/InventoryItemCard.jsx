@@ -79,16 +79,16 @@ export default function InventoryItemCard({
               : null
           }
         />
+        {!isMechanic && (
+          <MetaField
+          label="Cost Price"
+          primary={`₹${cost.toLocaleString("en-IN")}`}
+          />
+        )}
         <MetaField
           label="Retail Price"
           primary={`₹${retail.toLocaleString("en-IN")}`}
         />
-        {!isMechanic && (
-          <MetaField
-            label="Cost Price"
-            primary={`₹${cost.toLocaleString("en-IN")}`}
-          />
-        )}
       </div>
 
       {/* ── DIVIDER ── */}

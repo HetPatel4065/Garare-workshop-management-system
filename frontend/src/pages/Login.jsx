@@ -1,242 +1,189 @@
-import React, { useState,useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import { Wrench } from "lucide-react";
+import React from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Wrench, Store, HardHat, ShieldCheck, Car, ChevronRight } from "lucide-react";
+import { FaCar } from "react-icons/fa";
+import { GiMechanicGarage } from "react-icons/gi";
 
+// ─── Role card definitions ────────────────────────────────────────────────────
+const ROLE_CARDS = [
+  {
+    id: "owner",
+    label: "Garage Owner",
+    description: "Manage your garage, staff, billing & reports",
+    icon: GiMechanicGarage,
+    route: "/owner/login",
+    gradient: "from-emerald-500 to-teal-500",
+    ring: "ring-emerald-300",
+    iconBg: "bg-emerald-100",
+    iconColor: "text-emerald-600",
+    badgeBg: "bg-emerald-50 border-emerald-100",
+    hoverBorder: "hover:border-emerald-300",
+    tagColor: "text-emerald-600 bg-emerald-50",
+    tag: "Full Access",
+  },
+  {
+    id: "staff",
+    label: "Staff Member",
+    description: "Service advisors & mechanics workspace",
+    icon: HardHat,
+    route: "/staff/login",
+    gradient: "from-violet-500 to-purple-500",
+    ring: "ring-violet-300",
+    iconBg: "bg-violet-100",
+    iconColor: "text-violet-600",
+    badgeBg: "bg-violet-50 border-violet-100",
+    hoverBorder: "hover:border-violet-300",
+    tagColor: "text-violet-600 bg-violet-50",
+    tag: "Requires Garage ID",
+  },
+  {
+    id: "admin",
+    label: "Administrator",
+    description: "System-wide control across all garages",
+    icon: ShieldCheck,
+    route: "/admin/login",
+    gradient: "from-orange-500 to-amber-500",
+    ring: "ring-orange-300",
+    iconBg: "bg-orange-100",
+    iconColor: "text-orange-600",
+    badgeBg: "bg-orange-50 border-orange-100",
+    hoverBorder: "hover:border-orange-300",
+    tagColor: "text-orange-600 bg-orange-50",
+    tag: "Elevated Access",
+  },
+  {
+    id: "customer",
+    label: "Customer",
+    description: "Track your vehicle service history & appointments",
+    icon: FaCar,
+    route: "/customer/login",
+    gradient: "from-blue-500 to-indigo-500",
+    ring: "ring-blue-300",
+    iconBg: "bg-blue-100",
+    iconColor: "text-blue-600",
+    badgeBg: "bg-blue-50 border-blue-100",
+    hoverBorder: "hover:border-blue-300",
+    tagColor: "text-blue-600 bg-blue-50",
+    tag: "Customer Portal",
+  },
+];
+
+// ─── Animation variants ───────────────────────────────────────────────────────
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08 } },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } },
+};
+
+// ─── Component ────────────────────────────────────────────────────────────────
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [garageId, setGarageId] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const { login } = useAuth();
   const navigate = useNavigate();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-    try {
-      await login(email, password, garageId || undefined);
-    } catch (err) {
-      setError(err.message || "Failed to sign in.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const loginGreetings = useMemo(() => {
-    const greetings = [
-      // --- High Performance & Speed ---
-      "Ignition sequence initiated",
-      "Welcome to the fast lane",
-      "Ready to shift into high gear?",
-      "Full throttle toward growth",
-      "Turbocharge your operations",
-      "Accelerate your shop's performance",
-      "Streamlined for maximum velocity",
-
-      // --- Technical & Under the Hood ---
-      "Under the hood starts here",
-      "Let's get those gears turning",
-      "Time to grease the wheels",
-      "The missing part of your workflow",
-      "Your digital toolbox is ready",
-      "Every nut, bolt, and job card—organized",
-      "Smooth idling starts with good data",
-
-      // --- Professional & Elite Branding ---
-      "Precision tuning for your business",
-      "Heavy-duty management, made simple",
-      "The all-in-one OS for modern garages",
-      "High-performance workshop OS",
-      "Welcome to the pro league",
-      "Enterprise-grade tools for your bay",
-      "The brains behind the brawn",
-
-      // --- New Onboarding/Registration ---
-      "Let's get your profile road-ready",
-      "Your shop's new secret weapon",
-      "Smarter repairs start here",
-      "Welcome to the driver's seat",
-      "Fixing the way you fix cars",
-      "A fresh coat of tech for your garage",
-    ];
-    return greetings[Math.floor(Math.random() * greetings.length)];
-  }, []);
 
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">
-      <div className="w-full max-w-md">
-        {/* Brand Header */}
-        <div className="text-center mb-8">
+      <div className="w-full max-w-2xl">
+
+        {/* ── Brand header ─────────────────────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="text-center mb-10"
+        >
           <div
-            className="group inline-flex items-center gap-3 mb-6 cursor-pointer select-none"
+            className="group inline-flex items-center gap-3 mb-5 cursor-pointer select-none"
             onClick={() => navigate("/")}
           >
             <div className="bg-blue-600 p-2.5 rounded-xl shadow-lg shadow-blue-100 transition-all duration-300 group-hover:rotate-12 group-hover:scale-110">
               <Wrench className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-black text-slate-900 tracking-tighter">
+            <span className="text-2xl font-black text-slate-900 tracking-tighter">
               Garage<span className="text-blue-600">Pro</span>
             </span>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-            {loginGreetings}
+
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
+            Who are you?
           </h1>
-          <p className="mt-1.5 text-sm text-slate-500">
-            Sign in to your garage management panel
+          <p className="mt-2 text-slate-500 text-base">
+            Select your role to reach the right login portal
           </p>
-        </div>
+        </motion.div>
 
-        {/* Card */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 overflow-hidden">
-          <div className="h-1 w-full bg-linear-to-r from-blue-500 via-blue-600 to-indigo-600" />
+        {/* ── Role cards grid ───────────────────────────────────── */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+        >
+          {ROLE_CARDS.map((card) => {
+            const Icon = card.icon;
+            return (
+              <motion.button
+                key={card.id}
+                variants={cardVariants}
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigate(card.route)}
+                id={`role-select-${card.id}`}
+                className={`
+                  group relative w-full text-left bg-white rounded-2xl border border-slate-200
+                  ${card.hoverBorder} shadow-sm hover:shadow-lg
+                  transition-all duration-200 overflow-hidden p-5
+                  focus:outline-none focus:ring-2 ${card.ring} focus:ring-offset-2
+                `}
+              >
+                {/* Gradient top bar */}
+                <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${card.gradient}`} />
 
-          <div className="p-6 sm:p-8">
-            {/* Error */}
-            {error && (
-              <div className="mb-5 flex items-start gap-3 p-3.5 rounded-xl bg-red-50 border border-red-100">
-                <svg
-                  className="w-4 h-4 text-red-500 mt-0.5 shrink-0"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <p className="text-sm text-red-600">{error}</p>
-              </div>
-            )}
+                <div className="flex items-start gap-4">
+                  {/* Icon */}
+                  <div className={`shrink-0 w-12 h-12 rounded-xl ${card.iconBg} flex items-center justify-center`}>
+                    <Icon className={`w-6 h-6 ${card.iconColor}`} />
+                  </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Email */}
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                  Email Address
-                  <span className="text-red-500 ml-0.5">*</span>
-                </label>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@company.com"
-                  className="w-full h-11 px-3.5 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 focus:bg-white transition-all"
-                />
-              </div>
+                  {/* Text */}
+                  <div className="flex-1 min-w-0 pt-0.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-base font-bold text-slate-900">{card.label}</p>
+                      <ChevronRight
+                        className="w-4 h-4 text-slate-400 group-hover:text-slate-600 group-hover:translate-x-0.5 transition-all shrink-0"
+                      />
+                    </div>
+                    <p className="text-sm text-slate-500 mt-0.5 leading-snug">{card.description}</p>
 
-              {/* Garage ID */}
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                  Garage ID
-                  <span className="text-slate-400 ml-1 text-xs font-normal">
-                    (required for Staff)
-                  </span>
-                </label>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={10}
-                  value={garageId}
-                  onChange={(e) =>
-                    setGarageId(e.target.value.replace(/\D/g, "").slice(0, 10))
-                  }
-                  placeholder="10-digit Garage ID"
-                  className="w-full h-11 px-3.5 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 focus:bg-white transition-all font-mono"
-                />
-                <p className="mt-1.5 text-[11px] text-slate-400 ml-0.5">
-                  Owners: enter your 10-digit Garage ID. Staff: required.
-                </p>
-              </div>
-
-              {/* Password */}
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                  Password
-                  <span className="text-red-500 ml-0.5">*</span>
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full h-11 pl-3.5 pr-11 rounded-xl border border-slate-200 bg-slate-50 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 focus:bg-white transition-all"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-                  >
-                    {showPassword ? (
-                      <EyeSlashIcon style={{ width: 18, height: 18 }} />
-                    ) : (
-                      <EyeIcon style={{ width: 18, height: 18 }} />
-                    )}
-                  </button>
+                    {/* Tag */}
+                    <span className={`inline-block mt-2.5 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${card.tagColor} border ${card.badgeBg.split(" ")[1]}`}>
+                      {card.tag}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              </motion.button>
+            );
+          })}
+        </motion.div>
 
-              {/* Submit */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full h-11 flex items-center justify-center gap-2 rounded-xl text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-blue-600/25 transition-all mt-2"
-              >
-                {loading ? (
-                  <>
-                    <svg
-                      className="animate-spin w-4 h-4 text-white"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      />
-                    </svg>
-                    <span>Signing in…</span>
-                  </>
-                ) : (
-                  "Sign In"
-                )}
-              </button>
-            </form>
-
-            {/* Footer links */}
-            <div className="mt-5 pt-5 border-t border-slate-100 flex items-center justify-between">
-              <Link
-                to="/portal"
-                className="text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors"
-              >
-                Customer Portal →
-              </Link>
-              <Link
-                to="/signup"
-                className="text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors"
-              >
-                Create account
-              </Link>
-            </div>
-          </div>
-        </div>
+        {/* ── Footer ───────────────────────────────────────────── */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="text-center text-xs text-slate-400 mt-8"
+        >
+          New here?{" "}
+          <Link
+            to="/signup"
+            className="font-medium text-blue-600 hover:text-blue-700 underline underline-offset-2 transition-colors"
+          >
+            Register your garage
+          </Link>
+        </motion.p>
       </div>
     </div>
   );

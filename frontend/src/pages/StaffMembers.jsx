@@ -133,7 +133,7 @@ const StatCard = ({
 export default function StaffMembers() {
   const { user } = useAuth();
   const { addToast } = useToast();
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   const canManage = ["admin", "owner"].includes(user?.role);
   const navigate = useNavigate();
@@ -216,9 +216,7 @@ export default function StaffMembers() {
 
   const filteredStaff = staff
     .filter((m) => {
-      const query = (
-        isTyping ? searchQuery : activeSearch
-      ).toLowerCase();
+      const query = (isTyping ? searchQuery : activeSearch).toLowerCase();
       const matchSearch =
         m.name?.toLowerCase().includes(query) ||
         m.email?.toLowerCase().includes(query);
@@ -568,7 +566,9 @@ export default function StaffMembers() {
               setActiveSearch(cleanTerm);
               setSearchQuery("");
               if (cleanTerm) {
-                navigate(`/staff-members?q=${encodeURIComponent(cleanTerm)}`, { replace: true });
+                navigate(`/staff-members?q=${encodeURIComponent(cleanTerm)}`, {
+                  replace: true,
+                });
               } else {
                 navigate("/staff-members", { replace: true });
               }

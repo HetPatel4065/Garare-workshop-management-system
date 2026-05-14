@@ -69,7 +69,67 @@ export const getAllVehicles = async (req, res) => {
     const vehicles = await Vehicle.find({ garageId: ownerId })
       .populate("customerId", "name phone email")
       .populate("jobCards");
-    res.json(vehicles);
+
+    // ── Enrich with last completed service info (name + date) ──
+    // Wrap in try-catch so any aggregation failure still returns vehicle list.
+    try {
+      const { default: Service } = await import("../models/Service.js");
+      const mongoose = await import("mongoose");
+      const { Types: { ObjectId } } = mongoose.default || mongoose;
+
+      // Cast to ObjectId — aggregation pipelines don't auto-cast strings.
+      const ownerObjectId = new ObjectId(String(ownerId));
+      const vehicleObjectIds = vehicles.map((v) => v._id);
+
+      const lastServices = await Service.aggregate([
+        {
+          $match: {
+            vehicleId: { $in: vehicleObjectIds },
+            ownerId: ownerObjectId,
+            status: "Completed",
+          },
+        },
+        { $sort: { updatedAt: -1 } },
+        {
+          $group: {
+            _id: "$vehicleId",
+            serviceName: { $first: "$serviceName" },
+            completedAt: { $first: "$endTime" },
+            updatedAt: { $first: "$updatedAt" },
+          },
+        },
+      ]);
+
+      const lastServiceMap = {};
+      lastServices.forEach((s) => {
+        lastServiceMap[s._id.toString()] = {
+          lastServiceName: s.serviceName || null,
+          lastServiceDate: s.completedAt || s.updatedAt || null,
+        };
+      });
+
+      const enriched = vehicles.map((v) => {
+        const obj = v.toObject();
+        const last = lastServiceMap[v._id.toString()];
+        if (last) {
+          obj.lastServiceName = last.lastServiceName;
+          obj.lastServiceDate = last.lastServiceDate || obj.serviceDate || null;
+        } else {
+          obj.lastServiceDate = obj.serviceDate || null;
+        }
+        return obj;
+      });
+
+      return res.json(enriched);
+    } catch (enrichErr) {
+      console.error("Vehicle enrichment failed (non-fatal):", enrichErr.message);
+      // Graceful fallback — return plain vehicle data without service history
+      return res.json(vehicles.map((v) => {
+        const obj = v.toObject();
+        obj.lastServiceDate = obj.serviceDate || null;
+        return obj;
+      }));
+    }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

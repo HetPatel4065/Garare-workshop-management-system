@@ -201,7 +201,7 @@ export default function ServiceForm({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         const headers = { Authorization: `Bearer ${token}` };
         const ts = Date.now();
         const [
@@ -408,23 +408,23 @@ export default function ServiceForm({
       (serviceData.mechanicId && typeof serviceData.mechanicId === "object"
         ? serviceData.mechanicId._id
         : serviceData.mechanicId) ||
-      (serviceData.jobId &&
-        allJobCards.find((jc) => jc._id === serviceData.jobId)?.mechanicId
-          ?._id) ||
-      (serviceData.jobId &&
-        allJobCards.find((jc) => jc._id === serviceData.jobId)?.mechanicId) ||
-      "",
+        (serviceData.jobId &&
+          allJobCards.find((jc) => jc._id === serviceData.jobId)?.mechanicId
+            ?._id) ||
+        (serviceData.jobId &&
+          allJobCards.find((jc) => jc._id === serviceData.jobId)?.mechanicId) ||
+        "",
     );
     setAdvisorId(
       (serviceData.advisorId && typeof serviceData.advisorId === "object"
         ? serviceData.advisorId._id
         : serviceData.advisorId) ||
-      (serviceData.jobId &&
-        allJobCards.find((jc) => jc._id === serviceData.jobId)?.advisorId
-          ?._id) ||
-      (serviceData.jobId &&
-        allJobCards.find((jc) => jc._id === serviceData.jobId)?.advisorId) ||
-      "",
+        (serviceData.jobId &&
+          allJobCards.find((jc) => jc._id === serviceData.jobId)?.advisorId
+            ?._id) ||
+        (serviceData.jobId &&
+          allJobCards.find((jc) => jc._id === serviceData.jobId)?.advisorId) ||
+        "",
     );
     setJobId(serviceData.jobId || "");
     setStatus(serviceData.status || "Pending");
@@ -453,13 +453,13 @@ export default function ServiceForm({
         "",
       chassisnumber: String(
         serviceData.vehicle?.chassisnumber ||
-        serviceData.vehicleId?.chassisnumber ||
-        "",
+          serviceData.vehicleId?.chassisnumber ||
+          "",
       ),
       mileage: String(
         serviceData.vehicle?.mileage ||
-        serviceData.vehicleId?.currentMileage ||
-        "",
+          serviceData.vehicleId?.currentMileage ||
+          "",
       ),
       year: String(
         serviceData.vehicle?.year || serviceData.vehicleId?.year || "",
@@ -471,15 +471,15 @@ export default function ServiceForm({
     setServiceDate(
       serviceData.vehicleId?.serviceDate
         ? new Date(serviceData.vehicleId.serviceDate)
-          .toISOString()
-          .split("T")[0]
+            .toISOString()
+            .split("T")[0]
         : new Date().toISOString().split("T")[0],
     );
     setNextServiceDate(
       serviceData.vehicleId?.nextServiceDate
         ? new Date(serviceData.vehicleId.nextServiceDate)
-          .toISOString()
-          .split("T")[0]
+            .toISOString()
+            .split("T")[0]
         : "",
     );
 
@@ -699,6 +699,18 @@ export default function ServiceForm({
         fuelType: v.fuelType || "",
       });
 
+      // ── Sync service dates from the selected vehicle ──
+      setServiceDate(
+        v.serviceDate
+          ? new Date(v.serviceDate).toISOString().split("T")[0]
+          : new Date().toISOString().split("T")[0],
+      );
+      setNextServiceDate(
+        v.nextServiceDate
+          ? new Date(v.nextServiceDate).toISOString().split("T")[0]
+          : "",
+      );
+
       const matchingJc = allJobCards.find(
         (jc) => jc.vehicleId?._id === v._id || jc.vehicleId === v._id,
       );
@@ -774,11 +786,11 @@ export default function ServiceForm({
       const p = inventory.find((x) => x._id === partId);
       u[i] = p
         ? {
-          partId: p._id,
-          name: p.name,
-          quantity: 1,
-          priceAtTime: p.retailPrice,
-        }
+            partId: p._id,
+            name: p.name,
+            quantity: 1,
+            priceAtTime: p.retailPrice,
+          }
         : { partId: "", name: "", quantity: 1, priceAtTime: 0 };
     }
     setPartsUsed(u);
@@ -799,10 +811,10 @@ export default function ServiceForm({
       const item = serviceCatalog.find((x) => x._id === catalogId);
       u[i] = item
         ? {
-          serviceCatalogId: item._id,
-          name: item.name,
-          priceAtTimeOfService: item.defaultPrice,
-        }
+            serviceCatalogId: item._id,
+            name: item.name,
+            priceAtTimeOfService: item.defaultPrice,
+          }
         : { serviceCatalogId: "", name: "", priceAtTimeOfService: 0 };
     }
 
@@ -1227,18 +1239,20 @@ export default function ServiceForm({
               key={tab.id}
               type="button"
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold border-b-2 transition-colors whitespace-nowrap relative ${activeTab === tab.id
+              className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold border-b-2 transition-colors whitespace-nowrap relative ${
+                activeTab === tab.id
                   ? "border-gray-900 text-gray-900"
                   : "border-transparent text-gray-400 hover:text-gray-600"
-                }`}
+              }`}
             >
               {tab.label}
               {tab.badge && (
                 <span
-                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${activeTab === tab.id
+                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
+                    activeTab === tab.id
                       ? "bg-gray-900 text-white"
                       : "bg-gray-100 text-gray-500"
-                    }`}
+                  }`}
                 >
                   {tab.badge}
                 </span>
@@ -1349,68 +1363,125 @@ export default function ServiceForm({
                     <p className="text-[10px] font-black uppercase tracking-widest text-gray-600 mb-3">
                       Vehicle Details
                     </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-                      {[
-                        { label: "Make", field: "make" },
-                        { label: "Model", field: "model" },
-                        { label: "Year", field: "year" },
-                        { label: "Fuel Type", field: "fuelType" },
-                        { label: "Chassis No.", field: "chassisnumber" },
-                        { label: "Mileage", field: "mileage" },
-                        {
-                          label: "Service Date",
-                          field: "serviceDate",
-                          type: "date",
-                        },
-                        {
-                          label: "Next Service",
-                          field: "nextServiceDate",
-                          type: "date",
-                        },
-                      ].map(({ label, field, type }) => (
-                        <div key={field}>
-                          <Label error={errors[field]}>{label}</Label>
-                          <FieldInput
-                            type={type || "text"}
-                            value={
-                              field === "serviceDate"
-                                ? serviceDate
-                                : field === "nextServiceDate"
-                                  ? nextServiceDate
-                                  : vehicle[field]
-                            }
-                            onChange={(e) => {
-                              if (field === "serviceDate") {
-                                setServiceDate(e.target.value);
-                              } else if (field === "nextServiceDate") {
-                                setNextServiceDate(e.target.value);
-                              } else if (!readOnly && !isMechanic) {
-                                handleVehicleField(field, e.target.value);
-                                if (errors[field])
-                                  setErrors((prev) => ({
-                                    ...prev,
-                                    [field]: "",
-                                  }));
-                              }
-                            }}
-                            disabled={
-                              readOnly ||
-                              (field === "serviceDate" ||
-                                field === "nextServiceDate"
-                                ? !(
-                                  user?.role === "owner" ||
-                                  user?.role === "admin"
+                    {readOnly ? (
+                      /* ── READ-ONLY: Clean info panel, no grey disabled inputs ── */
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        {[
+                          { label: "Make", value: vehicle.make },
+                          { label: "Model", value: vehicle.model },
+                          { label: "Year", value: vehicle.year },
+                          { label: "Fuel Type", value: vehicle.fuelType },
+                          {
+                            label: "Chassis No.",
+                            value: vehicle.chassisnumber || "—",
+                          },
+                          {
+                            label: "Mileage",
+                            value: vehicle.mileage
+                              ? `${vehicle.mileage} km`
+                              : "—",
+                          },
+                          {
+                            label: "Last Service",
+                            value: serviceDate
+                              ? new Date(serviceDate).toLocaleDateString(
+                                  "en-GB",
+                                  {
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  },
                                 )
-                                : isMechanic)
-                            }
-                            error={errors[field]}
-                            maxLength={
-                              field === "chassisnumber" ? 17 : undefined
-                            }
-                          />
-                        </div>
-                      ))}
-                    </div>
+                              : "—",
+                          },
+                          {
+                            label: "Next Service",
+                            value: nextServiceDate
+                              ? new Date(nextServiceDate).toLocaleDateString(
+                                  "en-GB",
+                                  {
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  },
+                                )
+                              : "—",
+                          },
+                        ].map(({ label, value }) => (
+                          <div key={label}>
+                            <p className="text-[10px] font-black uppercase tracking-wider text-gray-400 mb-0.5">
+                              {label}
+                            </p>
+                            <p className="text-sm font-bold text-gray-800 capitalize">
+                              {value || "—"}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      /* ── EDIT MODE: Editable inputs ── */
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+                        {[
+                          { label: "Make", field: "make" },
+                          { label: "Model", field: "model" },
+                          { label: "Year", field: "year" },
+                          { label: "Fuel Type", field: "fuelType" },
+                          { label: "Chassis No.", field: "chassisnumber" },
+                          { label: "Mileage", field: "mileage" },
+                          {
+                            label: "Service Date",
+                            field: "serviceDate",
+                            type: "date",
+                          },
+                          {
+                            label: "Next Service",
+                            field: "nextServiceDate",
+                            type: "date",
+                          },
+                        ].map(({ label, field, type }) => (
+                          <div key={field}>
+                            <Label error={errors[field]}>{label}</Label>
+                            <FieldInput
+                              type={type || "text"}
+                              value={
+                                field === "serviceDate"
+                                  ? serviceDate
+                                  : field === "nextServiceDate"
+                                    ? nextServiceDate
+                                    : vehicle[field]
+                              }
+                              onChange={(e) => {
+                                if (field === "serviceDate") {
+                                  setServiceDate(e.target.value);
+                                } else if (field === "nextServiceDate") {
+                                  setNextServiceDate(e.target.value);
+                                } else if (!isMechanic) {
+                                  handleVehicleField(field, e.target.value);
+                                  if (errors[field])
+                                    setErrors((prev) => ({
+                                      ...prev,
+                                      [field]: "",
+                                    }));
+                                }
+                              }}
+                              disabled={
+                                field === "serviceDate" ||
+                                field === "nextServiceDate"
+                                  ? !(
+                                      user?.role === "owner" ||
+                                      user?.role === "admin"
+                                    )
+                                  : isMechanic
+                              }
+                              error={errors[field]}
+                              maxLength={
+                                field === "chassisnumber" ? 17 : undefined
+                              }
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -1556,10 +1627,11 @@ export default function ServiceForm({
                 {requestedServices.map((task, idx) => (
                   <div
                     key={idx}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-all ${task.status === "Done"
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-all ${
+                      task.status === "Done"
                         ? "bg-green-50/60 border-green-100"
                         : "bg-gray-100 border-gray-200 hover:border-gray-300"
-                      }`}
+                    }`}
                   >
                     <button
                       type="button"
@@ -1567,10 +1639,11 @@ export default function ServiceForm({
                         !readOnly ? () => toggleTaskStatus(idx) : undefined
                       }
                       disabled={readOnly}
-                      className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${task.status === "Done"
+                      className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
+                        task.status === "Done"
                           ? "bg-green-500 border-green-500"
                           : "border-gray-300 hover:border-gray-500"
-                        } ${readOnly ? "cursor-default" : ""}`}
+                      } ${readOnly ? "cursor-default" : ""}`}
                     >
                       {task.status === "Done" && (
                         <svg
@@ -1600,10 +1673,11 @@ export default function ServiceForm({
                       }}
                       placeholder="Describe task…"
                       disabled={readOnly || !canEditEverything}
-                      className={`flex-1 bg-transparent border-none outline-none text-sm capitalize font-medium placeholder:text-gray-300 ${task.status === "Done"
+                      className={`flex-1 bg-transparent border-none outline-none text-sm capitalize font-medium placeholder:text-gray-300 ${
+                        task.status === "Done"
                           ? "line-through text-gray-400"
                           : "text-gray-800"
-                        } ${readOnly || !canEditEverything ? "cursor-not-allowed" : ""}`}
+                      } ${readOnly || !canEditEverything ? "cursor-not-allowed" : ""}`}
                     />
                     {!readOnly && canEditEverything && (
                       <button
@@ -1785,10 +1859,11 @@ export default function ServiceForm({
                             }
                           }}
                           disabled={readOnly || !canEditEverything}
-                          className={`w-full text-sm py-1 outline-none! bg-transparent capitalize ${readOnly || !canEditEverything
+                          className={`w-full text-sm py-1 outline-none! bg-transparent capitalize ${
+                            readOnly || !canEditEverything
                               ? "border-b border-transparent text-gray-700 font-semibold cursor-default"
                               : "border-b border-dashed border-gray-200 focus:border-blue-400"
-                            }`}
+                          }`}
                         />
                       </div>
                     )}
@@ -2143,7 +2218,11 @@ export default function ServiceForm({
                           >
                             <option value="">Select part…</option>
                             {inventory.map((p) => (
-                              <option key={p._id} value={p._id} className="capitalize">
+                              <option
+                                key={p._id}
+                                value={p._id}
+                                className="capitalize"
+                              >
                                 {p.name} (Stock: {p.stock}) (Car:{" "}
                                 {p.carModel || "Universal"})
                               </option>
@@ -2249,10 +2328,11 @@ export default function ServiceForm({
                               }
                             }}
                             disabled={readOnly}
-                            className={`border border-gray-200 rounded-lg pl-6 pr-3 py-2.5 text-sm w-full bg-gray-50 focus:bg-white font-semibold outline-none transition ${item.partId === "manual_entry"
+                            className={`border border-gray-200 rounded-lg pl-6 pr-3 py-2.5 text-sm w-full bg-gray-50 focus:bg-white font-semibold outline-none transition ${
+                              item.partId === "manual_entry"
                                 ? "ring-1 ring-blue-100"
                                 : ""
-                              }`}
+                            }`}
                           />
                         </div>
                       </div>
@@ -2266,18 +2346,20 @@ export default function ServiceForm({
 
         <div className="flex items-center gap-2">
           <div
-            className={`w-2 h-2 rounded-full ${!isDisabled && !readOnly ? "bg-green-500 animate-pulse" : "hidden"
-              }`}
+            className={`w-2 h-2 rounded-full ${
+              !isDisabled && !readOnly ? "bg-green-500 animate-pulse" : "hidden"
+            }`}
           />
           <p
-            className={`text-sm font-medium transition-colors duration-200 ${isBlocked
+            className={`text-sm font-medium transition-colors duration-200 ${
+              isBlocked
                 ? "text-red-600 font-bold"
                 : isDisabled && !readOnly
                   ? "text-red-500"
                   : !isDisabled && !readOnly
                     ? "text-green-600"
                     : "text-gray-400"
-              }`}
+            }`}
           >
             {readOnly
               ? "Read-only view"
@@ -2313,10 +2395,11 @@ export default function ServiceForm({
               type="button"
               onClick={handleSubmit}
               disabled={isDisabled}
-              className={`px-6 py-2 text-sm font-bold rounded-lg text-white flex items-center gap-2 transition-all ${isDisabled
+              className={`px-6 py-2 text-sm font-bold rounded-lg text-white flex items-center gap-2 transition-all ${
+                isDisabled
                   ? "bg-gray-200 cursor-not-allowed"
                   : "bg-gray-900 hover:bg-black active:scale-[0.98] shadow-sm"
-                }`}
+              }`}
             >
               {!isDisabled && (
                 <svg
