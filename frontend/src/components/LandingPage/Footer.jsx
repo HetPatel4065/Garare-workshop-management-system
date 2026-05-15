@@ -6,40 +6,40 @@ import { ChevronDown } from "lucide-react";
 export const FAQ = () => {
   const [active, setActive] = useState(0);
 
-  const faqs=[
-  {
-    q: "Is there a free trial available?",
-    a: "Yes! You can explore all the features of GaragePro with a 14-day free trial. No credit card is required to get started.",
-  },
-  {
-    q: "Can I track my spare parts inventory?",
-    a: "Absolutely. Our inventory management module lets you track stock levels, set low-stock alerts, and link parts directly to job cards.",
-  },
-  {
-    q: "Does GaragePro support digital signatures?",
-    a: "Yes. Customers can sign job cards and estimates digitally on your tablet or phone, making your workshop completely paperless.",
-  },
-  {
-    q: "Can I export reports for accounting?",
-    a: "You can generate and export detailed sales, tax, and profit-and-loss reports in Excel or PDF format to share with your accountant.",
-  },
-  {
-    q: "Will my customers get automated service reminders?",
-    a: "Yes. You can schedule automated WhatsApp or SMS reminders for upcoming oil changes, insurance renewals, or general service dates.",
-  },
-  {
-    q: "Can I manage different labor rates for different services?",
-    a: "Yes, you can set custom labor rates for different types of work or even apply specific rates for premium customers.",
-  },
-  {
-    q: "What kind of support do you offer?",
-    a: "We provide priority support via WhatsApp and Email. Pro and Enterprise users also get access to dedicated account managers.",
-  },
-  {
-    q: "Can I import my existing customer list?",
-    a: "Definitely. You can upload your existing data using our CSV template to get your workshop up and running without manual entry.",
-  },
-]
+  const faqs = [
+    {
+      q: "Is there a free trial available?",
+      a: "Yes! You can explore all the features of GaragePro with a 14-day free trial. No credit card is required to get started.",
+    },
+    {
+      q: "Can I track my spare parts inventory?",
+      a: "Absolutely. Our inventory management module lets you track stock levels, set low-stock alerts, and link parts directly to job cards.",
+    },
+    {
+      q: "Does GaragePro support digital signatures?",
+      a: "Yes. Customers can sign job cards and estimates digitally on your tablet or phone, making your workshop completely paperless.",
+    },
+    {
+      q: "Can I export reports for accounting?",
+      a: "You can generate and export detailed sales, tax, and profit-and-loss reports in Excel or PDF format to share with your accountant.",
+    },
+    {
+      q: "Will my customers get automated service reminders?",
+      a: "Yes. You can schedule automated WhatsApp or SMS reminders for upcoming oil changes, insurance renewals, or general service dates.",
+    },
+    {
+      q: "Can I manage different labor rates for different services?",
+      a: "Yes, you can set custom labor rates for different types of work or even apply specific rates for premium customers.",
+    },
+    {
+      q: "What kind of support do you offer?",
+      a: "We provide priority support via WhatsApp and Email. Pro and Enterprise users also get access to dedicated account managers.",
+    },
+    {
+      q: "Can I import my existing customer list?",
+      a: "Definitely. You can upload your existing data using our CSV template to get your workshop up and running without manual entry.",
+    },
+  ]
 
   return (
     <section

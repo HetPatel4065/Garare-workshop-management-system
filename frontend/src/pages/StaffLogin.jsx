@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { Wrench, HardHat, UserCog } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { FaUsers } from "react-icons/fa";
 
 const GREETINGS = [
   "Ready to start your shift?",
@@ -224,7 +225,7 @@ export default function StaffLogin() {
                   </>
                 ) : (
                   <>
-                    <HardHat className="w-4 h-4" />
+                    <FaUsers className="w-4 h-4" />
                     <span>Staff Sign In</span>
                   </>
                 )}

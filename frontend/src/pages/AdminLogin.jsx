@@ -6,15 +6,15 @@ import { ShieldCheck, Wrench } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function AdminLogin() {
-  const [email, setEmail]               = useState("");
-  const [garageId, setGarageId]         = useState("");
-  const [password, setPassword]         = useState("");
+  const [email, setEmail] = useState("");
+  const [garageId, setGarageId] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError]               = useState("");
-  const [loading, setLoading]           = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const { login }  = useAuth();
-  const navigate   = useNavigate();
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,23 +33,12 @@ export default function AdminLogin() {
     }
   };
 
-  const adminGreetings = useMemo(() => {
-    const msgs = [
-      "Command centre — authorised access only",
-      "Admin hub — manage every garage from here",
-      "Full control starts here",
-      "Master panel — enter your credentials",
-      "Elevated access — proceed with authority",
-      "System administration portal",
-      "One ID, every garage at your command",
-    ];
-    return msgs[Math.floor(Math.random() * msgs.length)];
-  }, []);
-
   /* ── shared input classes ── */
   const inputCls =
     "w-full h-11 px-3.5 rounded-xl border border-orange-200 bg-orange-50/60 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-400/30 focus:border-orange-400 focus:bg-white transition-all";
 
+  const ADMIN_GREETING =
+    "Accessing secure command center. Let's manage today's operations.";
   return (
     <div className="min-h-screen bg-orange-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">
       <motion.div
@@ -84,7 +73,7 @@ export default function AdminLogin() {
           </div>
 
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-            {adminGreetings}
+            {ADMIN_GREETING}
           </h1>
           <p className="mt-1.5 text-sm text-slate-500">
             Authorised person only — enter your admin credentials

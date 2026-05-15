@@ -16,6 +16,7 @@ import { io } from "socket.io-client";
 
 // ─── Greeting pool (from existing PortalLogin) ───────────────────────────────
 const GREETINGS = [
+  // Original List
   "Welcome back",
   "Good to see you",
   "Ready to check your car?",
@@ -26,6 +27,27 @@ const GREETINGS = [
   "Let's pick up where you left off",
   "Your garage, at your fingertips",
   "Smarter service tracking starts here",
+
+  // Service & Status Focused
+  "Your digital service book is ready",
+  "Track your repairs in real-time",
+  "Your vehicle is in good hands. Check its progress here",
+  "Instant access to your service timeline",
+  "Let’s see how your vehicle is doing today",
+
+  // Speed & OTP Focused
+  "Skip the password, skip the wait",
+  "One quick code to view your car's status",
+  "No password? No problem. Let's get you in",
+  "Tap, verify, and view your vehicle",
+  "Your garage dashboard is just an OTP away",
+
+  // Premium & Welcoming
+  "Welcome back! How is the car running?",
+  "Giving your car the care it deserves",
+  "Welcome to your personal garage portal",
+  "Let’s get your vehicle sorted",
+  "Keep your vehicle running smoothly. Log in to check status"
 ];
 
 // ─── Step indicator ───────────────────────────────────────────────────────────

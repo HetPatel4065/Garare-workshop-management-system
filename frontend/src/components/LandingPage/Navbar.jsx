@@ -152,9 +152,8 @@ const Dropdown = ({ items, visible }) => (
           }}
         >
           <div
-            className={`grid gap-1 ${
-              items.length > 4 ? "grid-cols-2" : "grid-cols-1"
-            }`}
+            className={`grid gap-1 ${items.length > 4 ? "grid-cols-2" : "grid-cols-1"
+              }`}
           >
             {items.map((item) => {
               const Icon = item.icon;
@@ -334,17 +333,16 @@ export const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled ? "py-2 md:py-3" : "py-4 md:py-5"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? "py-2 md:py-3" : "py-4 md:py-5"
+        }`}
       style={
         scrolled
           ? {
-              background: "rgba(248,250,255,0.92)",
-              backdropFilter: "blur(24px)",
-              borderBottom: "1px solid rgba(99,102,241,0.10)",
-              boxShadow: "0 4px 32px rgba(99,102,241,0.08)",
-            }
+            background: "rgba(248,250,255,0.92)",
+            backdropFilter: "blur(24px)",
+            borderBottom: "1px solid rgba(99,102,241,0.10)",
+            boxShadow: "0 4px 32px rgba(99,102,241,0.08)",
+          }
           : { background: "transparent" }
       }
     >

@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Wrench, Store, HardHat, ShieldCheck, Car, ChevronRight } from "lucide-react";
 import { FaCar } from "react-icons/fa";
-import { GiMechanicGarage } from "react-icons/gi";
+import { FaUser } from "react-icons/fa";
 
 // ─── Role card definitions ────────────────────────────────────────────────────
 const ROLE_CARDS = [
@@ -11,7 +11,7 @@ const ROLE_CARDS = [
     id: "owner",
     label: "Garage Owner",
     description: "Manage your garage, staff, billing & reports",
-    icon: GiMechanicGarage,
+    icon: FaCar,
     route: "/owner/login",
     gradient: "from-emerald-500 to-teal-500",
     ring: "ring-emerald-300",
@@ -56,7 +56,7 @@ const ROLE_CARDS = [
     id: "customer",
     label: "Customer",
     description: "Track your vehicle service history & appointments",
-    icon: FaCar,
+    icon: FaUser,
     route: "/customer/login",
     gradient: "from-blue-500 to-indigo-500",
     ring: "ring-blue-300",
