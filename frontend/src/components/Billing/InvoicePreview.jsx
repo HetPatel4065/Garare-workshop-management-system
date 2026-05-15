@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import PaymentStatusBadge from "./PaymentStatusBadge";
 
 import { useToast } from "../../context/ToastContext";
+import { useAuth } from "../../context/AuthContext";
 import ConfirmModal from "../../components/UI/ConfirmModal";
 
 export default memo(function InvoicePreview({
@@ -14,8 +15,8 @@ export default memo(function InvoicePreview({
   currentUser,
 }) {
   const { addToast } = useToast();
+  const { token } = useAuth();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
   const currentYear = new Date().getFullYear();
 
   // Role-based access control
@@ -307,10 +308,11 @@ export default memo(function InvoicePreview({
                     <button
                       key={m}
                       onClick={() => setSelectedMethod(m)}
-                      className={`flex-1 py-2.5 rounded-2xl text-xs font-black transition-all duration-300 ${selectedMethod === m
-                        ? "bg-blue-600 text-white shadow-lg shadow-blue-200 ring-2 ring-blue-100"
-                        : "bg-white text-gray-400 border border-gray-100 hover:border-blue-200"
-                        }`}
+                      className={`flex-1 py-2.5 rounded-2xl text-xs font-black transition-all duration-300 ${
+                        selectedMethod === m
+                          ? "bg-blue-600 text-white shadow-lg shadow-blue-200 ring-2 ring-blue-100"
+                          : "bg-white text-gray-400 border border-gray-100 hover:border-blue-200"
+                      }`}
                     >
                       {m}
                     </button>
@@ -406,27 +408,48 @@ export default memo(function InvoicePreview({
             onClick={async () => {
               try {
                 addToast("Generating your premium invoice...", "info");
-                
-                const response = await fetch(`/api/billing/${invoice._id}/generate-pdf`, {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${sessionStorage.getItem("token")}`
-                  }
-                });
 
+                const response = await fetch(
+                  `/api/billing/${invoice._id}/generate-pdf`,
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${token}`,
+                    },
+                  },
+                );
+
+                // 1. If your API returns a JSON with a URL, we need that data first
                 const data = await response.json();
-                if (!response.ok) throw new Error(data.error || "Failed to generate PDF");
+                if (!response.ok)
+                  throw new Error(data.error || "Failed to generate PDF");
 
-                // Open the PDF in a new tab for printing/viewing
-                window.open(data.pdfUrl, "_blank");
+                // 2. Fetch the actual PDF file from the returned URL as a blob
+                const pdfResponse = await fetch(data.pdfUrl);
+                const blob = await pdfResponse.blob();
+
+                // 3. Create a temporary local URL for the blob
+                const downloadUrl = window.URL.createObjectURL(blob);
+
+                // 4. Create a hidden <a> tag and programmatically click it to force download
+                const link = document.createElement("a");
+                link.href = downloadUrl;
+                link.download = `Invoice-${invoice._id}.pdf`; // You can name the file here
+                document.body.appendChild(link);
+                link.click();
+
+                // 5. Clean up the DOM and memory
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(downloadUrl);
+
                 addToast("Invoice ready!", "success");
               } catch (err) {
                 console.error("PDF Download Error:", err);
                 addToast(err.message, "error");
               }
             }}
-            className="w-full py-3 flex items-center justify-center gap-2 text-gray-400 hover:text-gray-600 text-[11px] font-bold transition-colors group"
+            className="w-full py-4 flex items-center justify-center gap-2 border rounded-3xl border-gray-200 text-gray-400 hover:text-gray-600 text-[13px] font-bold transition-colors group"
           >
             <svg
               className="w-4 h-4 transition-transform group-hover:translate-y-0.5"

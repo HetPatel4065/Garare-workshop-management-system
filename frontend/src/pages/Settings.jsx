@@ -62,23 +62,21 @@ function ToggleItem({
       tabIndex={disabled ? -1 : 0}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      className={`group flex items-center justify-between p-5 rounded-2xl border transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 select-none ${
-        disabled
+      className={`group flex items-center justify-between p-5 rounded-2xl border transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 select-none ${disabled
           ? "cursor-not-allowed bg-slate-50 border-slate-100 opacity-60"
           : isOn
             ? "cursor-pointer bg-blue-50 border-blue-200 hover:bg-blue-50/70"
             : "cursor-pointer bg-slate-50 border-slate-100 hover:border-blue-200 hover:bg-white"
-      }`}
+        }`}
     >
       <div className="pr-4 min-w-0">
         <p
-          className={`text-sm font-bold transition-colors duration-200 ${
-            disabled
+          className={`text-sm font-bold transition-colors duration-200 ${disabled
               ? "text-slate-400"
               : isOn
                 ? "text-blue-700"
                 : "text-slate-800 group-hover:text-blue-600"
-          }`}
+            }`}
         >
           {title}
         </p>
@@ -89,17 +87,15 @@ function ToggleItem({
 
       {/* The actual toggle pill */}
       <div
-        className={`relative inline-flex h-7 w-13 shrink-0 items-center rounded-full transition-all duration-200 ${
-          isOn
+        className={`relative inline-flex h-7 w-13 shrink-0 items-center rounded-full transition-all duration-200 ${isOn
             ? "bg-blue-600 shadow-[0_0_0_3px_rgba(37,99,235,0.15)]"
             : "bg-slate-300"
-        } ${disabled ? "opacity-50" : "active:scale-95"}`}
+          } ${disabled ? "opacity-50" : "active:scale-95"}`}
         style={{ width: "3rem" }}
       >
         <span
-          className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-200 ease-in-out ${
-            isOn ? "translate-x-6" : "translate-x-1"
-          }`}
+          className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-200 ease-in-out ${isOn ? "translate-x-6" : "translate-x-1"
+            }`}
         />
       </div>
     </div>
@@ -733,11 +729,10 @@ export default function Settings() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-6 py-3.5 text-sm font-bold rounded-2xl transition-all whitespace-nowrap
-                  ${
-                    isActive
+                  ${isActive
                       ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
                       : "bg-white text-slate-500 hover:bg-slate-50 border border-slate-100"
-                  }`}
+                    }`}
                 >
                   <span className={isActive ? "text-white" : "text-slate-400"}>
                     {tab.icon}
@@ -1048,11 +1043,10 @@ export default function Settings() {
                               <button
                                 key={r}
                                 onClick={() => setBackupRange(r)}
-                                className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all ${
-                                  backupRange === r
+                                className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all ${backupRange === r
                                     ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
                                     : "text-slate-500 hover:bg-white hover:text-blue-600"
-                                }`}
+                                  }`}
                               >
                                 {r} Days
                               </button>
@@ -1105,11 +1099,10 @@ export default function Settings() {
                             Select Backup File
                           </label>
                           <label
-                            className={`flex items-center gap-4 p-4 bg-white border-2 border-dashed rounded-2xl cursor-pointer transition-all ${
-                              restoreFile
+                            className={`flex items-center gap-4 p-4 bg-white border-2 border-dashed rounded-2xl cursor-pointer transition-all ${restoreFile
                                 ? "border-green-400 bg-green-50/50"
                                 : "border-slate-200 hover:border-blue-400 hover:bg-blue-50/30"
-                            }`}
+                              }`}
                           >
                             <div
                               className={`p-2.5 rounded-xl ${restoreFile ? "bg-green-500 text-white" : "bg-slate-100 text-slate-500"}`}

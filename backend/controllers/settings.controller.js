@@ -662,8 +662,8 @@ export const sendLiveBackup = async (req, res) => {
                           ${lowStockItems.map((item) => `<li>${item.name} (Only ${item.stock} left)</li>`,).join("")}
                       </ul>
               </div>`
-                 : ""
-             }
+        : ""
+      }
               <p style="margin:0 0 24px;font-size:12px;color:#94a3b8;line-height:1.6;text-align:center;">
                 Attached is the full database export in CSV format. You can open this file in Excel or Google Sheets to view your complete records.
               </p>

@@ -296,11 +296,10 @@ export default function Profile({ isAdvisor }) {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-4 md:px-6 py-3 md:py-3.5 text-xs md:text-sm font-bold rounded-xl md:rounded-2xl transition-all whitespace-nowrap shrink-0
-            ${
-              isActive
-                ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
-                : "bg-white text-slate-500 hover:bg-slate-50 border border-slate-100"
-            }`}
+            ${isActive
+                    ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
+                    : "bg-white text-slate-500 hover:bg-slate-50 border border-slate-100"
+                  }`}
               >
                 <span className={isActive ? "text-white" : "text-slate-400"}>
                   {tab.icon}

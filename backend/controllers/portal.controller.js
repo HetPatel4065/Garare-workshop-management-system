@@ -19,7 +19,7 @@ export const getPublicGarages = async (req, res) => {
   try {
     // Fetch all owners who have a garage name
     const garages = await Owner.find({ garageName: { $exists: true, $ne: "" } })
-      .select("garageName address mobileNumber logo location _id")
+      .select("name garageName address mobileNumber logo location note _id")
       .lean();
 
     res.status(200).json({

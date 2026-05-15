@@ -22,6 +22,7 @@ import {
   useTransform,
 } from "framer-motion";
 import RegistrationModal from "./RegistrationModal";
+import GarageDetailsModal from "./GarageDetailsModal";
 import PortalLogin from "./PortalLogin";
 import { useNavigate } from "react-router-dom";
 
@@ -55,6 +56,7 @@ export default function PortalHome() {
   const [isPending, startTransition] = useTransition();
   const [selectedGarage, setSelectedGarage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [loginPrefill, setLoginPrefill] = useState("");
 
@@ -96,6 +98,7 @@ export default function PortalHome() {
       garages.filter(
         (g) =>
           g.garageName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          g.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
           g.address?.toLowerCase().includes(searchQuery.toLowerCase()),
       ),
     [garages, searchQuery],
@@ -278,7 +281,7 @@ export default function PortalHome() {
                     }}
                     onClick={() => {
                       setSelectedGarage(garage);
-                      setIsModalOpen(true);
+                      setIsDetailsModalOpen(true);
                     }}
                     className="group relative bg-white rounded-2xl border border-slate-100 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-50 transition-all duration-300 cursor-pointer overflow-hidden"
                   >
@@ -343,7 +346,7 @@ export default function PortalHome() {
 
                         <div className="flex items-center gap-1.5 overflow-hidden">
                           <span className="text-[12px] font-semibold text-blue-600 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap">
-                            View
+                            View Details
                           </span>
                           <div className="w-7 h-7 rounded-xl border border-slate-100 bg-slate-50 group-hover:bg-blue-600 group-hover:border-blue-600 flex items-center justify-center transition-all duration-300 shrink-0">
                             <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-white transition-colors" />
@@ -412,6 +415,15 @@ export default function PortalHome() {
       </footer>
 
       {/* ── Modals ── */}
+      <GarageDetailsModal
+        isOpen={isDetailsModalOpen}
+        onClose={() => setIsDetailsModalOpen(false)}
+        garage={selectedGarage}
+        onRegister={(garage) => {
+          setSelectedGarage(garage);
+          setIsModalOpen(true);
+        }}
+      />
       <RegistrationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
