@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useTransition } from "react";
+import React, { useState, useEffect, useMemo, useTransition } from "react";
 import axios from "axios";
 import {
   Search,
@@ -87,7 +87,7 @@ export default function PortalHome() {
     startTransition(() => setSearchQuery(""));
   };
 
-  const filtered = React.useMemo(
+  const filtered = useMemo(
     () =>
       garages.filter(
         (g) =>
@@ -109,10 +109,10 @@ export default function PortalHome() {
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <button
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            onClick={() => window.scrollToj({ top: 0, behavior: "smooth" })}
             className="flex items-center gap-3 group bg-transparent border-none cursor-pointer"
           >
-            <div className="bg-blue-600 p-2.5 rounded-[10px] shadow-sm shadow-blue-200 group-hover:bg-blue-700 group-hover:shadow-blue-300 transition-all duration-200">
+            <div className="bg-blue-600 p-2.5 rounded-[10px] group-hover:bg-blue-700 group-hover:shadow-blue-300 transition-all duration-200">
               <Wrench className="w-4 h-4 text-white" strokeWidth={2.5} />
             </div>
             <span className="font-black text-[1.1rem] tracking-tight text-slate-900">
@@ -135,7 +135,7 @@ export default function PortalHome() {
                   ? navigate("/portal/dashboard")
                   : setIsLoginModalOpen(true)
               }
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-200/70 transition-all duration-200 active:scale-95"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700  transition-all duration-200 active:scale-95"
             >
               {isAuthenticated ? "Dashboard" : "Get Started"}
               <ArrowRight className="w-3.5 h-3.5" />
@@ -269,7 +269,7 @@ export default function PortalHome() {
                       setSelectedGarage(garage);
                       setIsDetailsModalOpen(true);
                     }}
-                    className="group relative bg-white rounded-2xl border border-slate-100 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-50 transition-all duration-300 cursor-pointer overflow-hidden"
+                    className="group relative bg-white rounded-2xl border border-slate-100 hover:border-blue-200  transition-all duration-300 cursor-pointer overflow-hidden"
                   >
                     {/* Top accent line */}
                     <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 rounded-t-2xl" />
