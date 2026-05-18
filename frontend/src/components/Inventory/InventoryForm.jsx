@@ -416,7 +416,7 @@ export default function InventoryForm({
                 onChange={(e) => set("notes", e.target.value)}
                 rows={6}
                 readOnly={readOnly}
-                className={`w-full border border-gray-300 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${readOnly ? "bg-gray-50/50 cursor-default" : ""}`}
+                className={`w-full border border-gray-300 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${readOnly ? "bg-gray-800 cursor-default" : ""}`}
               />
             </div>
           </Section>

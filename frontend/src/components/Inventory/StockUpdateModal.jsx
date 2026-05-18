@@ -55,13 +55,13 @@ export default function StockUpdateModal({
         className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden max-w-md mx-auto"
       >
         {/* Header Section */}
-        <div className="px-6 pt-6 pb-4 border-b bg-gray-50/50">
+        <div className="px-6 pt-6 pb-4 border-b bg-gray-800">
           <h2 className="text-lg font-bold capitalize text-gray-800 truncate">
             {itemData?.name || "Select Item"}
           </h2>
           <div className="flex justify-between items-center mt-1">
             <p className="text-sm text-gray-500">Current Inventory</p>
-            <span className="text-sm font-bold text-gray-700 bg-gray-200 px-2 py-0.5 rounded-lg">
+            <span className="text-sm font-bold text-gray-700 bg-gray-500 px-2 py-0.5 rounded-lg">
               {currentStock} Units
             </span>
           </div>

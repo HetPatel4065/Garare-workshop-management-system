@@ -57,10 +57,8 @@ const LandingPage = () => {
 
   return (
     <div
-      className="min-h-screen relative"
+      className="min-h-screen relative bg-[#f8faff] dark:bg-[#030712] text-[#1e1b4b] dark:text-[#f8fafc]"
       style={{
-        background: "#f8faff",
-        color: "#1e1b4b",
         fontFamily: "'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif",
       }}
     >

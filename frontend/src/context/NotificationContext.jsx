@@ -117,12 +117,45 @@ export const NotificationProvider = ({ children }) => {
     }
   };
 
+  const deleteNotification = async (id) => {
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/notifications/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const deletedNotif = notifications.find(n => n._id === id);
+      if (deletedNotif && !deletedNotif.read) {
+        setUnreadCount(prev => Math.max(0, prev - 1));
+      }
+      setNotifications(prev => prev.filter(n => n._id !== id));
+      addToast("Notification deleted successfully!", "info");
+    } catch (err) {
+      console.error("Failed to delete notification:", err);
+      addToast("Failed to delete notification.", "error");
+    }
+  };
+
+  const clearAllNotifications = async () => {
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/notifications/clear-all`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setNotifications([]);
+      setUnreadCount(0);
+      addToast("All notifications cleared!", "info");
+    } catch (err) {
+      console.error("Failed to clear notifications:", err);
+      addToast("Failed to clear notifications.", "error");
+    }
+  };
+
   return (
     <NotificationContext.Provider value={{ 
       notifications, 
       unreadCount, 
       markAsRead, 
       markAllAsRead,
+      deleteNotification,
+      clearAllNotifications,
       refreshNotifications: fetchNotifications 
     }}>
       {children}

@@ -32,23 +32,12 @@ export default function StatsCard({
 
   return (
     <div className="group relative bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-7 shadow-[0_20px_50px_rgba(0,0,0,0.04)] hover:shadow-[0_40px_80px_rgba(0,0,0,0.08)] transition-all duration-500 border border-slate-100 flex flex-col min-w-0 h-full overflow-hidden hover:-translate-y-1">
-      {/* Background Accent Gradient */}
-      <div
-        className={`absolute -right-10 -top-10 w-40 h-40 rounded-full opacity-[0.03] transition-all duration-700 group-hover:scale-110 group-hover:opacity-[0.08] ${theme.bg}`}
-      />
-
       <div className="flex justify-between items-start mb-4 sm:mb-6 z-10">
         <div
           className={`p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl ${theme.bg} ${theme.text} transition-all duration-500 shadow-sm border border-white/50`}
         >
           {React.cloneElement(icon, { size: 22, strokeWidth: 2.5 })}
         </div>
-        
-        {trend && (
-          <div className={`text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg ${trend > 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'} border border-black/5`}>
-            {trend > 0 ? '↑' : '↓'} {Math.abs(trend)}%
-          </div>
-        )}
       </div>
 
       <div className="space-y-0.5 sm:space-y-1 relative z-10 flex-1 min-w-0">

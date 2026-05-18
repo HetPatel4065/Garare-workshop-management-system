@@ -171,7 +171,7 @@ export default function CustomerForm({
     <div className="flex flex-col h-[90vh]">
       {/* Internal Header Actions (Status Switcher Only) */}
       {!isReadOnly && (
-        <div className="px-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+        <div className="px-6 border-b border-gray-100 flex items-center justify-between bg-gray-800">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
             {isEditing ? "Modify Record" : "New Entry"}
           </p>

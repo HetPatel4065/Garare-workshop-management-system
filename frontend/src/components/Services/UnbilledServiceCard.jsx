@@ -6,8 +6,9 @@ export default function UnbilledServiceCard({ service, onGenerate }) {
       ? service.customerId?.name
       : "Unknown";
 
-  const carModel = `${service.vehicle?.make || ""} ${service.vehicle?.model || ""
-    }`.trim();
+  const carModel = `${service.vehicle?.make || ""} ${
+    service.vehicle?.model || ""
+  }`.trim();
 
   const labour = Number(service?.labourCost || service?.labourAtTime || 0);
   const parts = Number(service?.partsTotal || 0);
@@ -17,20 +18,20 @@ export default function UnbilledServiceCard({ service, onGenerate }) {
   const displayDate =
     service.vehicleId?.serviceDate || service.createdAt
       ? new Date(
-        service.vehicleId?.serviceDate || service.createdAt,
-      ).toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      })
+          service.vehicleId?.serviceDate || service.createdAt,
+        ).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        })
       : "N/A";
 
   const nextServiceDisplay = service.vehicleId?.nextServiceDate
     ? new Date(service.vehicleId.nextServiceDate).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    })
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      })
     : null;
 
   return (
@@ -101,10 +102,11 @@ export default function UnbilledServiceCard({ service, onGenerate }) {
 
         {/* STATUS BADGE */}
         <span
-          className={`text-[10px] sm:text-[11px] font-black px-3 py-1 rounded-full whitespace-nowrap self-start ${service.status === "Completed"
-            ? "bg-green-50 text-green-600 border border-green-100"
-            : "bg-blue-50 text-blue-600 border border-blue-100"
-            }`}
+          className={`text-[10px] sm:text-[11px] font-black px-3 py-1 rounded-full whitespace-nowrap self-start ${
+            service.status === "Completed"
+              ? "bg-green-50 text-green-600 border border-green-100"
+              : "bg-blue-50 text-blue-600 border border-blue-100"
+          }`}
         >
           {service.status?.toUpperCase()}
         </span>
@@ -139,7 +141,7 @@ export default function UnbilledServiceCard({ service, onGenerate }) {
       </div>
 
       {/* 3. COST BREAKDOWN */}
-      <div className="bg-gray-50/50 border border-gray-100 rounded-xl p-4 mb-5 space-y-2">
+      <div className="bg-gray-800 border border-gray-100 rounded-xl p-4 mb-5 space-y-2">
         <div className="flex justify-between text-xs sm:text-sm">
           <span className="text-gray-500 font-medium">Labour</span>
           <span className="font-semibold text-gray-800">

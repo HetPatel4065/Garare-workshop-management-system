@@ -86,7 +86,7 @@ const GarageDetailsModal = ({ isOpen, onClose, garage, onRegister }) => {
             </button>
           </div>
 
-          <div className="space-y-6 flex-grow">
+          <div className="space-y-6 grow">
             {/* Owner Section */}
             <div className="flex gap-4">
               <div className="w-11 h-11 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">

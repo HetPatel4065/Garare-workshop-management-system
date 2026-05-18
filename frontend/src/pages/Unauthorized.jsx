@@ -6,14 +6,14 @@ import { useAuth } from "../context/AuthContext";
 import { getDashboardRoute, ROLE_LABELS } from "../utils/roles";
 
 export default function Unauthorized() {
-  const navigate  = useNavigate();
-  const location  = useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useAuth();
 
-  const from          = location.state?.from ?? "/dashboard";
+  const from = location.state?.from ?? "/dashboard";
   const requiredRoles = location.state?.requiredRoles ?? [];
-  const userRole      = user?.role?.toLowerCase();
-  const dashRoute     = getDashboardRoute(userRole);
+  const userRole = user?.role?.toLowerCase();
+  const dashRoute = getDashboardRoute(userRole);
 
   return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center p-6">
@@ -27,7 +27,12 @@ export default function Unauthorized() {
         <motion.div
           initial={{ rotate: -15, scale: 0.8 }}
           animate={{ rotate: 0, scale: 1 }}
-          transition={{ delay: 0.15, type: "spring", stiffness: 260, damping: 20 }}
+          transition={{
+            delay: 0.15,
+            type: "spring",
+            stiffness: 260,
+            damping: 20,
+          }}
           className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-red-500/10 border border-red-500/20 mb-6"
         >
           <ShieldOff className="w-9 h-9 text-red-400" />

@@ -5,37 +5,39 @@ import { useAuth } from "./context/AuthContext";
 import { getDashboardRoute } from "./utils/roles";
 
 // ── Pages ──────────────────────────────────────────────────────────────────────
-import LandingPage         from "./pages/LandingPage";
-import Login               from "./pages/Login";           // Role selector hub
-import OwnerLogin          from "./pages/OwnerLogin";
-import StaffLogin          from "./pages/StaffLogin";
-import AdminLogin          from "./pages/AdminLogin";
-import CustomerLogin       from "./pages/CustomerLogin";
-import Signup              from "./pages/Signup";
-import Unauthorized        from "./pages/Unauthorized";
-import Dashboard           from "./pages/Dashboard";
-import ProtectedRoute      from "./context/ProtectedRoutes";
-import Settings            from "./pages/Settings";
-import Inventory           from "./pages/Inventory";
-import JobCards            from "./pages/JobCards";
-import Customers           from "./pages/Customers";
-import RequestedCustomers  from "./pages/RequestedCustomers";
-import Profile             from "./pages/Profile";
-import Billing             from "./pages/Billing";
-import StaffMembers        from "./pages/StaffMembers";
-import Services            from "./pages/Services";
-import Vehicles            from "./pages/Vehicles";
-import ServiceReminders    from "./pages/ServiceReminders";
-import PortalLogin         from "./pages/portal/PortalLogin";  // modal — used in PortalHome
-import PortalHome          from "./pages/portal/PortalHome";
-import PortalDashboard     from "./pages/portal/PortalDashboard";
-import HelpCenter          from "./pages/HelpCenter";
-import SearchPage          from "./pages/SearchPage";
-import Notifications       from "./pages/Notifications";
+import LandingPage from "./pages/LandingPage";
+import Login from "./pages/Login";           // Role selector hub
+import OwnerLogin from "./pages/OwnerLogin";
+import StaffLogin from "./pages/StaffLogin";
+import AdminLogin from "./pages/AdminLogin";
+import CustomerLogin from "./pages/CustomerLogin";
+import Signup from "./pages/Signup";
+import OwnerSignup from "./pages/OwnerSignup";
+import StaffSignup from "./pages/StaffSignup";
+import Unauthorized from "./pages/Unauthorized";
+import Dashboard from "./pages/Dashboard";
+import ProtectedRoute from "./context/ProtectedRoutes";
+import Settings from "./pages/Settings";
+import Inventory from "./pages/Inventory";
+import JobCards from "./pages/JobCards";
+import Customers from "./pages/Customers";
+import RequestedCustomers from "./pages/RequestedCustomers";
+import Profile from "./pages/Profile";
+import Billing from "./pages/Billing";
+import StaffMembers from "./pages/StaffMembers";
+import Services from "./pages/Services";
+import Vehicles from "./pages/Vehicles";
+import ServiceReminders from "./pages/ServiceReminders";
+import PortalLogin from "./pages/portal/PortalLogin";  // modal — used in PortalHome
+import PortalHome from "./pages/portal/PortalHome";
+import PortalDashboard from "./pages/portal/PortalDashboard";
+import HelpCenter from "./pages/HelpCenter";
+import SearchPage from "./pages/SearchPage";
+import Notifications from "./pages/Notifications";
 
 // ── Components ─────────────────────────────────────────────────────────────────
 import ToastContainer from "./components/UI/ToastContainer";
-import GarageLayout   from "./components/Layout/GarageLayout";
+import GarageLayout from "./components/Layout/GarageLayout";
 
 // ── Page transition wrapper ────────────────────────────────────────────────────
 const PageTransition = ({ children }) => (
@@ -157,6 +159,22 @@ function App() {
               </PublicOnlyRoute>
             }
           />
+          <Route
+            path="/owner/signup"
+            element={
+              <PublicOnlyRoute>
+                <PageTransition><OwnerSignup /></PageTransition>
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
+            path="/staff/signup"
+            element={
+              <PublicOnlyRoute>
+                <PageTransition><StaffSignup /></PageTransition>
+              </PublicOnlyRoute>
+            }
+          />
 
           {/* ── Customer login alias → standalone CustomerLogin page ─ */}
           <Route path="/customer/login" element={<PageTransition><CustomerLogin /></PageTransition>} />
@@ -197,15 +215,15 @@ function App() {
             }
           >
             {/* All roles */}
-            <Route path="/dashboard"     element={<PageTransition><Dashboard /></PageTransition>} />
-            <Route path="/customers"     element={<PageTransition><Customers /></PageTransition>} />
-            <Route path="/vehicles"      element={<PageTransition><Vehicles /></PageTransition>} />
-            <Route path="/job-cards"     element={<PageTransition><JobCards /></PageTransition>} />
-            <Route path="/services"      element={<PageTransition><Services /></PageTransition>} />
-            <Route path="/inventory"     element={<PageTransition><Inventory /></PageTransition>} />
-            <Route path="/search"        element={<PageTransition><SearchPage /></PageTransition>} />
+            <Route path="/dashboard" element={<PageTransition><Dashboard /></PageTransition>} />
+            <Route path="/customers" element={<PageTransition><Customers /></PageTransition>} />
+            <Route path="/vehicles" element={<PageTransition><Vehicles /></PageTransition>} />
+            <Route path="/job-cards" element={<PageTransition><JobCards /></PageTransition>} />
+            <Route path="/services" element={<PageTransition><Services /></PageTransition>} />
+            <Route path="/inventory" element={<PageTransition><Inventory /></PageTransition>} />
+            <Route path="/search" element={<PageTransition><SearchPage /></PageTransition>} />
             <Route path="/notifications" element={<PageTransition><Notifications /></PageTransition>} />
-            <Route path="/profile"       element={<PageTransition><Profile /></PageTransition>} />
+            <Route path="/profile" element={<PageTransition><Profile /></PageTransition>} />
 
             {/* Owner / Admin only */}
             <Route

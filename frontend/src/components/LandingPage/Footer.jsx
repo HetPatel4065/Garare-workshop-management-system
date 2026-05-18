@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Sun, Moon, Monitor } from "lucide-react";
+import ThemeToggle from "../theme/ThemeToggle";
+import { useTheme } from "../../hooks/useTheme";
 
 export const FAQ = () => {
   const [active, setActive] = useState(0);
@@ -152,116 +154,154 @@ export const FAQ = () => {
   );
 };
 
-export const Footer = () => (
-  <footer
-    className="py-24 px-6 relative overflow-hidden"
-    style={{
-      background: "linear-gradient(180deg, #f8faff 0%, #eef2ff 100%)",
-      borderTop: "1px solid rgba(99,102,241,0.10)",
-    }}
-  >
-    {/* Decorative glow */}
-    <div
-      className="absolute bottom-0 left-1/2 -translate-x-1/2 w-125 h-50"
-      style={{
-        background: "radial-gradient(ellipse, rgba(99,102,241,0.12) 0%, transparent 70%)",
-        filter: "blur(60px)",
-      }}
-    />
+export const Footer = () => {
+  const { theme, setTheme } = useTheme();
 
-    <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 relative z-10">
-      <div className="md:col-span-2">
-        <div className="flex items-center gap-2.5 mb-6">
+  return (
+    <footer
+      className="py-24 px-6 relative overflow-hidden"
+      style={{
+        background: "linear-gradient(180deg, #f8faff 0%, #eef2ff 100%)",
+        borderTop: "1px solid rgba(99,102,241,0.10)",
+      }}
+    >
+      {/* Decorative glow */}
+      <div
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-125 h-50"
+        style={{
+          background: "radial-gradient(ellipse, rgba(99,102,241,0.12) 0%, transparent 70%)",
+          filter: "blur(60px)",
+        }}
+      />
+
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-12 relative z-10">
+        <div className="md:col-span-2">
+          <div className="flex items-center gap-2.5 mb-6">
+            <div
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-extrabold text-sm"
+              style={{
+                background: "linear-gradient(135deg, #6366f1 0%, #3b82f6 100%)",
+                boxShadow: "0 4px 16px rgba(99,102,241,0.30)",
+              }}
+            >
+              GP
+            </div>
+            <span className="text-xl font-extrabold tracking-tight" style={{ color: "#1e1b4b" }}>
+              GaragePro
+            </span>
+          </div>
+          <p className="text-sm font-medium leading-relaxed max-w-sm mb-8" style={{ color: "#64748b" }}>
+            The all-in-one operating system for modern mechanical workshops.
+            Manage jobs, track inventory, and bill customers effortlessly.
+          </p>
           <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center text-white font-extrabold text-sm"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-bold uppercase tracking-widest"
             style={{
-              background: "linear-gradient(135deg, #6366f1 0%, #3b82f6 100%)",
-              boxShadow: "0 4px 16px rgba(99,102,241,0.30)",
+              background: "rgba(99,102,241,0.08)",
+              color: "#6366f1",
+              border: "1px solid rgba(99,102,241,0.16)",
             }}
           >
-            GP
+            &copy; 2026 GaragePro Inc. · Built for Garage Workshops.
           </div>
-          <span className="text-xl font-extrabold tracking-tight" style={{ color: "#1e1b4b" }}>
-            GaragePro
-          </span>
         </div>
-        <p className="text-sm font-medium leading-relaxed max-w-sm mb-8" style={{ color: "#64748b" }}>
-          The all-in-one operating system for modern mechanical workshops.
-          Manage jobs, track inventory, and bill customers effortlessly.
-        </p>
-        <div
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-bold uppercase tracking-widest"
-          style={{
-            background: "rgba(99,102,241,0.08)",
-            color: "#6366f1",
-            border: "1px solid rgba(99,102,241,0.16)",
-          }}
-        >
-          &copy; 2026 GaragePro Inc. · Built for Garage Workshops.
-        </div>
-      </div>
 
-      <div>
-        <h4
-          className="text-xs font-extrabold uppercase tracking-widest mb-6"
-          style={{ color: "#1e1b4b" }}
-        >
-          Product
-        </h4>
-        <ul className="space-y-4">
-          {[
-            { label: "Features", href: "#features" },
-            { label: "Pricing", href: "#pricing" },
-            { label: "FAQ", href: "#faq" },
-          ].map((l) => (
-            <li key={l.label}>
-              <a
-                href={l.href}
-                className="text-sm font-medium transition-colors hover:text-indigo-600"
-                style={{ color: "#64748b" }}
-              >
-                {l.label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div>
-        <h4
-          className="text-xs font-extrabold uppercase tracking-widest mb-6"
-          style={{ color: "#1e1b4b" }}
-        >
-          Company
-        </h4>
-        <ul className="space-y-4">
-          {[
-            { label: "About Us", href: "#", type: "anchor" },
-            { label: "Staff Login", href: "/login", type: "link" },
-            { label: "Privacy Policy", href: "#", type: "anchor" },
-          ].map((l) => (
-            <li key={l.label}>
-              {l.type === "link" ? (
-                <Link
-                  to={l.href}
-                  className="text-sm font-medium transition-colors hover:text-indigo-600"
-                  style={{ color: "#64748b", textDecoration: "none" }}
-                >
-                  {l.label}
-                </Link>
-              ) : (
+        <div>
+          <h4
+            className="text-xs font-extrabold uppercase tracking-widest mb-6"
+            style={{ color: "#1e1b4b" }}
+          >
+            Product
+          </h4>
+          <ul className="space-y-4">
+            {[
+              { label: "Features", href: "#features" },
+              { label: "Pricing", href: "#pricing" },
+              { label: "FAQ", href: "#faq" },
+            ].map((l) => (
+              <li key={l.label}>
                 <a
                   href={l.href}
                   className="text-sm font-medium transition-colors hover:text-indigo-600"
-                  style={{ color: "#64748b", textDecoration: "none" }}
+                  style={{ color: "#64748b" }}
                 >
                   {l.label}
                 </a>
-              )}
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h4
+            className="text-xs font-extrabold uppercase tracking-widest mb-6"
+            style={{ color: "#1e1b4b" }}
+          >
+            Company
+          </h4>
+          <ul className="space-y-4">
+            {[
+              { label: "About Us", href: "#", type: "anchor" },
+              { label: "Staff Login", href: "/login", type: "link" },
+              { label: "Privacy Policy", href: "#", type: "anchor" },
+            ].map((l) => (
+              <li key={l.label}>
+                {l.type === "link" ? (
+                  <Link
+                    to={l.href}
+                    className="text-sm font-medium transition-colors hover:text-indigo-600"
+                    style={{ color: "#64748b", textDecoration: "none" }}
+                  >
+                    {l.label}
+                  </Link>
+                ) : (
+                  <a
+                    href={l.href}
+                    className="text-sm font-medium transition-colors hover:text-indigo-600"
+                    style={{ color: "#64748b", textDecoration: "none" }}
+                  >
+                    {l.label}
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h4
+            className="text-xs font-extrabold uppercase tracking-widest mb-6"
+            style={{ color: "#1e1b4b" }}
+          >
+            Theme
+          </h4>
+          <div className="flex flex-col gap-3">
+            {[
+              { id: "light", label: "Light Mode", icon: Sun, activeColor: "text-amber-600 border-amber-300 bg-amber-50/50 dark:text-amber-400 dark:border-amber-500/30 dark:bg-amber-950/20" },
+              { id: "dark", label: "Dark Mode", icon: Moon, activeColor: "text-indigo-600 border-indigo-300 bg-indigo-50/50 dark:text-indigo-400 dark:border-indigo-500/30 dark:bg-indigo-950/20" },
+              { id: "system", label: "System", icon: Monitor, activeColor: "text-emerald-600 border-emerald-300 bg-emerald-50/50 dark:text-emerald-400 dark:border-emerald-500/30 dark:bg-emerald-950/20" }
+            ].map((opt) => {
+              const Icon = opt.icon;
+              const isActive = theme === opt.id;
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => setTheme(opt.id)}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-2xl border text-[13px] font-bold tracking-wide transition-all duration-350 cursor-pointer select-none active:scale-[0.98] ${
+                    isActive 
+                      ? `${opt.activeColor} shadow-sm font-extrabold`
+                      : "border-slate-200/80 dark:border-zinc-800 bg-white/40 hover:bg-white dark:bg-zinc-900/40 dark:hover:bg-zinc-900 text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+                  }`}
+                >
+                  <Icon size={16} />
+                  <span>{opt.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
-    </div>
-  </footer>
-);
+    </footer>
+  );
+};

@@ -596,7 +596,6 @@ export default function JobCards() {
                     key={group.customerId}
                     className="bg-white rounded-3xl p-5 mb-4 border border-slate-200 shadow-sm relative overflow-hidden"
                   >
-                    <div className="absolute top-0 right-0 w-48 h-48 bg-slate-50 rounded-full -mr-24 -mt-24 opacity-50" />
                     <div className="mb-4 relative z-10 flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
                       <div>
                         <h3 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
@@ -867,7 +866,7 @@ export default function JobCards() {
                       onKeyDown={(e) => handleKeyDown(e, i)}
                       readOnly={isReadOnly}
                       placeholder="1. Oil Change..."
-                      className={`w-full flex-1 capitalize bg-white border border-gray-200 rounded-xl p-5 text-sm text-gray-700 outline-none focus:ring-2 focus:ring-blue-100 resize-none ${isReadOnly ? "bg-gray-50/50" : ""}`}
+                      className={`w-full flex-1 capitalize bg-white border border-gray-200 rounded-xl p-5 text-sm text-gray-700 outline-none focus:ring-2 focus:ring-blue-100 resize-none ${isReadOnly ? "bg-gray-800" : ""}`}
                     />
                   </div>
                 </div>

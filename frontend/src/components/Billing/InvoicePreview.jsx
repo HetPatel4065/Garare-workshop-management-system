@@ -51,7 +51,7 @@ export default memo(function InvoicePreview({
       layout="position"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="group bg-white border border-gray-100 rounded-4xl shadow-sm hover:shadow-xl hover:shadow-gray-200/50 transition-shadow duration-300 flex flex-col h-full overflow-hidden"
+      className="group bg-white border border-gray-100 rounded-4xl  flex flex-col h-full overflow-hidden"
     >
       {/* 1. Header Section */}
       <div className="p-6 pb-4 flex items-start gap-4 cursor-pointer">

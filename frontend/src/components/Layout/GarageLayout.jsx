@@ -119,7 +119,7 @@ export default function GarageLayout({ children }) {
         />
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 relative">
+        <main className="flex-1 overflow-y-auto bg-slate-50 dark:bg-zinc-950 transition-colors duration-300 relative">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}

@@ -39,8 +39,6 @@ export default function VehicleCard({
 
   return (
     <div className="bg-white rounded-3xl p-4 sm:p-5 mb-4 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] transition-all duration-300 border border-slate-100 shadow-sm relative overflow-hidden group h-full flex flex-col">
-      {/* Background Accent Decoration */}
-      <div className="absolute top-0 right-0 w-3 h-32 bg-slate-50 rounded-full -mr-16 -mt-16 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
       {/* ── TOP ROW ── */}
       <div className="flex flex-wrap items-center gap-3 mb-6 relative z-10">

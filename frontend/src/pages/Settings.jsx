@@ -62,41 +62,52 @@ function ToggleItem({
       tabIndex={disabled ? -1 : 0}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      className={`group flex items-center justify-between p-5 rounded-2xl border transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 select-none ${disabled
-          ? "cursor-not-allowed bg-slate-50 border-slate-100 opacity-60"
+      className={`group relative overflow-hidden flex items-center justify-between p-5 rounded-2xl border transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 select-none ${
+        disabled
+          ? "cursor-not-allowed bg-slate-50 dark:bg-zinc-900 border-slate-100 dark:border-zinc-800 opacity-60"
           : isOn
-            ? "cursor-pointer bg-blue-50 border-blue-200 hover:bg-blue-50/70"
-            : "cursor-pointer bg-slate-50 border-slate-100 hover:border-blue-200 hover:bg-white"
-        }`}
+            ? "cursor-pointer bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-800/60 hover:bg-blue-50/70 dark:hover:bg-blue-950/60"
+            : "cursor-pointer bg-slate-50 dark:bg-zinc-900 border-slate-100 dark:border-zinc-800 hover:border-blue-200 dark:hover:border-blue-800/50 hover:bg-white dark:hover:bg-zinc-800/80"
+      }`}
     >
-      <div className="pr-4 min-w-0">
-        <p
-          className={`text-sm font-bold transition-colors duration-200 ${disabled
-              ? "text-slate-400"
-              : isOn
-                ? "text-blue-700"
-                : "text-slate-800 group-hover:text-blue-600"
-            }`}
-        >
-          {title}
-        </p>
-        <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
-          {description}
-        </p>
-      </div>
-
-      {/* The actual toggle pill */}
+      {/* Background Accent */}
       <div
-        className={`relative inline-flex h-7 w-13 shrink-0 items-center rounded-full transition-all duration-200 ${isOn
-            ? "bg-blue-600 shadow-[0_0_0_3px_rgba(37,99,235,0.15)]"
-            : "bg-slate-300"
-          } ${disabled ? "opacity-50" : "active:scale-95"}`}
-        style={{ width: "3rem" }}
-      >
-        <span
-          className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-200 ease-in-out ${isOn ? "translate-x-6" : "translate-x-1"
+        className={`absolute top-0 right-0 w-24 h-24 rounded-full -mr-12 -mt-12 opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none ${isOn ? "bg-blue-100/50 dark:bg-gray-800/20" : "bg-white dark:bg-zinc-700/30"}`}
+      />
+
+      <div className="relative z-10 flex items-center justify-between w-full">
+        <div className="pr-4 min-w-0">
+          <p
+            className={`text-sm font-bold transition-colors duration-200 ${
+              disabled
+                ? "text-slate-400 dark:text-zinc-600"
+                : isOn
+                  ? "text-blue-700 dark:text-blue-400"
+                  : "text-slate-800 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400"
             }`}
-        />
+          >
+            {title}
+          </p>
+          <p className="text-xs text-slate-500 dark:text-zinc-400 mt-0.5 leading-relaxed">
+            {description}
+          </p>
+        </div>
+
+        {/* Toggle pill */}
+        <div
+          className={`relative inline-flex h-7 shrink-0 items-center rounded-full transition-all duration-200 ${
+            isOn
+              ? "bg-blue-600 shadow-[0_0_0_3px_rgba(37,99,235,0.15)]"
+              : "bg-slate-300 dark:bg-zinc-700"
+          } ${disabled ? "opacity-50" : "active:scale-95"}`}
+          style={{ width: "3rem" }}
+        >
+          <span
+            className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-200 ease-in-out ${
+              isOn ? "translate-x-6" : "translate-x-1"
+            }`}
+          />
+        </div>
       </div>
     </div>
   );
@@ -129,30 +140,31 @@ function InputField({
   value,
   onChange,
   icon,
-  placeholder,
-  disabled,
-  required,
+  placeholder = "",
+  disabled = false,
+  required = false,
   type = "text",
 }) {
   return (
     <div className="space-y-2 p-3">
-      <label className="text-[10px] font-black uppercase text-slate-400 ml-1 block">
-        {label} {required && <span className="text-red-500">*</span>}
+      <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider px-1 flex items-center gap-1">
+        {label}
+        {required && <span className="text-red-500 font-black">*</span>}
       </label>
       <div className="relative group">
         {icon && (
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors">
+          <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors">
             {icon}
           </div>
         )}
         <input
-          type={type}
           name={name}
-          value={value}
+          type={type}
+          value={value || ""}
           onChange={onChange}
           disabled={disabled}
           placeholder={placeholder}
-          className={`w-full bg-white border border-slate-200 rounded-2xl py-3 text-sm font-semibold text-slate-800 focus:ring-4 focus:ring-blue-500/5 outline-none transition-all ${icon ? "pl-11" : "px-5"} disabled:bg-slate-50 disabled:text-slate-500`}
+          className={`w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 text-sm font-bold text-slate-800 focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all ${icon ? "pl-14" : "px-6"} ${disabled ? "cursor-not-allowed bg-slate-100 text-slate-500" : "hover:border-slate-300 bg-white"}`}
         />
       </div>
     </div>
@@ -729,10 +741,11 @@ export default function Settings() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2 px-6 py-3.5 text-sm font-bold rounded-2xl transition-all whitespace-nowrap
-                  ${isActive
+                  ${
+                    isActive
                       ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
                       : "bg-white text-slate-500 hover:bg-slate-50 border border-slate-100"
-                    }`}
+                  }`}
                 >
                   <span className={isActive ? "text-white" : "text-slate-400"}>
                     {tab.icon}
@@ -743,19 +756,19 @@ export default function Settings() {
             })}
           </div>
 
-          <div className="flex-1 bg-white rounded-4xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+          <div className="flex-1 bg-white rounded-2xl md:rounded-4xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 overflow-hidden">
             <div className="p-6 md:p-10">
               {activeTab === "business" && isAdmin && (
                 <div className="space-y-12 animate-in fade-in slide-in-from-right-4">
                   {/* OWNER INFORMATION */}
-                  <section className="space-y-8">
+                  <section className="space-y-6">
                     <div className="flex items-center gap-3">
-                      <div className="w-1.5 h-6 bg-black rounded-full"></div>
-                      <h3 className="text-sm font-black text-slate-800 uppercase tracking-tighter">
+                      <div className="w-1.5 h-6 bg-black rounded-full" />
+                      <h3 className="text-lg font-bold text-slate-800">
                         Owner Profile Details
                       </h3>
                     </div>
-                    <div className="gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <InputField
                         label="Owner Full Name"
                         name="name"
@@ -783,12 +796,10 @@ export default function Settings() {
                     </div>
                   </section>
 
-                  <hr className="border-slate-200" />
-
                   {/* Single Brand Logo */}
-                  <div className="flex items-center gap-2 mb-1 pb-3">
+                  <div className="flex items-center gap-3 mb-2">
                     <div className="w-1.5 h-6 bg-black rounded-full" />
-                    <h3 className="text-lg font-black text-slate-800 capitalize tracking-tighter">
+                    <h3 className="text-lg font-bold text-slate-800">
                       Business Logo
                     </h3>
                   </div>
@@ -886,63 +897,65 @@ export default function Settings() {
                     {catalog.map((s, idx) => (
                       <div
                         key={idx}
-                        className="flex flex-col md:flex-row items-start md:items-center gap-4 bg-slate-50 p-5 rounded-3xl border border-slate-100 group transition-all hover:bg-white hover:shadow-md"
+                        className="relative overflow-hidden group cursor-pointer bg-slate-50 p-5 rounded-3xl border border-slate-100 shadow-sm hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] transition-all duration-300"
                       >
-                        <div className="flex-1 w-full">
-                          <label className="text-[10px] font-black uppercase text-slate-400 ml-1 mb-1 block md:hidden">
-                            Service Name
-                          </label>
-                          <input
-                            placeholder="e.g. Full Oil Change"
-                            value={s.name}
-                            onChange={(e) => {
-                              handleChange();
-                              const updated = [...catalog];
-                              updated[idx].name = capitalizeWords(
-                                e.target.value,
-                              );
-                              setCatalog(updated);
-                            }}
-                            className="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3 text-sm font-semibold text-slate-800 focus:ring-4 focus:ring-blue-500/5 outline-none disabled:bg-slate-50 disabled:text-slate-500"
-                          />
-                        </div>
-                        <div className="w-full md:w-48">
-                          <label className="text-[10px] font-black uppercase text-slate-400 ml-1 mb-1 block md:hidden">
-                            Default Price
-                          </label>
-                          <div className="relative">
-                            <span className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">
-                              ₹
-                            </span>
+                        <div className="relative z-10 w-full flex flex-col md:flex-row items-start md:items-center gap-4">
+                          <div className="flex-1 w-full">
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider px-1 mb-1 block md:hidden">
+                              Service Name
+                            </label>
                             <input
-                              type="number"
-                              value={s.defaultPrice}
+                              placeholder="e.g. Full Oil Change"
+                              value={s.name}
                               onChange={(e) => {
                                 handleChange();
                                 const updated = [...catalog];
-                                updated[idx].defaultPrice = e.target.value;
+                                updated[idx].name = capitalizeWords(
+                                  e.target.value,
+                                );
                                 setCatalog(updated);
                               }}
-                              className="w-full bg-white border border-slate-200 rounded-2xl pl-10 pr-5 py-3 text-sm font-black text-slate-800 focus:ring-4 focus:ring-blue-500/5 outline-none disabled:bg-slate-50 disabled:text-slate-500"
+                              className="w-full border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold text-slate-800 focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all hover:border-slate-300 bg-white disabled:bg-slate-100 disabled:text-slate-500"
                             />
                           </div>
+                          <div className="w-full md:w-48">
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider px-1 mb-1 block md:hidden">
+                              Default Price
+                            </label>
+                            <div className="relative">
+                              <span className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">
+                                ₹
+                              </span>
+                              <input
+                                type="number"
+                                value={s.defaultPrice}
+                                onChange={(e) => {
+                                  handleChange();
+                                  const updated = [...catalog];
+                                  updated[idx].defaultPrice = e.target.value;
+                                  setCatalog(updated);
+                                }}
+                                className="w-full border border-slate-200 rounded-2xl pl-10 pr-6 py-4 text-sm font-black text-slate-800 focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all hover:border-slate-300 bg-white disabled:bg-slate-100 disabled:text-slate-500"
+                              />
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => {
+                              handleChange();
+                              const itemToDelete = catalog[idx];
+                              if (itemToDelete._id) {
+                                setDeletedCatalogIds((prev) => [
+                                  ...prev,
+                                  itemToDelete._id,
+                                ]);
+                              }
+                              setCatalog(catalog.filter((_, i) => i !== idx));
+                            }}
+                            className="self-end md:self-auto p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                          >
+                            <Trash2 size={20} />
+                          </button>
                         </div>
-                        <button
-                          onClick={() => {
-                            handleChange();
-                            const itemToDelete = catalog[idx];
-                            if (itemToDelete._id) {
-                              setDeletedCatalogIds((prev) => [
-                                ...prev,
-                                itemToDelete._id,
-                              ]);
-                            }
-                            setCatalog(catalog.filter((_, i) => i !== idx));
-                          }}
-                          className="self-end md:self-auto p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-                        >
-                          <Trash2 size={20} />
-                        </button>
                       </div>
                     ))}
                   </div>
@@ -955,7 +968,7 @@ export default function Settings() {
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <div className="w-1.5 h-6 bg-black rounded-full" />
-                      <h3 className="text-sm font-black text-slate-800 uppercase tracking-tighter">
+                      <h3 className="text-lg font-bold text-slate-800">
                         Alert Preferences
                       </h3>
                     </div>
@@ -1005,48 +1018,49 @@ export default function Settings() {
                   {/* BACKUP & RESTORE MODULE */}
                   <div className="space-y-8">
                     <div className="flex items-center gap-3">
-                      <div className="w-1.5 h-6 bg-blue-600 rounded-full" />
-                      <h3 className="text-sm font-black text-slate-800 uppercase tracking-tighter">
+                      <div className="w-1.5 h-6 bg-black rounded-full" />
+                      <h3 className="text-lg font-bold text-slate-800">
                         System Backup & Restore
                       </h3>
                     </div>
 
                     <div className="flex flex-col gap-6 max-w-2xl mx-auto">
                       {/* BACKUP BOX */}
-                      <div className="p-6 bg-linear-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-4xl space-y-5 shadow-sm hover:shadow-md transition-all">
+                      <div className="p-6 bg-linear-to-br from-blue-50 to-indigo-50 dark:from-zinc-900 dark:to-zinc-800/80 border border-blue-100 dark:border-zinc-800 rounded-4xl space-y-5 shadow-sm hover:shadow-md transition-all">
                         <div className="flex items-center gap-4">
                           <div className="p-3 bg-blue-600 text-white rounded-2xl shadow-lg shadow-blue-200">
                             <Download size={22} />
                           </div>
                           <div>
-                            <h4 className="font-bold text-slate-800 text-base">
+                            <h4 className="font-bold text-slate-800 dark:text-zinc-100 text-base">
                               Get Your {formData.garageName} Data
                             </h4>
-                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
                               Secure Data Export
                             </p>
                           </div>
                         </div>
 
-                        <p className="text-xs text-slate-600 leading-relaxed px-1">
+                        <p className="text-xs text-slate-600 dark:text-zinc-400 leading-relaxed px-1">
                           Export your services, invoices, payments, customers,
                           and inventory into a structured ZIP file for offline
                           safekeeping.
                         </p>
 
                         <div className="space-y-3">
-                          <label className="text-[10px] font-black uppercase text-slate-400 block ml-1">
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider px-1 block">
                             Time Range
                           </label>
-                          <div className="flex gap-2 p-1.5 bg-white/60 backdrop-blur-sm rounded-2xl border border-slate-200/50">
+                          <div className="flex gap-2 p-1.5 bg-white/60 dark:bg-zinc-950/60 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-zinc-800/50">
                             {["7", "15", "30"].map((r) => (
                               <button
                                 key={r}
                                 onClick={() => setBackupRange(r)}
-                                className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all ${backupRange === r
+                                className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all ${
+                                  backupRange === r
                                     ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
-                                    : "text-slate-500 hover:bg-white hover:text-blue-600"
-                                  }`}
+                                    : "text-slate-500 hover:bg-white dark:hover:bg-zinc-800 hover:text-blue-600"
+                                }`}
                               >
                                 {r} Days
                               </button>
@@ -1071,22 +1085,22 @@ export default function Settings() {
                       </div>
 
                       {/* RESTORE BOX */}
-                      <div className="p-6 bg-linear-to-br from-slate-50 to-gray-100 border border-slate-200 rounded-4xl space-y-5 shadow-sm hover:shadow-md transition-all">
+                      <div className="p-6 bg-linear-to-br from-slate-50 to-gray-100 dark:from-zinc-900 dark:to-zinc-800/80 border border-slate-200 dark:border-zinc-800 rounded-4xl space-y-5 shadow-sm hover:shadow-md transition-all">
                         <div className="flex items-center gap-4">
-                          <div className="p-3 bg-slate-900 text-white rounded-2xl shadow-lg shadow-slate-300">
+                          <div className="p-3 bg-slate-900 dark:bg-zinc-800 text-white rounded-2xl shadow-lg shadow-slate-300">
                             <History size={22} />
                           </div>
                           <div>
-                            <h4 className="font-bold text-slate-800 text-base">
+                            <h4 className="font-bold text-slate-800 dark:text-zinc-100 text-base">
                               Restore Data
                             </h4>
-                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
                               System Recovery
                             </p>
                           </div>
                         </div>
 
-                        <p className="text-xs text-slate-600 leading-relaxed px-1">
+                        <p className="text-xs text-slate-600 dark:text-zinc-400 leading-relaxed px-1">
                           Upload a previously generated backup ZIP file to
                           restore or merge records.{" "}
                           <span className="font-bold text-red-500">
@@ -1095,14 +1109,15 @@ export default function Settings() {
                         </p>
 
                         <div className="space-y-3">
-                          <label className="text-[10px] font-black uppercase text-slate-400 block ml-1">
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider px-1 block">
                             Select Backup File
                           </label>
                           <label
-                            className={`flex items-center gap-4 p-4 bg-white border-2 border-dashed rounded-2xl cursor-pointer transition-all ${restoreFile
+                            className={`flex items-center gap-4 p-4 bg-white border-2 border-dashed rounded-2xl cursor-pointer transition-all ${
+                              restoreFile
                                 ? "border-green-400 bg-green-50/50"
                                 : "border-slate-200 hover:border-blue-400 hover:bg-blue-50/30"
-                              }`}
+                            }`}
                           >
                             <div
                               className={`p-2.5 rounded-xl ${restoreFile ? "bg-green-500 text-white" : "bg-slate-100 text-slate-500"}`}
@@ -1206,7 +1221,7 @@ export default function Settings() {
                   <div className="space-y-6">
                     <div className="flex items-center gap-3">
                       <div className="w-1.5 h-6 bg-black rounded-full" />
-                      <h3 className="text-sm font-black text-slate-800 uppercase tracking-tighter">
+                      <h3 className="text-lg font-bold text-slate-800">
                         Security Settings
                       </h3>
                     </div>
@@ -1234,25 +1249,24 @@ export default function Settings() {
                   <div className="space-y-6">
                     <div className="flex items-center gap-3">
                       <div className="w-1.5 h-6 bg-black rounded-full" />
-                      <h3 className="text-sm font-black text-slate-800 uppercase tracking-tighter">
+                      <h3 className="text-lg font-bold text-slate-800">
                         Change Password
                       </h3>
                     </div>
                     <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 space-y-4">
                       {["current", "next", "confirm"].map((field) => (
-                        <div key={field} className="space-y-1">
-                          <label className="text-[10px] font-black uppercase text-slate-400 ml-1 block">
+                        <div key={field} className="space-y-2">
+                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider px-1 block">
                             {field === "current"
                               ? "Current Password"
                               : field === "next"
                                 ? "New Password"
                                 : "Confirm New Password"}
                           </label>
-                          <div className="relative">
-                            <KeyRound
-                              size={15}
-                              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-                            />
+                          <div className="relative group">
+                            <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors">
+                              <KeyRound size={16} />
+                            </div>
                             <input
                               type={showPw[field] ? "text" : "password"}
                               value={pwForm[field]}
@@ -1271,7 +1285,7 @@ export default function Settings() {
                                     ? "Min. 6 characters"
                                     : "Re-enter new password"
                               }
-                              className="w-full bg-white border border-slate-200 rounded-2xl pl-10 pr-11 py-3 text-sm font-semibold text-slate-800 focus:ring-4 focus:ring-blue-500/5 outline-none"
+                              className="w-full border border-slate-200 rounded-2xl pl-14 pr-11 py-4 text-sm font-bold text-slate-800 focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all hover:border-slate-300 bg-white"
                             />
                             <button
                               type="button"
@@ -1281,7 +1295,7 @@ export default function Settings() {
                                   [field]: !p[field],
                                 }))
                               }
-                              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                              className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                             >
                               {showPw[field] ? (
                                 <EyeOff size={15} />

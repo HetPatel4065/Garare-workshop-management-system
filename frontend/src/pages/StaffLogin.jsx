@@ -17,20 +17,20 @@ const GREETINGS = [
 ];
 
 const ROLE_OPTIONS = [
-  { value: "advisor", label: "Service Advisor", icon: UserCog,  color: "text-violet-600" },
-  { value: "mechanic", label: "Mechanic",        icon: HardHat, color: "text-violet-600" },
+  { value: "advisor", label: "Service Advisor", icon: UserCog, color: "text-violet-600" },
+  { value: "mechanic", label: "Mechanic", icon: HardHat, color: "text-violet-600" },
 ];
 
 export default function StaffLogin() {
-  const [email,        setEmail]        = useState("");
-  const [garageId,     setGarageId]     = useState("");
-  const [password,     setPassword]     = useState("");
+  const [email, setEmail] = useState("");
+  const [garageId, setGarageId] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error,        setError]        = useState("");
-  const [isLoading,    setIsLoading]    = useState(false);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const { login }  = useAuth();
-  const navigate   = useNavigate();
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const greeting = useMemo(
     () => GREETINGS[Math.floor(Math.random() * GREETINGS.length)],
@@ -243,7 +243,7 @@ export default function StaffLogin() {
 
         {/* Quick-switch */}
         <div className="mt-4 flex items-center justify-center gap-5 text-xs text-slate-400">
-          <Link to="/admin/login"  className="hover:text-orange-500 transition-colors">Admin</Link>
+          <Link to="/admin/login" className="hover:text-orange-500 transition-colors">Admin</Link>
           <span>·</span>
           <Link to="/portal/login" className="hover:text-blue-500 transition-colors">Customer Portal</Link>
         </div>

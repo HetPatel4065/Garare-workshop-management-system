@@ -514,7 +514,6 @@ export default function Vehicles() {
                 key={group.customerId}
                 className="bg-white rounded-3xl p-5 mb-4 border border-slate-200 shadow-sm relative overflow-hidden"
               >
-                <div className="absolute top-0 right-0 w-48 h-48 bg-slate-50 rounded-full -mr-24 -mt-24 opacity-50" />
                 <div className="mb-4 relative z-10 flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-4">
                   <div>
                     <h3 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">

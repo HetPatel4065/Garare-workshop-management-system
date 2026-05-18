@@ -14,7 +14,7 @@ import { ClipboardClock, FileText, ReceiptIndianRupee } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 const EmptyState = ({ icon, title, description }) => (
-  <div className="text-center py-32 bg-gray-50/50 rounded-[40px] border-2 border-dashed border-gray-300 flex flex-col items-center">
+  <div className="text-center py-32 bg-gray-800 rounded-[40px] border-2 border-dashed border-gray-300 flex flex-col items-center">
     <div className="text-6xl mb-6">{icon}</div>
     <p className="text-gray-900 font-black text-2xl tracking-normal">{title}</p>
     <p className="text-gray-500 font-bold max-w-sm mt-2">{description}</p>

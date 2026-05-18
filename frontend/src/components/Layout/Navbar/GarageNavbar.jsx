@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import {
   Search,
-  Settings,
+  // Settings,
   LogOut,
   User,
   X,
@@ -25,6 +25,7 @@ import {
 import { useAuth } from "../../../context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import ThemeToggle from "../../theme/ThemeToggle";
 
 const Highlight = ({ text = "", query = "" }) => {
   if (!query || !text) return <span>{text || ""}</span>;
@@ -346,32 +347,11 @@ import { useNotifications } from "../../../context/NotificationContext";
 
 export default function TopNavbar({
   userName = "User",
-  onToggleSidebar,
-  showNotifications,
-  setShowNotifications,
+  onToggleSidebar
 }) {
   const { logout, user, token } = useAuth();
-  const { notifications, unreadCount, markAsRead } = useNotifications();
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Filter notifications based on relevance (User requirements: unpaid invoices, new requests, reminders)
-  const relevantNotifications = useMemo(() => {
-    return notifications.filter((n) => {
-      const type = String(n.type).toLowerCase();
-      return [
-        "unpaid_invoice",
-        "new_customer",
-        "service_reminder",
-        "low_stock",
-        "warning",
-        "info",
-        "error",
-      ].includes(type);
-    });
-  }, [notifications]);
-
-  const hasNotifications = unreadCount > 0;
 
   const queryFromUrl = useMemo(
     () => new URLSearchParams(location.search).get("q") || "",
@@ -402,16 +382,13 @@ export default function TopNavbar({
   const roleLabel = user?.role
     ? user.role.charAt(0).toUpperCase() + user.role.slice(1)
     : "User";
-  const isSettingsActive = location.pathname === "/settings";
+  // const isSettingsActive = location.pathname === "/settings";
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  // Remove the sync effect that puts the URL query back into the search bar
-  // This allows the search bar to stay empty after navigation as requested.
 
   const performSearch = useCallback(
     async (query) => {
@@ -496,12 +473,11 @@ export default function TopNavbar({
         setMenuOpen(false);
       if (searchRef.current && !searchRef.current.contains(e.target))
         setShowResults(false);
-      if (notifRef.current && !notifRef.current.contains(e.target))
-        setShowNotifications(false);
+      
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
-  }, [setShowNotifications]);
+  }, []);
 
   const handleSearchSubmit = (e) => {
     if (e && e.key && e.key !== "Enter") return;
@@ -524,7 +500,7 @@ export default function TopNavbar({
           ${scrolled ? "bg-gray-900/80 backdrop-blur-xl border-b border-white/5 shadow-[0_10px_30px_rgba(0,0,0,0.3)]" : "bg-transparent"}
         `}
       >
-        <div className="flex items-center justify-between w-full max-w-400 mx-auto gap-4">
+        <div className="flex items-center justify-between w-full max-w-400 mx-auto gap-2 sm:gap-4">
           <button
             onClick={onToggleSidebar}
             className="lg:hidden p-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-all active:scale-95"
@@ -539,11 +515,10 @@ export default function TopNavbar({
             <div className="relative group">
               <Search
                 size={18}
-                className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 pointer-events-none ${
-                  showResults
+                className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 pointer-events-none ${showResults
                     ? "text-blue-500"
                     : "text-gray-500 group-focus-within:text-blue-400"
-                }`}
+                  }`}
               />
               <input
                 type="text"
@@ -614,162 +589,15 @@ export default function TopNavbar({
           <div className="flex items-center gap-1.5 sm:gap-3" ref={dropdownRef}>
             <button
               onClick={() => setMobileSearchOpen((v) => !v)}
-              className={`md:hidden p-2.5 rounded-xl transition-all duration-300 ${
-                mobileSearchOpen
+              className={`md:hidden p-2.5 rounded-xl transition-all duration-300 ${mobileSearchOpen
                   ? "bg-blue-500/10 text-blue-400"
                   : "text-gray-400 hover:text-white hover:bg-white/5"
-              }`}
+                }`}
             >
               <Search size={20} />
             </button>
-            {user?.role !== "mechanic" && user?.role !== "advisor" && (
-              <div className="flex flex-row">
-                <button
-                  onClick={() => navigate("/settings")}
-                  className={`hidden sm:flex p-2.5 rounded-xl transition-all duration-300 ${
-                    isSettingsActive
-                      ? "bg-white/10 text-blue-400"
-                      : "text-gray-400 hover:text-white hover:bg-white/5"
-                  }`}
-                >
-                  <Settings size={20} />
-                </button>
 
-                <div className="relative" ref={notifRef}>
-                  <button
-                    onClick={() => navigate("/notifications")}
-                    className={`p-2.5 rounded-xl transition-all duration-300 ${
-                      showNotifications
-                        ? "bg-blue-500/10 text-blue-400"
-                        : "text-gray-400 hover:text-white hover:bg-white/5"
-                    }`}
-                  >
-                    <Bell size={20} />
-                    {hasNotifications && (
-                      <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-blue-500 rounded-full ring-2 ring-gray-900 shadow-lg shadow-blue-500/20" />
-                    )}
-                  </button>
-
-                  <AnimatePresence>
-                    {showNotifications && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 15, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        className="absolute right-0 top-full mt-3 w-80 sm:w-96 bg-gray-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50"
-                      >
-                        <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between bg-gray-900/50 backdrop-blur-xl">
-                          <h3 className="font-bold text-gray-100">
-                            Notifications
-                          </h3>
-                          <span className="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full font-black uppercase tracking-wider">
-                            NEW
-                          </span>
-                        </div>
-                        <div className="max-h-100 overflow-y-auto">
-                          {relevantNotifications.length === 0 ? (
-                            <div className="p-12 text-center">
-                              <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/5 shadow-inner">
-                                <Bell size={28} className="text-gray-700" />
-                              </div>
-                              <p className="text-sm text-gray-400 font-medium tracking-tight">
-                                No notifications
-                              </p>
-                              <p className="text-[11px] text-gray-600 mt-1">
-                                We'll let you know when something happens
-                              </p>
-                            </div>
-                          ) : (
-                            <div className="py-2">
-                              {relevantNotifications.map((n) => (
-                                <button
-                                  key={n._id}
-                                  onClick={() => {
-                                    markAsRead(n._id);
-                                    const type = String(n.type).toLowerCase();
-                                    if (type === "new_customer")
-                                      navigate("/requested-customers");
-                                    if (type === "unpaid_invoice")
-                                      navigate("/billing");
-                                    if (
-                                      type === "service_reminder" ||
-                                      ["warning", "info", "error"].includes(
-                                        type,
-                                      )
-                                    )
-                                      navigate("/reminders");
-                                    setShowNotifications(false);
-                                  }}
-                                  className={`w-full flex items-start gap-4 px-5 py-4 hover:bg-white/5 transition-colors text-left border-b border-white/5 last:border-0 ${!n.read ? "bg-blue-500/5" : ""}`}
-                                >
-                                  <div
-                                    className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm border border-white/5 ${
-                                      n.type === "unpaid_invoice"
-                                        ? "bg-rose-500/10 text-rose-400"
-                                        : n.type === "new_customer"
-                                          ? "bg-blue-500/10 text-blue-400"
-                                          : n.type === "service_reminder"
-                                            ? "bg-amber-500/10 text-amber-400"
-                                            : n.type === "low_stock"
-                                              ? "bg-orange-500/10 text-orange-400"
-                                              : "bg-indigo-500/10 text-indigo-400"
-                                    }`}
-                                  >
-                                    {n.type === "unpaid_invoice" ? (
-                                      <FileText size={18} />
-                                    ) : n.type === "new_customer" ? (
-                                      <User size={18} />
-                                    ) : n.type === "service_reminder" ? (
-                                      <Clock size={18} />
-                                    ) : n.type === "low_stock" ? (
-                                      <Box size={18} />
-                                    ) : (
-                                      <Bell size={18} />
-                                    )}
-                                  </div>
-                                  <div className="min-w-0 flex-1">
-                                    <div className="flex items-center justify-between gap-2 mb-1">
-                                      <p className="text-xs font-black text-gray-200 uppercase tracking-widest truncate">
-                                        {n.title}
-                                      </p>
-                                      <span className="text-[10px] text-gray-600 font-bold whitespace-nowrap">
-                                        {new Date(
-                                          n.createdAt,
-                                        ).toLocaleTimeString([], {
-                                          hour: "2-digit",
-                                          minute: "2-digit",
-                                        })}
-                                      </span>
-                                    </div>
-                                    <p className="text-[11px] text-gray-500 leading-relaxed line-clamp-2">
-                                      {n.message}
-                                    </p>
-                                  </div>
-                                  {!n.read && (
-                                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 shadow-lg shadow-blue-500/50" />
-                                  )}
-                                </button>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                        <div className="p-3 border-t border-white/5 bg-gray-950/50">
-                          <button
-                            onClick={() => {
-                              navigate("/notifications");
-                              setShowNotifications(false);
-                            }}
-                            className="w-full py-2.5 rounded-xl bg-white/5 text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center gap-2"
-                          >
-                            View All Notifications <ArrowRight size={14} />
-                          </button>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </div>
-            )}
+            <ThemeToggle />
 
             <div className="w-px h-6 bg-white/10 mx-1 hidden sm:block" />
 
