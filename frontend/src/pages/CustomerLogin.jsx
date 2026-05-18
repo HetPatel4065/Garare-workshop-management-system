@@ -230,7 +230,7 @@ export default function CustomerLogin() {
             className="group inline-flex items-center gap-3 mb-4 cursor-pointer select-none"
             onClick={() => navigate("/portal")}
           >
-            <div className="bg-blue-600 p-2.5 rounded-xl shadow-lg shadow-blue-100 transition-all duration-300 group-hover:rotate-12 group-hover:scale-110">
+            <div className="bg-blue-600 p-2.5 rounded-xl transition-all duration-300 group-hover:scale-110">
               <Wrench className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-black text-slate-900 tracking-tighter">
@@ -264,7 +264,7 @@ export default function CustomerLogin() {
         </motion.div>
 
         {/* ── Card ──────────────────────────────────────────────── */}
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-slate-200  overflow-hidden">
           <div className="h-1 w-full bg-linear-to-r from-blue-400 via-blue-500 to-indigo-500" />
 
           <div className="p-6 sm:p-8">

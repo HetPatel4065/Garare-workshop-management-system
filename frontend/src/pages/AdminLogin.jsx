@@ -54,7 +54,7 @@ export default function AdminLogin() {
             className="group inline-flex items-center gap-3 mb-3 cursor-pointer select-none"
             onClick={() => navigate("/")}
           >
-            <div className="bg-orange-500 p-2.5 rounded-xl shadow-lg shadow-orange-200 transition-all duration-300 group-hover:rotate-12 group-hover:scale-110">
+            <div className="bg-orange-500 p-2.5 rounded-xl shadow-lg  transition-all duration-300  group-hover:scale-110">
               <Wrench className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-black text-slate-900 tracking-tighter">
@@ -81,7 +81,7 @@ export default function AdminLogin() {
         </div>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl border border-orange-100 shadow-xl shadow-orange-100/60 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-orange-100 overflow-hidden">
           {/* Orange accent bar */}
           <div className="h-1 w-full bg-linear-to-r from-orange-400 via-orange-500 to-amber-500" />
 

@@ -93,7 +93,7 @@ export default function StaffSignup() {
             className="group inline-flex items-center gap-3 mb-2 cursor-pointer select-none"
             onClick={() => navigate("/")}
           >
-            <div className="bg-violet-500 p-2.5 rounded-xl shadow-lg shadow-violet-200 transition-all duration-300 group-hover:rotate-12 group-hover:scale-110">
+            <div className="bg-violet-500 p-2.5 rounded-xl  shadow-violet-200 transition-all duration-300group-hover:scale-110">
               <Wrench className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-black text-slate-900 tracking-tighter">
@@ -120,7 +120,7 @@ export default function StaffSignup() {
         </div>
 
         {/* ── Card ─────────────────────────────────────────────── */}
-        <div className="bg-white rounded-2xl border border-violet-100 shadow-xl shadow-violet-100/60 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-violet-100 overflow-hidden">
           <div className="h-1 w-full bg-linear-to-r from-violet-400 via-violet-500 to-purple-500" />
 
           <div className="p-6 sm:p-8">

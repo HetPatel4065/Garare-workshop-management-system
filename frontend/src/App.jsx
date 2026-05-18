@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "./context/AuthContext";
 import { getDashboardRoute } from "./utils/roles";
 
-// ── Pages ──────────────────────────────────────────────────────────────────────
+// ── Pages ─────────────────────────────────────
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";           // Role selector hub
 import OwnerLogin from "./pages/OwnerLogin";

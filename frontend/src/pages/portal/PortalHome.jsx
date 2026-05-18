@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useTransition, useRef } from "react";
+import React, { useState, useEffect, useTransition } from "react";
 import axios from "axios";
 import {
   Search,
@@ -7,13 +7,7 @@ import {
   ArrowRight,
   Wrench,
   Sparkles,
-  ChevronRight,
-  Star,
-  Shield,
-  Zap,
   X,
-  Building2,
-  Users,
 } from "lucide-react";
 import {
   motion,
@@ -64,7 +58,7 @@ export default function PortalHome() {
   const headerBg = useTransform(
     scrollY,
     [0, 60],
-    ["rgba(255,255,255,0.7)", "rgba(255,255,255,0.95)"],
+    ["rgba(15, 23, 42, 0.7)", "rgba(15, 23, 42, 0.95)"], // Interpolates Slate-900 alphas
   );
 
   const getPortalToken = () =>
@@ -106,16 +100,17 @@ export default function PortalHome() {
 
   /* ═══════════════ RENDER ═══════════════ */
   return (
-    <div className="min-h-screen bg-slate-50/50 font-sans selection:bg-blue-100 selection:text-blue-700">
+    /* Explicitly added light background and slate text colors to counter structural dark mode configs */
+    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-100 selection:text-blue-700">
       {/* ── Header ── */}
       <motion.header
         style={{ backgroundColor: headerBg }}
-        className="sticky top-0 z-40 backdrop-blur-xl border-b border-slate-200/60 px-6 py-3.5"
+        className="sticky top-0 z-40 backdrop-blur-xl border-b border-slate-100 px-6 py-3.5"
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="flex items-center gap-3 group"
+            className="flex items-center gap-3 group bg-transparent border-none cursor-pointer"
           >
             <div className="bg-blue-600 p-2.5 rounded-[10px] shadow-sm shadow-blue-200 group-hover:bg-blue-700 group-hover:shadow-blue-300 transition-all duration-200">
               <Wrench className="w-4 h-4 text-white" strokeWidth={2.5} />
@@ -152,10 +147,6 @@ export default function PortalHome() {
       <main>
         {/* ── Hero ── */}
         <section className="relative overflow-hidden">
-          {/* Decorative blobs — subtle, no color change */}
-          <div className="absolute -top-32 -right-32 w-125 h-125 bg-blue-50 rounded-full opacity-60 blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-16 -left-24 w-90 h-90 bg-indigo-50 rounded-full opacity-50 blur-3xl pointer-events-none" />
-
           <div className="relative max-w-7xl mx-auto px-6 pt-16 pb-14 text-center">
             {/* Badge */}
             <motion.div
@@ -168,12 +159,7 @@ export default function PortalHome() {
             </motion.div>
 
             {/* Headline */}
-            <motion.h1
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.07 }}
-              className="text-[3rem] md:text-[4rem] font-black text-slate-900 tracking-tight leading-[1.06] mb-5"
-            >
+            <motion.h1 className="text-[3rem] md:text-[4rem] font-black text-slate-900 tracking-tight leading-[1.06] mb-5">
               Your vehicle deserves
               <br />
               <span className="text-blue-600">expert care.</span>
@@ -249,7 +235,7 @@ export default function PortalHome() {
                 {searchQuery && (
                   <button
                     onClick={clearSearch}
-                    className="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors"
+                    className="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition-colors bg-transparent border-none cursor-pointer"
                   >
                     <X className="w-3 h-3" /> Clear
                   </button>
@@ -285,8 +271,8 @@ export default function PortalHome() {
                     }}
                     className="group relative bg-white rounded-2xl border border-slate-100 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-50 transition-all duration-300 cursor-pointer overflow-hidden"
                   >
-                    {/* Top accent */}
-                    <div className="absolute inset-x-0 top-0 h-0.75 bg-linear-to-r from-blue-500 to-indigo-500 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 rounded-t-2xl" />
+                    {/* Top accent line */}
+                    <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 rounded-t-2xl" />
 
                     <div className="p-5">
                       {/* Top row */}
@@ -375,7 +361,7 @@ export default function PortalHome() {
               </p>
               <button
                 onClick={clearSearch}
-                className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors underline underline-offset-2"
+                className="text-sm font-semibold text-blue-600 hover:text-blue-800 transition-colors underline underline-offset-2 bg-transparent border-none cursor-pointer"
               >
                 Clear search
               </button>

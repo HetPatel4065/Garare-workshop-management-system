@@ -92,7 +92,7 @@ export default function OwnerSignup() {
             className="group inline-flex items-center gap-3 mb-2 cursor-pointer select-none"
             onClick={() => navigate("/")}
           >
-            <div className="bg-emerald-500 p-2.5 rounded-xl shadow-lg shadow-emerald-200 transition-all duration-300 group-hover:rotate-12 group-hover:scale-110">
+            <div className="bg-emerald-500 p-2.5 rounded-xl transition-all duration-300 group-hover:scale-110">
               <Wrench className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-black text-slate-900 tracking-tighter">
@@ -119,7 +119,7 @@ export default function OwnerSignup() {
         </div>
 
         {/* ── Card ─────────────────────────────────────────────── */}
-        <div className="bg-white rounded-2xl border border-emerald-100 shadow-xl shadow-emerald-100/60 overflow-hidden">
+        <div className="bg-white rounded-2xl border border-emerald-100  overflow-hidden">
           <div className="h-1 w-full bg-linear-to-r from-emerald-400 via-emerald-500 to-teal-500" />
 
           <div className="p-6 sm:p-8">
