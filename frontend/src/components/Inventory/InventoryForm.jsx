@@ -202,7 +202,7 @@ export default function InventoryForm({
                 Low Stock
               </span>
             ) : (
-              <span className="text-sm font-bold px-3 py-1 rounded-full border text-green-700 bg-green-50 border-green-200">
+              <span className="text-sm font-bold px-3 py-1 rounded-full border text-emerald-700 bg-emerald-50 border-emerald-200">
                 In Stock
               </span>
             )}
@@ -426,10 +426,10 @@ export default function InventoryForm({
       <div className="px-3 sm:px-5 py-3 sm:py-4 border-t flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 sm:gap-3">
         <div className="flex items-center gap-2">
           <div
-            className={`w-2 h-2 rounded-full ${isInvalid && !readOnly ? "bg-red-500 animate-pulse" : "bg-green-500"}`}
+            className={`w-2 h-2 rounded-full ${isInvalid && !readOnly ? "bg-red-500 animate-pulse" : "bg-emerald-500"}`}
           />
           <span
-            className={`text-xs sm:text-sm font-medium ${isInvalid && !readOnly ? "text-red-500" : "text-green-600"}`}
+            className={`text-xs sm:text-sm font-medium ${isInvalid && !readOnly ? "text-red-500" : "text-emerald-600"}`}
           >
             {readOnly
               ? "View Only Mode"

@@ -439,7 +439,7 @@ const RegistrationModal = ({ isOpen, onClose, garage }) => {
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ type: "spring", damping: 12 }}
-                    className="absolute inset-0 bg-green-100 rounded-full"
+                    className="absolute inset-0 bg-emerald-100 rounded-full"
                   />
                   <motion.div
                     initial={{ scale: 0 }}
@@ -447,7 +447,7 @@ const RegistrationModal = ({ isOpen, onClose, garage }) => {
                     transition={{ type: "spring", damping: 12, delay: 0.1 }}
                     className="absolute inset-0 flex items-center justify-center"
                   >
-                    <CheckCircle2 className="w-16 h-16 text-green-600" />
+                    <CheckCircle2 className="w-16 h-16 text-emerald-600" />
                   </motion.div>
                 </div>
 

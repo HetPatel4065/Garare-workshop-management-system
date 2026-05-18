@@ -363,7 +363,7 @@ export default function Vehicles() {
     {
       label: "Active",
       count: statusCounts["Active"] || 0,
-      active: "bg-green-50 text-green-700 border-green-200",
+      active: "bg-emerald-50 text-emerald-700 border-emerald-200",
       inactive: "bg-white text-gray-500 border-gray-200",
     },
     {

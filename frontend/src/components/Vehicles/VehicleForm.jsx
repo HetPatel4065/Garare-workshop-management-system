@@ -161,7 +161,10 @@ export default function VehicleForm({
     return value.replace(/\b\w/g, (char) => char.toUpperCase());
   };
 
-  if ((vehicle?.licensePlate?.length ?? 0) > 0 && (vehicle?.licensePlate?.length ?? 0) < 9) {
+  if (
+    (vehicle?.licensePlate?.length ?? 0) > 0 &&
+    (vehicle?.licensePlate?.length ?? 0) < 9
+  ) {
     errors.licensePlate =
       "Plate must be at least 10 characters (e.g., GJ01AB123)";
   }
@@ -370,7 +373,9 @@ export default function VehicleForm({
               <FieldInput
                 type="date"
                 value={formatDateForInput(vehicle.nextServiceDate)}
-                onChange={(e) => handleChange("nextServiceDate", e.target.value)}
+                onChange={(e) =>
+                  handleChange("nextServiceDate", e.target.value)
+                }
                 disabled={isReadOnly}
                 min={today}
               />
@@ -395,10 +400,10 @@ export default function VehicleForm({
       <div className="shrink-0 px-6 py-4 border-t border-gray-100 flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <div
-            className={`w-2 h-2 rounded-full ${isInvalid && !isReadOnly ? "bg-red-500 animate-pulse" : "bg-green-500"}`}
+            className={`w-2 h-2 rounded-full ${isInvalid && !isReadOnly ? "bg-red-500 animate-pulse" : "bg-emerald-500"}`}
           />
           <span
-            className={`text-xs sm:text-sm font-medium ${isInvalid && !isReadOnly ? "text-red-500" : "text-green-600"}`}
+            className={`text-xs sm:text-sm font-medium ${isInvalid && !isReadOnly ? "text-red-500" : "text-emerald-600"}`}
           >
             {isReadOnly
               ? "View Only Mode"

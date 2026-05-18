@@ -4,12 +4,12 @@ import { useToast } from "../../context/ToastContext";
 const STATUS_OPTIONS = ["Active", "Inactive", "Blocked"];
 
 const STATUS_STYLES = {
-  Active: "bg-green-50 text-green-700 border-green-200",
+  Active: "bg-emerald-50 text-emerald-700 border-emerald-200",
   Inactive: "bg-gray-100 text-gray-500 border-gray-200",
   Blocked: "bg-red-50 text-red-600 border-red-200",
 };
 const STATUS_DOT = {
-  Active: "bg-green-500",
+  Active: "bg-emerald-500",
   Inactive: "bg-gray-400",
   Blocked: "bg-red-500",
 };
@@ -335,10 +335,10 @@ export default function CustomerForm({
 
         <div className="flex items-center gap-2">
           <div
-            className={`w-2 h-2 rounded-full ${isInvalid && !isReadOnly ? "bg-red-500 animate-pulse" : "bg-green-500"}`}
+            className={`w-2 h-2 rounded-full ${isInvalid && !isReadOnly ? "bg-red-500 animate-pulse" : "bg-emerald-500"}`}
           />
           <span
-            className={`text-xs sm:text-sm font-medium ${isInvalid && !isReadOnly ? "text-red-500" : "text-green-600"}`}
+            className={`text-xs sm:text-sm font-medium ${isInvalid && !isReadOnly ? "text-red-500" : "text-emerald-600"}`}
           >
             {isReadOnly
               ? "View Only Mode"

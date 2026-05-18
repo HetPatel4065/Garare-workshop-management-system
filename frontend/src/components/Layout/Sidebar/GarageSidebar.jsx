@@ -27,7 +27,6 @@ import { useAuth } from "../../../context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { ROLE_LABELS } from "../../../utils/roles";
 
-
 const NAV_SECTIONS = [
   {
     label: "Main Menu",
@@ -412,13 +411,19 @@ export default function GarageSidebar({ isOpen, onClose, showNotifications }) {
               </div>
             )}
             {(!collapsed || !isDesktop) && (
-              <span className={`shrink-0 text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full ${
-                role === "admin"    ? "bg-orange-500/20 text-orange-400" :
-                role === "owner"    ? "bg-emerald-500/20 text-emerald-400" :
-                role === "advisor"  ? "bg-violet-500/20 text-violet-400" :
-                role === "mechanic" ? "bg-violet-500/20 text-violet-400" :
-                "bg-blue-500/20 text-blue-400"
-              }`}>
+              <span
+                className={`shrink-0 text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full ${
+                  role === "admin"
+                    ? "bg-orange-500/20 text-orange-400"
+                    : role === "owner"
+                      ? "bg-emerald-500/20 text-emerald-400"
+                      : role === "advisor"
+                        ? "bg-violet-500/20 text-violet-400"
+                        : role === "mechanic"
+                          ? "bg-violet-500/20 text-violet-400"
+                          : "bg-blue-500/20 text-blue-400"
+                }`}
+              >
                 {ROLE_LABELS[role] ?? role}
               </span>
             )}

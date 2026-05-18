@@ -15,8 +15,8 @@ const STATUS_META = {
     dot: "bg-blue-500",
   },
   Completed: {
-    color: "text-green-700 bg-green-50 border-green-200",
-    dot: "bg-green-500",
+    color: "text-emerald-700 bg-emerald-50 border-emerald-200",
+    dot: "bg-emerald-500",
   },
   Cancelled: {
     color: "text-red-700 bg-red-50 border-red-200",
@@ -201,9 +201,23 @@ export default function ServiceForm({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = sessionStorage.getItem("token");
-        const headers = { Authorization: `Bearer ${token}` };
+        const token = localStorage.getItem("token");
+
+        // If there's no token at all, stop early instead of sending requests destined to fail
+        if (!token) {
+          addToast(
+            "Authentication token missing. Please log in again.",
+            "error",
+          );
+          return;
+        }
+
+        const headers = {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        };
         const ts = Date.now();
+
         const [
           custRes,
           invRes,
@@ -234,18 +248,37 @@ export default function ServiceForm({
           }),
           fetch(
             `${import.meta.env.VITE_API_URL}/auth/staff?role=mechanic&t=${ts}`,
-            {
-              headers,
-            },
+            { headers },
           ),
           fetch(
             `${import.meta.env.VITE_API_URL}/auth/staff?role=advisor&t=${ts}`,
-            {
-              headers,
-            },
+            { headers },
           ),
         ]);
 
+        // Array to easily check any authorization dropping across any of the endpoints
+        const responses = [
+          custRes,
+          invRes,
+          catalogRes,
+          settingsRes,
+          vehRes,
+          jcRes,
+          mechRes,
+          advRes,
+        ];
+        const checkUnauthorized = responses.some((res) => res.status === 401);
+
+        if (checkUnauthorized) {
+          addToast(
+            "Session expired or unauthorized access. Please re-login.",
+            "error",
+          );
+          // Optional: window.location.href = "/login";
+          return;
+        }
+
+        // Safe to process payloads now that status codes are clear
         if (custRes.ok) setCustomers(await custRes.json());
         if (invRes.ok) setInventory(await invRes.json());
         if (catalogRes.ok) setServiceCatalog(await catalogRes.json());
@@ -262,9 +295,11 @@ export default function ServiceForm({
           setAvailableAdvisors(aJson.staff || aJson);
         }
       } catch (err) {
+        console.error("Fetch dependencies root error:", err);
         addToast("Failed to fetch dependencies", "error");
       }
     };
+
     fetchData();
   }, [user?.role, user?._id]);
 
@@ -1629,7 +1664,7 @@ export default function ServiceForm({
                     key={idx}
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-all ${
                       task.status === "Done"
-                        ? "bg-green-50/60 border-green-100"
+                        ? "bg-emerald-50/60 border-emerald-100"
                         : "bg-gray-100 border-gray-200 hover:border-gray-300"
                     }`}
                   >
@@ -1641,7 +1676,7 @@ export default function ServiceForm({
                       disabled={readOnly}
                       className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
                         task.status === "Done"
-                          ? "bg-green-500 border-green-500"
+                          ? "bg-emerald-500 border-emerald-500"
                           : "border-gray-300 hover:border-gray-500"
                       } ${readOnly ? "cursor-default" : ""}`}
                     >
@@ -2044,7 +2079,7 @@ export default function ServiceForm({
                   {labourCharges.length > 0 && (
                     <div className="flex justify-between items-center bg-gray-900 text-white p-4 rounded-xl shadow-lg">
                       <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                         <span className="text-xs font-bold uppercase tracking-wider opacity-80">
                           Total Labour
                         </span>
@@ -2347,7 +2382,9 @@ export default function ServiceForm({
         <div className="flex items-center gap-2">
           <div
             className={`w-2 h-2 rounded-full ${
-              !isDisabled && !readOnly ? "bg-green-500 animate-pulse" : "hidden"
+              !isDisabled && !readOnly
+                ? "bg-emerald-500 animate-pulse"
+                : "hidden"
             }`}
           />
           <p
@@ -2357,7 +2394,7 @@ export default function ServiceForm({
                 : isDisabled && !readOnly
                   ? "text-red-500"
                   : !isDisabled && !readOnly
-                    ? "text-green-600"
+                    ? "text-emerald-600"
                     : "text-gray-400"
             }`}
           >

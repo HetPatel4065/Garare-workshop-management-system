@@ -10,16 +10,16 @@ import {
 } from "lucide-react";
 
 const toastVariants = {
-  initial: { 
-    opacity: 0, 
-    y: -24, 
-    scale: 0.9, 
-    filter: "blur(4px)" 
+  initial: {
+    opacity: 0,
+    y: -24,
+    scale: 0.9,
+    filter: "blur(4px)",
   },
-  
+
   animate: {
     opacity: 1,
-    y: 0, 
+    y: 0,
     scale: 1,
     filter: "blur(0px)",
     transition: {
@@ -40,9 +40,9 @@ const toastVariants = {
 
 const TYPE_CONFIG = {
   success: {
-    color: "text-green-600",
-    bar: "bg-green-500",
-    bg: "bg-green-200",
+    color: "text-emerald-600",
+    bar: "bg-emerald-500",
+    bg: "bg-emerald-200",
     icon: <CheckCircle size={18} strokeWidth={2.5} />,
   },
   error: {

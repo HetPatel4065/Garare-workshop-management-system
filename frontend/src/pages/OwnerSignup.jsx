@@ -1,7 +1,18 @@
 import React, { useState, useMemo } from "react";
 import { useNavigate as useNav, Link as RouterLink } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, ArrowLeft, Wrench, Store, Upload, Phone, Mail, User, MapPin } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  ArrowLeft,
+  Wrench,
+  Store,
+  Upload,
+  Phone,
+  Mail,
+  User,
+  MapPin,
+} from "lucide-react";
 import { FaCar } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 
@@ -12,7 +23,7 @@ const GREETINGS = [
   "Turbocharge your garage operations",
   "Every nut, bolt, and job card—organized",
   "Accelerate your shop's performance",
-  "Ready to build your workshop empire?"
+  "Ready to build your workshop empire?",
 ];
 
 export default function OwnerSignup() {
@@ -33,7 +44,7 @@ export default function OwnerSignup() {
 
   const greeting = useMemo(
     () => GREETINGS[Math.floor(Math.random() * GREETINGS.length)],
-    []
+    [],
   );
 
   const handleLogoChange = (e) => {
@@ -130,8 +141,16 @@ export default function OwnerSignup() {
                 animate={{ opacity: 1, scale: 1 }}
                 className="mb-5 flex items-start gap-3 p-3.5 rounded-xl bg-red-50 border border-red-100"
               >
-                <svg className="w-4 h-4 text-red-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                <svg
+                  className="w-4 h-4 text-red-500 mt-0.5 shrink-0"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clipRule="evenodd"
+                  />
                 </svg>
                 <p className="text-sm text-red-600">{error}</p>
               </motion.div>
@@ -211,7 +230,8 @@ export default function OwnerSignup() {
                     Password <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <Mail className="hidden" /> {/* Dummy so className pl-10 aligns perfectly */}
+                    <Mail className="hidden" />{" "}
+                    {/* Dummy so className pl-10 aligns perfectly */}
                     <div className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-400 flex items-center justify-center font-bold text-base select-none">
                       *
                     </div>
@@ -277,7 +297,10 @@ export default function OwnerSignup() {
                           className="w-5 h-5 rounded object-cover shrink-0"
                         />
                       ) : (
-                        <Upload size={14} className="text-emerald-400 shrink-0" />
+                        <Upload
+                          size={14}
+                          className="text-emerald-400 shrink-0"
+                        />
                       )}
                       <span className="text-xs text-slate-500 truncate group-hover:text-emerald-600 transition-colors">
                         {logo ? logo.name : "Upload Logo"}
@@ -313,9 +336,24 @@ export default function OwnerSignup() {
               >
                 {isLoading ? (
                   <>
-                    <svg className="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    <svg
+                      className="animate-spin w-4 h-4 text-white"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
                     </svg>
                     <span>Registering your business…</span>
                   </>
@@ -348,7 +386,8 @@ export default function OwnerSignup() {
 
         {/* Footer legal disclaimer */}
         <p className="mt-5 text-center text-[11px] text-slate-400 px-4">
-          By registering, you agree to our Terms of Service and Privacy Policy. All your data is encrypted natively.
+          By registering, you agree to our Terms of Service and Privacy Policy.
+          All your data is encrypted natively.
         </p>
       </motion.div>
     </div>

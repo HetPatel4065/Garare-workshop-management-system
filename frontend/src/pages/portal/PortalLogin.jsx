@@ -89,7 +89,8 @@ const PortalLogin = ({ isOpen, onClose, prefilledEmail }) => {
   useEffect(() => {
     let socket;
     if (isOpen && step === 3 && email) {
-      const socketUrl = import.meta.env.VITE_BASE_URL || "http://localhost:5000";
+      const socketUrl =
+        import.meta.env.VITE_BASE_URL || "http://localhost:5000";
       socket = io(socketUrl, { transports: ["websocket"] });
 
       socket.on("connect", () => {
@@ -173,8 +174,8 @@ const PortalLogin = ({ isOpen, onClose, prefilledEmail }) => {
           return;
         }
 
-        sessionStorage.setItem("portal_token", response.data.token);
-        sessionStorage.setItem("portal_user", JSON.stringify(response.data.user));
+        localStorage.setItem("portal_token", response.data.token);
+        localStorage.setItem("portal_user", JSON.stringify(response.data.user));
 
         const userGarage = response.data.user.garage;
         if (userGarage) {
@@ -259,7 +260,10 @@ const PortalLogin = ({ isOpen, onClose, prefilledEmail }) => {
                 className="space-y-6"
               >
                 <div className="space-y-2">
-                  <Label required className="text-sm font-bold text-slate-700 ml-1">
+                  <Label
+                    required
+                    className="text-sm font-bold text-slate-700 ml-1"
+                  >
                     Registered Email
                   </Label>
                   <div className="relative">
@@ -367,13 +371,18 @@ const PortalLogin = ({ isOpen, onClose, prefilledEmail }) => {
                 className="text-center py-4 space-y-6"
               >
                 <div className="relative mx-auto w-20 h-20">
-                  <div className={`absolute inset-0 rounded-3xl flex items-center justify-center ${
-                    registrationStatus.status === 'rejected' ? 'bg-rose-50' : 
-                    registrationStatus.status === 'approved' ? 'bg-emerald-50' : 'bg-amber-50'
-                  }`}>
-                    {registrationStatus.status === 'rejected' ? (
+                  <div
+                    className={`absolute inset-0 rounded-3xl flex items-center justify-center ${
+                      registrationStatus.status === "rejected"
+                        ? "bg-rose-50"
+                        : registrationStatus.status === "approved"
+                          ? "bg-emerald-50"
+                          : "bg-amber-50"
+                    }`}
+                  >
+                    {registrationStatus.status === "rejected" ? (
                       <AlertCircle className="w-10 h-10 text-rose-500" />
-                    ) : registrationStatus.status === 'approved' ? (
+                    ) : registrationStatus.status === "approved" ? (
                       <CheckCircle2 className="w-10 h-10 text-emerald-500" />
                     ) : (
                       <Loader2 className="w-10 h-10 text-amber-500 animate-spin" />
@@ -383,49 +392,60 @@ const PortalLogin = ({ isOpen, onClose, prefilledEmail }) => {
 
                 <div className="space-y-2">
                   <h4 className="text-2xl font-black text-slate-900">
-                    {registrationStatus.status === 'rejected' 
-                      ? "Registration Rejected" 
-                      : registrationStatus.status === 'approved'
-                      ? "Request Approved!"
-                      : "Request Pending"}
+                    {registrationStatus.status === "rejected"
+                      ? "Registration Rejected"
+                      : registrationStatus.status === "approved"
+                        ? "Request Approved!"
+                        : "Request Pending"}
                   </h4>
                   <p className="text-slate-500 text-sm">
-                    {registrationStatus.status === 'rejected' 
+                    {registrationStatus.status === "rejected"
                       ? `Hi ${registrationStatus.customerName}, unfortunately your request at ${registrationStatus.garageName} was not approved.`
-                      : registrationStatus.status === 'approved'
-                      ? `Great news ${registrationStatus.customerName}! Your request at ${registrationStatus.garageName} has been approved.`
-                      : `Hi ${registrationStatus.customerName}, your request at ${registrationStatus.garageName} is still being reviewed.`
-                    }
+                      : registrationStatus.status === "approved"
+                        ? `Great news ${registrationStatus.customerName}! Your request at ${registrationStatus.garageName} has been approved.`
+                        : `Hi ${registrationStatus.customerName}, your request at ${registrationStatus.garageName} is still being reviewed.`}
                   </p>
 
-                  {registrationStatus.status === 'approved' && registrationStatus.appointmentDate && (
-                    <div className="mt-4 p-5 bg-emerald-50 border border-emerald-100 rounded-[2rem] text-center shadow-sm">
-                      <p className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-2">Confirmed Appointment</p>
-                      <div className="flex flex-col items-center gap-1">
-                        <p className="text-lg font-black text-slate-900">
-                          {new Date(registrationStatus.appointmentDate).toLocaleDateString("en-IN", {
-                            day: "2-digit",
-                            month: "long",
-                            year: "numeric",
-                          })}
+                  {registrationStatus.status === "approved" &&
+                    registrationStatus.appointmentDate && (
+                      <div className="mt-4 p-5 bg-emerald-50 border border-emerald-100 rounded-[2rem] text-center shadow-sm">
+                        <p className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-2">
+                          Confirmed Appointment
                         </p>
-                        <div className="flex items-center gap-2 text-emerald-700 font-bold">
-                          <Clock className="w-4 h-4" />
-                          <span>{registrationStatus.appointmentTime || "10:00 AM"}</span>
+                        <div className="flex flex-col items-center gap-1">
+                          <p className="text-lg font-black text-slate-900">
+                            {new Date(
+                              registrationStatus.appointmentDate,
+                            ).toLocaleDateString("en-IN", {
+                              day: "2-digit",
+                              month: "long",
+                              year: "numeric",
+                            })}
+                          </p>
+                          <div className="flex items-center gap-2 text-emerald-700 font-bold">
+                            <Clock className="w-4 h-4" />
+                            <span>
+                              {registrationStatus.appointmentTime || "10:00 AM"}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {registrationStatus.status === 'rejected' && registrationStatus.reason && (
-                    <div className="mt-4 p-4 bg-rose-50 border border-rose-100 rounded-2xl text-left">
-                      <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-1">Reason for rejection</p>
-                      <p className="text-sm font-bold text-rose-700">{registrationStatus.reason}</p>
-                    </div>
-                  )}
+                  {registrationStatus.status === "rejected" &&
+                    registrationStatus.reason && (
+                      <div className="mt-4 p-4 bg-rose-50 border border-rose-100 rounded-2xl text-left">
+                        <p className="text-[10px] font-black text-rose-400 uppercase tracking-widest mb-1">
+                          Reason for rejection
+                        </p>
+                        <p className="text-sm font-bold text-rose-700">
+                          {registrationStatus.reason}
+                        </p>
+                      </div>
+                    )}
                 </div>
 
-                {registrationStatus.status === 'approved' ? (
+                {registrationStatus.status === "approved" ? (
                   <button
                     onClick={() => setStep(1)}
                     className="w-full bg-blue-600 text-white py-5 rounded-3xl font-bold text-lg hover:bg-blue-700 transition-all shadow-xl shadow-blue-200"

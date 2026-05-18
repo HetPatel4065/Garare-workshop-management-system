@@ -36,8 +36,8 @@ const ServiceHistoryItem = ({ svc, isOpen, toggleExpand }) => {
               {(Array.isArray(svc.serviceName)
                 ? svc.serviceName
                 : (svc.serviceName || "General Maintenance")
-                  .split("\n")
-                  .filter(Boolean)
+                    .split("\n")
+                    .filter(Boolean)
               )
                 .map((item) =>
                   ((typeof item === "object" ? item.name : item) || "").trim(),
@@ -68,10 +68,11 @@ const ServiceHistoryItem = ({ svc, isOpen, toggleExpand }) => {
         <div className="flex items-center gap-4 shrink-0">
           <div className="hidden md:flex flex-col items-end gap-1">
             <span
-              className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${svc.status === "Completed"
-                ? "bg-green-50 text-green-600 border-green-100"
-                : "bg-blue-50 text-blue-600 border-blue-100"
-                }`}
+              className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${
+                svc.status === "Completed"
+                  ? "bg-emerald-50 text-emerald-600 border-emerald-100"
+                  : "bg-blue-50 text-blue-600 border-blue-100"
+              }`}
             >
               {svc.status}
             </span>

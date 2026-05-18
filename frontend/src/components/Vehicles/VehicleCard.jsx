@@ -27,9 +27,9 @@ export default function VehicleCard({
 }) {
   // Define status colors based on your requirements
   const statusStyles = {
-    "WITH OWNER": "bg-green-100 text-green-700 border-green-200",
+    "WITH OWNER": "bg-emerald-100 text-emerald-700 border-emerald-200",
     "IN GARAGE": "bg-blue-100 text-blue-700 border-blue-200",
-    "ARCHIVED": "bg-amber-100 text-amber-700 border-amber-200",
+    ARCHIVED: "bg-amber-100 text-amber-700 border-amber-200",
   };
 
   const currentStatus = vehicle.status?.toUpperCase() || "ACTIVE";
@@ -39,7 +39,6 @@ export default function VehicleCard({
 
   return (
     <div className="bg-white rounded-3xl p-4 sm:p-5 mb-4 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] transition-all duration-300 border border-slate-100 shadow-sm relative overflow-hidden group h-full flex flex-col">
-
       {/* ── TOP ROW ── */}
       <div className="flex flex-wrap items-center gap-3 mb-6 relative z-10">
         <h3 className="text-xl font-bold capitalize text-slate-900 tracking-tight">

@@ -7,7 +7,7 @@ function PaymentStatusBadge({ status }) {
   const statusConfig = {
     paid: {
       label: "Paid",
-      className: "bg-green-100 text-green-600 border-green-100",
+      className: "bg-emerald-100 text-emerald-600 border-emerald-100",
     },
     pending: {
       label: "Pending",
@@ -27,17 +27,18 @@ function PaymentStatusBadge({ status }) {
     },
   };
 
-  const current =
-    statusConfig[normalizedStatus] || {
-      label: status || "Unknown",
-      className: "bg-gray-50 text-gray-500 border-gray-100",
-    };
+  const current = statusConfig[normalizedStatus] || {
+    label: status || "Unknown",
+    className: "bg-gray-50 text-gray-500 border-gray-100",
+  };
 
   return (
     <span
       className={`px-3 py-1 rounded-full text-[10px] font-black tracking-wide uppercase border flex items-center gap-1.5 shadow-sm ${current.className}`}
     >
-      <span className={`w-1.5 h-1.5 rounded-full ${normalizedStatus === 'paid' ? 'bg-green-500' : normalizedStatus === 'overdue' ? 'bg-red-500' : 'bg-current'}`} />
+      <span
+        className={`w-1.5 h-1.5 rounded-full ${normalizedStatus === "paid" ? "bg-emerald-500" : normalizedStatus === "overdue" ? "bg-red-500" : "bg-current"}`}
+      />
       {current.label}
     </span>
   );

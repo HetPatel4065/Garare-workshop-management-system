@@ -69,7 +69,7 @@ export default memo(function InvoicePreview({
           )}
           <div className="absolute -bottom-1 -right-1.5 w-5 h-5 bg-white rounded-full p-0.5 shadow-sm">
             <div
-              className={`w-full h-full rounded-full ${invoice.status === "Paid" ? "bg-green-500" : "bg-amber-500 animate-pulse"}`}
+              className={`w-full h-full rounded-full ${invoice.status === "Paid" ? "bg-emerald-500" : "bg-amber-500 animate-pulse"}`}
             />
           </div>
         </div>
@@ -389,7 +389,7 @@ export default memo(function InvoicePreview({
 
                 <button
                   onClick={() => onSendWhatsApp?.(invoice)}
-                  className="flex-1 flex items-center justify-center bg-green-500 text-white py-4 rounded-3xl transition-all shadow-xl shadow-green-100 hover:bg-green-600 active:scale-95"
+                  className="flex-1 flex items-center justify-center bg-emerald-500 text-white py-4 rounded-3xl transition-all shadow-xl shadow-emerald-100 hover:bg-emerald-600 active:scale-95"
                 >
                   <svg
                     width="22"

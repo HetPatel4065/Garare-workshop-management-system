@@ -16,13 +16,20 @@ import {
 } from "lucide-react";
 import axios from "axios";
 
-const InvoiceRow = ({ invoice, isOpen, toggleExpand, getStatusColor, onRefresh, token }) => {
+const InvoiceRow = ({
+  invoice,
+  isOpen,
+  toggleExpand,
+  getStatusColor,
+  onRefresh,
+  token,
+}) => {
   const [isGenerating, setIsGenerating] = useState(false);
 
   const downloadUrl = invoice.pdfUrl
-    ? (invoice.pdfUrl.startsWith('http')
+    ? invoice.pdfUrl.startsWith("http")
       ? invoice.pdfUrl
-      : `${import.meta.env.VITE_API_URL.replace("/api", "")}${invoice.pdfUrl.startsWith('/') ? '' : '/'}${invoice.pdfUrl}`)
+      : `${import.meta.env.VITE_API_URL.replace("/api", "")}${invoice.pdfUrl.startsWith("/") ? "" : "/"}${invoice.pdfUrl}`
     : null;
 
   const getStatusIcon = (status) => {
@@ -45,7 +52,7 @@ const InvoiceRow = ({ invoice, isOpen, toggleExpand, getStatusColor, onRefresh, 
     try {
       await axios.get(
         `${import.meta.env.VITE_API_URL}/portal/invoices/${invoice._id}/pdf`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       if (onRefresh) await onRefresh();
     } catch (error) {
@@ -71,7 +78,8 @@ const InvoiceRow = ({ invoice, isOpen, toggleExpand, getStatusColor, onRefresh, 
           </div>
           <div className="min-w-0">
             <h3 className="text-lg font-bold text-slate-900 tracking-tight truncate capitalize">
-              {(invoice.services || []).map(s => s.name).join(" - ") || "Service Invoice"}
+              {(invoice.services || []).map((s) => s.name).join(" - ") ||
+                "Service Invoice"}
             </h3>
             <div className="flex items-center gap-3 mt-1 flex-wrap">
               <span className="text-[12px] font-bold text-slate-400">
@@ -101,7 +109,7 @@ const InvoiceRow = ({ invoice, isOpen, toggleExpand, getStatusColor, onRefresh, 
           <div className="text-right hidden sm:block">
             <span
               className={`flex items-center justify-end gap-1.5 mb-1 text-[10px] font-black uppercase tracking-widest ${getStatusColor(
-                invoice.status
+                invoice.status,
               )} bg-transparent border-none p-0`}
             >
               {getStatusIcon(invoice.status)}
@@ -150,18 +158,25 @@ const InvoiceRow = ({ invoice, isOpen, toggleExpand, getStatusColor, onRefresh, 
                   {hasServices && (
                     <div className="animate-in fade-in slide-in-from-left-4 duration-300">
                       <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                        <Tag className="w-3.5 h-3.5 text-blue-500" /> Service Charges
+                        <Tag className="w-3.5 h-3.5 text-blue-500" /> Service
+                        Charges
                       </h4>
                       <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
                         <table className="w-full text-sm text-left">
                           <tbody className="divide-y divide-slate-50">
                             {invoice.services.map((s, i) => (
-                              <tr key={i} className="hover:bg-slate-50 transition-colors">
+                              <tr
+                                key={i}
+                                className="hover:bg-slate-50 transition-colors"
+                              >
                                 <td className="px-5 py-3 font-bold text-slate-800 capitalize">
                                   {s.name}
                                 </td>
                                 <td className="px-5 py-3 font-black text-slate-900 text-right">
-                                  ₹{Number(s.priceSnapshot || s.total).toLocaleString("en-IN")}
+                                  ₹
+                                  {Number(
+                                    s.priceSnapshot || s.total,
+                                  ).toLocaleString("en-IN")}
                                 </td>
                               </tr>
                             ))}
@@ -175,14 +190,18 @@ const InvoiceRow = ({ invoice, isOpen, toggleExpand, getStatusColor, onRefresh, 
                   {invoice.labor && invoice.labor.priceSnapshot > 0 && (
                     <div className="animate-in fade-in slide-in-from-left-4 duration-300 delay-75">
                       <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                        <Wrench className="w-3.5 h-3.5 text-orange-500" /> Labour Charges
+                        <Wrench className="w-3.5 h-3.5 text-orange-500" />{" "}
+                        Labour Charges
                       </h4>
                       <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm flex justify-between items-center">
                         <span className="text-sm font-bold text-slate-800">
                           {invoice.labor.typeOfWork || "General Labour"}
                         </span>
                         <span className="text-sm font-black text-slate-900">
-                          ₹{Number(invoice.labor.priceSnapshot).toLocaleString("en-IN")}
+                          ₹
+                          {Number(invoice.labor.priceSnapshot).toLocaleString(
+                            "en-IN",
+                          )}
                         </span>
                       </div>
                     </div>
@@ -192,24 +211,41 @@ const InvoiceRow = ({ invoice, isOpen, toggleExpand, getStatusColor, onRefresh, 
                   {hasParts && (
                     <div className="animate-in fade-in slide-in-from-left-4 duration-300 delay-150">
                       <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                        <Package className="w-3.5 h-3.5 text-green-500" /> Parts & Inventory
+                        <Package className="w-3.5 h-3.5 text-emerald-500" />{" "}
+                        Parts & Inventory
                       </h4>
                       <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
                         <table className="w-full text-sm text-left">
                           <thead className="bg-slate-50/50">
                             <tr>
-                              <th className="px-5 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">Item</th>
-                              <th className="px-5 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Qty</th>
-                              <th className="px-5 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Total</th>
+                              <th className="px-5 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                Item
+                              </th>
+                              <th className="px-5 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">
+                                Qty
+                              </th>
+                              <th className="px-5 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">
+                                Total
+                              </th>
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-slate-50">
                             {invoice.parts.map((p, i) => (
-                              <tr key={i} className="hover:bg-slate-50 transition-colors">
-                                <td className="px-5 py-3 font-bold text-slate-800 capitalize">{p.name}</td>
-                                <td className="px-5 py-3 font-bold text-slate-600 text-center">{p.quantity}</td>
+                              <tr
+                                key={i}
+                                className="hover:bg-slate-50 transition-colors"
+                              >
+                                <td className="px-5 py-3 font-bold text-slate-800 capitalize">
+                                  {p.name}
+                                </td>
+                                <td className="px-5 py-3 font-bold text-slate-600 text-center">
+                                  {p.quantity}
+                                </td>
                                 <td className="px-5 py-3 font-black text-slate-900 text-right">
-                                  ₹{Number(p.total || (p.priceSnapshot * p.quantity)).toLocaleString("en-IN")}
+                                  ₹
+                                  {Number(
+                                    p.total || p.priceSnapshot * p.quantity,
+                                  ).toLocaleString("en-IN")}
                                 </td>
                               </tr>
                             ))}
@@ -225,13 +261,21 @@ const InvoiceRow = ({ invoice, isOpen, toggleExpand, getStatusColor, onRefresh, 
                   {/* Summary Card */}
                   <div className="bg-slate-900 rounded-3xl p-8 text-white shadow-xl shadow-slate-200">
                     <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                      <PieChart className="w-4 h-4 text-blue-400" /> Payment Summary
+                      <PieChart className="w-4 h-4 text-blue-400" /> Payment
+                      Summary
                     </h4>
 
                     <div className="space-y-4">
                       <div className="flex justify-between items-center pb-4 border-b border-white/10">
-                        <span className="text-sm font-bold text-slate-400">Subtotal</span>
-                        <span className="text-sm font-black text-white">₹{Number(invoice.subTotal || 0).toLocaleString("en-IN")}</span>
+                        <span className="text-sm font-bold text-slate-400">
+                          Subtotal
+                        </span>
+                        <span className="text-sm font-black text-white">
+                          ₹
+                          {Number(invoice.subTotal || 0).toLocaleString(
+                            "en-IN",
+                          )}
+                        </span>
                       </div>
 
                       {invoice.discountAmount > 0 && (
@@ -239,27 +283,46 @@ const InvoiceRow = ({ invoice, isOpen, toggleExpand, getStatusColor, onRefresh, 
                           <span className="text-sm font-bold text-emerald-400 flex items-center gap-1.5">
                             Discount ({invoice.discountPercent}%)
                           </span>
-                          <span className="text-sm font-black text-emerald-400">-₹{Number(invoice.discountAmount).toLocaleString("en-IN")}</span>
+                          <span className="text-sm font-black text-emerald-400">
+                            -₹
+                            {Number(invoice.discountAmount).toLocaleString(
+                              "en-IN",
+                            )}
+                          </span>
                         </div>
                       )}
 
                       <div className="flex justify-between items-center pb-4 border-b border-white/10">
-                        <span className="text-sm font-bold text-slate-400">Tax (GST)</span>
-                        <span className="text-sm font-black text-white">₹{Number(invoice.gst || 0).toLocaleString("en-IN")}</span>
+                        <span className="text-sm font-bold text-slate-400">
+                          Tax (GST)
+                        </span>
+                        <span className="text-sm font-black text-white">
+                          ₹{Number(invoice.gst || 0).toLocaleString("en-IN")}
+                        </span>
                       </div>
 
                       <div className="flex justify-between items-center pt-2">
                         <div className="flex flex-col">
-                          <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Grand Total</span>
+                          <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">
+                            Grand Total
+                          </span>
                           <span className="text-3xl font-black text-white tracking-tighter mt-1">
-                            ₹{Number(invoice.totalAmount || 0).toLocaleString("en-IN")}
+                            ₹
+                            {Number(invoice.totalAmount || 0).toLocaleString(
+                              "en-IN",
+                            )}
                           </span>
                         </div>
                         {invoice.amountPaid > 0 && (
                           <div className="text-right">
-                            <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Paid</span>
+                            <span className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">
+                              Paid
+                            </span>
                             <span className="block text-lg font-black text-emerald-400">
-                              ₹{Number(invoice.amountPaid).toLocaleString("en-IN")}
+                              ₹
+                              {Number(invoice.amountPaid).toLocaleString(
+                                "en-IN",
+                              )}
                             </span>
                           </div>
                         )}

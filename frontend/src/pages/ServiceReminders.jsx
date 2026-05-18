@@ -213,9 +213,16 @@ function ReminderCard({ r, onSendEmail, onSendSMS, onCall }) {
 
       {/* ── META GRID ── */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-4 mb-4">
-        <MetaField label="Customer" primary={r.customerId?.name || r.customerName || "Walk-in"} />
+        <MetaField
+          label="Customer"
+          primary={r.customerId?.name || r.customerName || "Walk-in"}
+        />
         <MetaField label="Phone" primary={r.customerId?.phone || "—"} />
-        <MetaField label="Email" primary={r.customerId?.email || "—"} noCapitalize />
+        <MetaField
+          label="Email"
+          primary={r.customerId?.email || "—"}
+          noCapitalize
+        />
         <MetaField
           label="Due Date"
           primary={format(new Date(r.nextServiceDate), "dd MMM yyyy")}
@@ -418,12 +425,12 @@ export default function ServiceReminders() {
       icon: Users,
       value: "All",
       colorClasses: {
-        activeBg: "bg-blue-50",
-        activeBorder: "border-blue-200",
-        iconBg: "bg-blue-100",
-        iconColor: "text-blue-600",
-        label: "text-blue-600",
-        count: "text-blue-700",
+        activeBg: "bg-blue-50 dark:bg-blue-950/40",
+        activeBorder: "border-blue-200 dark:border-blue-800",
+        iconBg: "bg-blue-100 dark:bg-blue-900/50",
+        iconColor: "text-blue-600 dark:text-blue-400",
+        label: "text-blue-600 dark:text-blue-400",
+        count: "text-blue-700 dark:text-blue-300",
       },
     },
     {
@@ -432,12 +439,12 @@ export default function ServiceReminders() {
       icon: Clock,
       value: "Today",
       colorClasses: {
-        activeBg: "bg-amber-50",
-        activeBorder: "border-amber-200",
-        iconBg: "bg-amber-100",
-        iconColor: "text-amber-600",
-        label: "text-amber-600",
-        count: "text-amber-700",
+        activeBg: "bg-amber-50 dark:bg-amber-950/40",
+        activeBorder: "border-amber-200 dark:border-amber-800",
+        iconBg: "bg-amber-100 dark:bg-amber-900/50",
+        iconColor: "text-amber-600 dark:text-amber-400",
+        label: "text-amber-600 dark:text-amber-400",
+        count: "text-amber-700 dark:text-amber-300",
       },
     },
     {
@@ -446,12 +453,12 @@ export default function ServiceReminders() {
       icon: Calendar,
       value: "Upcoming",
       colorClasses: {
-        activeBg: "bg-indigo-50",
-        activeBorder: "border-indigo-200",
-        iconBg: "bg-indigo-100",
-        iconColor: "text-indigo-600",
-        label: "text-indigo-600",
-        count: "text-indigo-700",
+        activeBg: "bg-indigo-50 dark:bg-indigo-950/40",
+        activeBorder: "border-indigo-200 dark:border-indigo-800",
+        iconBg: "bg-indigo-100 dark:bg-indigo-900/50",
+        iconColor: "text-indigo-600 dark:text-indigo-400",
+        label: "text-indigo-600 dark:text-indigo-400",
+        count: "text-indigo-700 dark:text-indigo-300",
       },
     },
     {
@@ -460,12 +467,12 @@ export default function ServiceReminders() {
       icon: AlertCircle,
       value: "Overdue",
       colorClasses: {
-        activeBg: "bg-rose-50",
-        activeBorder: "border-rose-200",
-        iconBg: "bg-rose-100",
-        iconColor: "text-rose-600",
-        label: "text-rose-600",
-        count: "text-rose-700",
+        activeBg: "bg-rose-50 dark:bg-rose-950/40",
+        activeBorder: "border-rose-200 dark:border-rose-800",
+        iconBg: "bg-rose-100 dark:bg-rose-900/50",
+        iconColor: "text-rose-600 dark:text-rose-400",
+        label: "text-rose-600 dark:text-rose-400",
+        count: "text-rose-700 dark:text-rose-300",
       },
     },
     {
@@ -474,12 +481,12 @@ export default function ServiceReminders() {
       icon: CheckCircle,
       value: "Completed",
       colorClasses: {
-        activeBg: "bg-emerald-50",
-        activeBorder: "border-emerald-200",
-        iconBg: "bg-emerald-100",
-        iconColor: "text-emerald-600",
-        label: "text-emerald-600",
-        count: "text-emerald-700",
+        activeBg: "bg-emerald-50 dark:bg-emerald-950/40",
+        activeBorder: "border-emerald-200 dark:border-emerald-800",
+        iconBg: "bg-emerald-100 dark:bg-emerald-900/50",
+        iconColor: "text-emerald-600 dark:text-emerald-400",
+        label: "text-emerald-600 dark:text-emerald-400",
+        count: "text-emerald-700 dark:text-emerald-300",
       },
     },
   ];

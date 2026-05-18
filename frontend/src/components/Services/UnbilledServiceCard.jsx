@@ -104,7 +104,7 @@ export default function UnbilledServiceCard({ service, onGenerate }) {
         <span
           className={`text-[10px] sm:text-[11px] font-black px-3 py-1 rounded-full whitespace-nowrap self-start ${
             service.status === "Completed"
-              ? "bg-green-50 text-green-600 border border-green-100"
+              ? "bg-emerald-50 text-emerald-600 border border-emerald-100"
               : "bg-blue-50 text-blue-600 border border-blue-100"
           }`}
         >

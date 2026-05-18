@@ -460,7 +460,7 @@ export default function SearchPage() {
                       <span
                         className={
                           (item.stock ?? item.quantity) > 5
-                            ? "text-green-600"
+                            ? "text-emerald-600"
                             : "text-red-600 font-medium"
                         }
                       >

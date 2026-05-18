@@ -113,27 +113,6 @@ function ToggleItem({
   );
 }
 
-function SectionHeader({ title, desc, onAdd, hideAdd }) {
-  return (
-    <div className="flex justify-between items-end">
-      <div>
-        <h4 className="text-md font-black text-slate-800 capitalize tracking-wide">
-          {title}
-        </h4>
-        <p className="text-xs text-slate-500">{desc}</p>
-      </div>
-      {!hideAdd && (
-        <button
-          onClick={onAdd}
-          className="flex items-center gap-1.5 text-blue-600 hover:bg-blue-50 px-3 py-1.5 rounded-xl text-sm font-bold transition-colors"
-        >
-          <Plus size={16} /> Add New
-        </button>
-      )}
-    </div>
-  );
-}
-
 function InputField({
   label,
   name,
@@ -743,7 +722,7 @@ export default function Settings() {
                   className={`flex items-center gap-2 px-6 py-3.5 text-sm font-bold rounded-2xl transition-all whitespace-nowrap
                   ${
                     isActive
-                      ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
+                      ? "bg-blue-600 text-white"
                       : "bg-white text-slate-500 hover:bg-slate-50 border border-slate-100"
                   }`}
                 >
@@ -756,14 +735,14 @@ export default function Settings() {
             })}
           </div>
 
-          <div className="flex-1 bg-white rounded-2xl md:rounded-4xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 overflow-hidden">
+          <div className="flex-1 bg-white rounded-2xl md:rounded-4xl border border-slate-100 overflow-hidden">
             <div className="p-6 md:p-10">
               {activeTab === "business" && isAdmin && (
                 <div className="space-y-12 animate-in fade-in slide-in-from-right-4">
                   {/* OWNER INFORMATION */}
                   <section className="space-y-6">
                     <div className="flex items-center gap-3">
-                      <div className="w-1.5 h-6 bg-black rounded-full" />
+                      <div className="w-1.5 h-6 bg-black dark:bg-white rounded-full" />
                       <h3 className="text-lg font-bold text-slate-800">
                         Owner Profile Details
                       </h3>
@@ -854,40 +833,60 @@ export default function Settings() {
 
               {activeTab === "catalog" && (
                 <div className="space-y-6">
-                  <SectionHeader
-                    title="Service Packages"
-                    desc="Define standard fixed-price services."
-                    onAdd={() => {
-                      handleChange();
-                      setCatalog([
-                        ...catalog,
-                        { name: "", defaultPrice: 0, category: "General" },
-                      ]);
-                    }}
-                  />
+                  {/* --- NATIVE REPLACEMENT HEADER ASSEMBLY --- */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
+                    <div className="flex items-start gap-3">
+                      <div className="w-1.5 h-6 bg-black dark:bg-white rounded-full" />
+                      <div>
+                        <h3 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">
+                          Service Packages
+                        </h3>
+                        <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+                          Define standard fixed-price services.
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleChange();
+                        setCatalog([
+                          ...catalog,
+                          { name: "", defaultPrice: 0, category: "General" },
+                        ]);
+                      }}
+                      className="self-start sm:self-auto bg-slate-900 dark:bg-slate-100 hover:bg-blue-600 dark:hover:bg-blue-600 text-white dark:text-slate-900 hover:text-white dark:hover:text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all shadow-md active:scale-95 flex items-center gap-2"
+                    >
+                      <Plus size={14} />
+                      Add New
+                    </button>
+                  </div>
+
+                  {/* --- CATALOG CONTENT --- */}
                   <div className="space-y-4">
                     {/* Desktop Header */}
                     {catalog.length > 0 && (
                       <div className="hidden md:flex gap-4 px-5 mb-2">
-                        <div className="flex-1 text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">
+                        <div className="flex-1 text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest ml-1">
                           Service Package Name
                         </div>
-                        <div className="w-48 text-[10px] font-black uppercase text-slate-400 tracking-widest ml-1">
+                        <div className="w-48 text-[10px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest ml-1">
                           Default Base Price
                         </div>
-                        {<div className="w-12"></div>}
+                        <div className="w-12"></div>
                       </div>
                     )}
 
                     {catalog.length === 0 && (
-                      <div className="flex flex-col items-center justify-center py-12 px-4 bg-slate-50 border-2 border-dashed border-slate-100 rounded-4xl text-center animate-in fade-in zoom-in-95 duration-300">
-                        <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-slate-300 shadow-sm mb-4">
+                      <div className="flex flex-col items-center justify-center py-12 px-4 bg-slate-50 dark:bg-slate-950/20 border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-3xl text-center animate-in fade-in zoom-in-95 duration-300">
+                        <div className="w-14 h-14 bg-white dark:bg-slate-900 rounded-2xl flex items-center justify-center text-slate-300 dark:text-slate-700 shadow-sm mb-4">
                           <List size={28} />
                         </div>
-                        <h5 className="text-sm font-bold text-slate-800">
+                        <h5 className="text-sm font-bold text-slate-800 dark:text-slate-200">
                           No Service Packages Found
                         </h5>
-                        <p className="text-xs text-slate-500 mt-1 max-w-50 mx-auto">
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-50 mx-auto">
                           Click "Add New" to define your standard service
                           prices.
                         </p>
@@ -897,11 +896,11 @@ export default function Settings() {
                     {catalog.map((s, idx) => (
                       <div
                         key={idx}
-                        className="relative overflow-hidden group cursor-pointer bg-slate-50 p-5 rounded-3xl border border-slate-100 shadow-sm hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] transition-all duration-300"
+                        className="relative overflow-hidden group cursor-pointer bg-slate-50 dark:bg-slate-950/20 p-5 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] transition-all duration-300"
                       >
                         <div className="relative z-10 w-full flex flex-col md:flex-row items-start md:items-center gap-4">
                           <div className="flex-1 w-full">
-                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider px-1 mb-1 block md:hidden">
+                            <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider px-1 mb-1 block md:hidden">
                               Service Name
                             </label>
                             <input
@@ -915,15 +914,15 @@ export default function Settings() {
                                 );
                                 setCatalog(updated);
                               }}
-                              className="w-full border border-slate-200 rounded-2xl px-6 py-4 text-sm font-bold text-slate-800 focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all hover:border-slate-300 bg-white disabled:bg-slate-100 disabled:text-slate-500"
+                              className="w-full border border-slate-200 dark:border-slate-800 rounded-2xl px-6 py-4 text-sm font-bold text-slate-800 dark:text-slate-200 focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900 disabled:bg-slate-100 dark:disabled:bg-slate-950 disabled:text-slate-500"
                             />
                           </div>
                           <div className="w-full md:w-48">
-                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider px-1 mb-1 block md:hidden">
+                            <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider px-1 mb-1 block md:hidden">
                               Default Price
                             </label>
                             <div className="relative">
-                              <span className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">
+                              <span className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 font-bold">
                                 ₹
                               </span>
                               <input
@@ -935,11 +934,12 @@ export default function Settings() {
                                   updated[idx].defaultPrice = e.target.value;
                                   setCatalog(updated);
                                 }}
-                                className="w-full border border-slate-200 rounded-2xl pl-10 pr-6 py-4 text-sm font-black text-slate-800 focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all hover:border-slate-300 bg-white disabled:bg-slate-100 disabled:text-slate-500"
+                                className="w-full border border-slate-200 dark:border-slate-800 rounded-2xl pl-10 pr-6 py-4 text-sm font-black text-slate-800 dark:text-slate-200 focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 outline-none transition-all hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900 disabled:bg-slate-100 dark:disabled:bg-slate-950 disabled:text-slate-500"
                               />
                             </div>
                           </div>
                           <button
+                            type="button"
                             onClick={() => {
                               handleChange();
                               const itemToDelete = catalog[idx];
@@ -951,7 +951,7 @@ export default function Settings() {
                               }
                               setCatalog(catalog.filter((_, i) => i !== idx));
                             }}
-                            className="self-end md:self-auto p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                            className="self-end md:self-auto p-3 text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-xl transition-all"
                           >
                             <Trash2 size={20} />
                           </button>
@@ -967,7 +967,7 @@ export default function Settings() {
                   {/* Header Section */}
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-1.5 h-6 bg-black rounded-full" />
+                      <div className="w-1.5 h-6 bg-black dark:bg-white rounded-full" />
                       <h3 className="text-lg font-bold text-slate-800">
                         Alert Preferences
                       </h3>
@@ -1018,7 +1018,7 @@ export default function Settings() {
                   {/* BACKUP & RESTORE MODULE */}
                   <div className="space-y-8">
                     <div className="flex items-center gap-3">
-                      <div className="w-1.5 h-6 bg-black rounded-full" />
+                      <div className="w-1.5 h-6 bg-black dark:bg-white rounded-full" />
                       <h3 className="text-lg font-bold text-slate-800">
                         System Backup & Restore
                       </h3>
@@ -1028,7 +1028,7 @@ export default function Settings() {
                       {/* BACKUP BOX */}
                       <div className="p-6 bg-linear-to-br from-blue-50 to-indigo-50 dark:from-zinc-900 dark:to-zinc-800/80 border border-blue-100 dark:border-zinc-800 rounded-4xl space-y-5 shadow-sm hover:shadow-md transition-all">
                         <div className="flex items-center gap-4">
-                          <div className="p-3 bg-blue-600 text-white rounded-2xl shadow-lg shadow-blue-200">
+                          <div className="p-3 bg-blue-600 text-white rounded-2xl">
                             <Download size={22} />
                           </div>
                           <div>
@@ -1058,7 +1058,7 @@ export default function Settings() {
                                 onClick={() => setBackupRange(r)}
                                 className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all ${
                                   backupRange === r
-                                    ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
+                                    ? "bg-blue-600 text-white"
                                     : "text-slate-500 hover:bg-white dark:hover:bg-zinc-800 hover:text-blue-600"
                                 }`}
                               >
@@ -1087,7 +1087,7 @@ export default function Settings() {
                       {/* RESTORE BOX */}
                       <div className="p-6 bg-linear-to-br from-slate-50 to-gray-100 dark:from-zinc-900 dark:to-zinc-800/80 border border-slate-200 dark:border-zinc-800 rounded-4xl space-y-5 shadow-sm hover:shadow-md transition-all">
                         <div className="flex items-center gap-4">
-                          <div className="p-3 bg-slate-900 dark:bg-zinc-800 text-white rounded-2xl shadow-lg shadow-slate-300">
+                          <div className="p-3 bg-slate-900 dark:bg-zinc-800 text-white rounded-2xl">
                             <History size={22} />
                           </div>
                           <div>
@@ -1115,12 +1115,12 @@ export default function Settings() {
                           <label
                             className={`flex items-center gap-4 p-4 bg-white border-2 border-dashed rounded-2xl cursor-pointer transition-all ${
                               restoreFile
-                                ? "border-green-400 bg-green-50/50"
+                                ? "border-emerald-400 bg-emerald-50/50"
                                 : "border-slate-200 hover:border-blue-400 hover:bg-blue-50/30"
                             }`}
                           >
                             <div
-                              className={`p-2.5 rounded-xl ${restoreFile ? "bg-green-500 text-white" : "bg-slate-100 text-slate-500"}`}
+                              className={`p-2.5 rounded-xl ${restoreFile ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-500"}`}
                             >
                               {restoreFile ? (
                                 <Check size={18} />
@@ -1170,8 +1170,8 @@ export default function Settings() {
 
                     {/* RESTORE RESULTS DISPLAY */}
                     {restoreResult && (
-                      <div className="animate-in fade-in zoom-in-95 duration-300 bg-green-50 border border-green-100 rounded-4xl p-6 space-y-4">
-                        <div className="flex items-center gap-2 text-green-700">
+                      <div className="animate-in fade-in zoom-in-95 duration-300 bg-emerald-50 border border-emerald-100 rounded-4xl p-6 space-y-4">
+                        <div className="flex items-center gap-2 text-emerald-700">
                           <CheckCircle2 size={18} />
                           <h5 className="font-bold text-sm">
                             Restore Completed Successfully
@@ -1182,12 +1182,12 @@ export default function Settings() {
                             ([key, count]) => (
                               <div
                                 key={key}
-                                className="bg-white/80 p-3 rounded-xl border border-green-100 flex flex-col items-center"
+                                className="bg-white/80 p-3 rounded-xl border border-emerald-100 flex flex-col items-center"
                               >
                                 <span className="text-[10px] font-black uppercase text-slate-400">
                                   {key}
                                 </span>
-                                <span className="text-lg font-black text-green-600">
+                                <span className="text-lg font-black text-emerald-600">
                                   {count}
                                 </span>
                               </div>
@@ -1220,7 +1220,7 @@ export default function Settings() {
                   {/* SECURITY TOGGLES */}
                   <div className="space-y-6">
                     <div className="flex items-center gap-3">
-                      <div className="w-1.5 h-6 bg-black rounded-full" />
+                      <div className="w-1.5 h-6 bg-black dark:bg-white rounded-full" />
                       <h3 className="text-lg font-bold text-slate-800">
                         Security Settings
                       </h3>
@@ -1248,7 +1248,7 @@ export default function Settings() {
                   {/* CHANGE PASSWORD */}
                   <div className="space-y-6">
                     <div className="flex items-center gap-3">
-                      <div className="w-1.5 h-6 bg-black rounded-full" />
+                      <div className="w-1.5 h-6 bg-black dark:bg-white rounded-full" />
                       <h3 className="text-lg font-bold text-slate-800">
                         Change Password
                       </h3>
@@ -1313,7 +1313,7 @@ export default function Settings() {
                         </div>
                       )}
                       {pwSuccess && (
-                        <div className="flex items-center gap-2 text-green-700 bg-green-50 border border-green-100 rounded-xl px-4 py-2">
+                        <div className="flex items-center gap-2 text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-2">
                           <CheckCircle2 size={14} />
                           <p className="text-xs font-semibold">{pwSuccess}</p>
                         </div>

@@ -24,29 +24,40 @@ export default function GarageLayout({ children }) {
   useEffect(() => {
     const checkReminders = async () => {
       // Only show for owner/admin and once per session
-      if (!token || !user || !["owner", "admin"].includes(user.role?.toLowerCase())) return;
-      if (sessionStorage.getItem("service_reminder_shown") === "true") return;
+      if (
+        !token ||
+        !user ||
+        !["owner", "admin"].includes(user.role?.toLowerCase())
+      )
+        return;
+      if (localStorage.getItem("service_reminder_shown") === "true") return;
 
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/vehicles`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/vehicles`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
         const urgent = res.data.filter((v) => {
-          if (!v.nextServiceDate || v.reminderStatus === "Completed") return false;
+          if (!v.nextServiceDate || v.reminderStatus === "Completed")
+            return false;
           const nextDate = new Date(v.nextServiceDate);
           nextDate.setHours(0, 0, 0, 0);
-          const diffDays = Math.ceil((nextDate - today) / (1000 * 60 * 60 * 24));
+          const diffDays = Math.ceil(
+            (nextDate - today) / (1000 * 60 * 60 * 24),
+          );
           return diffDays >= 0 && diffDays <= 3;
         });
 
         if (urgent.length > 0) {
           setUrgentReminders(urgent);
           setReminderModalOpen(true);
-          sessionStorage.setItem("service_reminder_shown", "true");
+          localStorage.setItem("service_reminder_shown", "true");
         }
       } catch (err) {
         console.error("Failed to check reminders:", err);
@@ -55,7 +66,6 @@ export default function GarageLayout({ children }) {
 
     checkReminders();
   }, [token, user]);
-
 
   // Global resize handling to disable transitions
   React.useEffect(() => {
@@ -90,7 +100,6 @@ export default function GarageLayout({ children }) {
     return () => mediaQuery.removeEventListener("change", handleMediaChange);
   }, []);
 
-
   return (
     <div className="flex h-screen bg-gray-950 overflow-hidden">
       <div
@@ -106,9 +115,7 @@ export default function GarageLayout({ children }) {
       />
 
       {/* Main content area — shrinks/grows with sidebar */}
-      <div
-        className="flex flex-col flex-1 min-w-0 overflow-hidden relative"
-      >
+      <div className="flex flex-col flex-1 min-w-0 overflow-hidden relative">
         {/* Navbar */}
         <GarageNavbar
           role={user?.role || ""}
@@ -141,6 +148,5 @@ export default function GarageLayout({ children }) {
         reminders={urgentReminders}
       />
     </div>
-
   );
 }

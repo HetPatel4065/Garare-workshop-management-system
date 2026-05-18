@@ -41,13 +41,10 @@ export const FAQ = () => {
       q: "Can I import my existing customer list?",
       a: "Definitely. You can upload your existing data using our CSV template to get your workshop up and running without manual entry.",
     },
-  ]
+  ];
 
   return (
-    <section
-      id="faq"
-      className="py-24 md:py-32 px-6 max-w-3xl mx-auto"
-    >
+    <section id="faq" className="py-24 md:py-32 px-6 max-w-3xl mx-auto">
       <div className="text-center mb-12 md:mb-16">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -59,7 +56,10 @@ export const FAQ = () => {
             border: "1px solid rgba(99,102,241,0.20)",
           }}
         >
-          <span className="text-[10px] md:text-[11px] font-bold uppercase tracking-widest" style={{ color: "#6366f1" }}>
+          <span
+            className="text-[10px] md:text-[11px] font-bold uppercase tracking-widest"
+            style={{ color: "#6366f1" }}
+          >
             Common Questions
           </span>
         </motion.div>
@@ -83,7 +83,10 @@ export const FAQ = () => {
             We've got answers.
           </span>
         </motion.h2>
-        <p className="font-medium text-sm md:text-base" style={{ color: "#64748b" }}>
+        <p
+          className="font-medium text-sm md:text-base"
+          style={{ color: "#64748b" }}
+        >
           Everything you need to know about GaragePro.
         </p>
       </div>
@@ -113,7 +116,10 @@ export const FAQ = () => {
               onClick={() => setActive(active === i ? -1 : i)}
               className="w-full px-5 md:px-8 py-5 md:py-6 flex items-center justify-between text-left"
             >
-              <span className="text-sm md:text-base font-bold" style={{ color: "#1e1b4b" }}>
+              <span
+                className="text-sm md:text-base font-bold"
+                style={{ color: "#1e1b4b" }}
+              >
                 {item.q}
               </span>
               <div
@@ -169,7 +175,8 @@ export const Footer = () => {
       <div
         className="absolute bottom-0 left-1/2 -translate-x-1/2 w-125 h-50"
         style={{
-          background: "radial-gradient(ellipse, rgba(99,102,241,0.12) 0%, transparent 70%)",
+          background:
+            "radial-gradient(ellipse, rgba(99,102,241,0.12) 0%, transparent 70%)",
           filter: "blur(60px)",
         }}
       />
@@ -186,11 +193,17 @@ export const Footer = () => {
             >
               GP
             </div>
-            <span className="text-xl font-extrabold tracking-tight" style={{ color: "#1e1b4b" }}>
+            <span
+              className="text-xl font-extrabold tracking-tight"
+              style={{ color: "#1e1b4b" }}
+            >
               GaragePro
             </span>
           </div>
-          <p className="text-sm font-medium leading-relaxed max-w-sm mb-8" style={{ color: "#64748b" }}>
+          <p
+            className="text-sm font-medium leading-relaxed max-w-sm mb-8"
+            style={{ color: "#64748b" }}
+          >
             The all-in-one operating system for modern mechanical workshops.
             Manage jobs, track inventory, and bill customers effortlessly.
           </p>
@@ -277,9 +290,27 @@ export const Footer = () => {
           </h4>
           <div className="flex flex-col gap-3">
             {[
-              { id: "light", label: "Light Mode", icon: Sun, activeColor: "text-amber-600 border-amber-300 bg-amber-50/50 dark:text-amber-400 dark:border-amber-500/30 dark:bg-amber-950/20" },
-              { id: "dark", label: "Dark Mode", icon: Moon, activeColor: "text-indigo-600 border-indigo-300 bg-indigo-50/50 dark:text-indigo-400 dark:border-indigo-500/30 dark:bg-indigo-950/20" },
-              { id: "system", label: "System", icon: Monitor, activeColor: "text-emerald-600 border-emerald-300 bg-emerald-50/50 dark:text-emerald-400 dark:border-emerald-500/30 dark:bg-emerald-950/20" }
+              {
+                id: "light",
+                label: "Light Mode",
+                icon: Sun,
+                activeColor:
+                  "text-amber-600 border-amber-300 bg-amber-50/50 dark:text-amber-400 dark:border-amber-500/30 dark:bg-amber-950/20",
+              },
+              {
+                id: "dark",
+                label: "Dark Mode",
+                icon: Moon,
+                activeColor:
+                  "text-indigo-600 border-indigo-300 bg-indigo-50/50 dark:text-indigo-400 dark:border-indigo-500/30 dark:bg-indigo-950/20",
+              },
+              {
+                id: "system",
+                label: "System",
+                icon: Monitor,
+                activeColor:
+                  "text-emerald-600 border-emerald-300 bg-emerald-50/50 dark:text-emerald-400 dark:border-emerald-500/30 dark:bg-emerald-950/20",
+              },
             ].map((opt) => {
               const Icon = opt.icon;
               const isActive = theme === opt.id;
@@ -289,7 +320,7 @@ export const Footer = () => {
                   type="button"
                   onClick={() => setTheme(opt.id)}
                   className={`flex items-center gap-3 px-4 py-3 rounded-2xl border text-[13px] font-bold tracking-wide transition-all duration-350 cursor-pointer select-none active:scale-[0.98] ${
-                    isActive 
+                    isActive
                       ? `${opt.activeColor} shadow-sm font-extrabold`
                       : "border-slate-200/80 dark:border-zinc-800 bg-white/40 hover:bg-white dark:bg-zinc-900/40 dark:hover:bg-zinc-900 text-slate-500 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-zinc-100"
                   }`}

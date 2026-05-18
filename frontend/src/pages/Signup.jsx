@@ -10,7 +10,8 @@ const SIGNUP_ROLES = [
   {
     id: "owner",
     label: "Garage Owner",
-    description: "Register your workshop and start managing staff, jobs & billing",
+    description:
+      "Register your workshop and start managing staff, jobs & billing",
     icon: Store,
     route: "/owner/signup",
     gradient: "from-emerald-500 to-teal-500",
@@ -47,7 +48,11 @@ const containerVariants = {
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: "easeOut" } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.35, ease: "easeOut" },
+  },
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -57,7 +62,6 @@ export default function Signup() {
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 sm:p-6 lg:p-8">
       <div className="w-full max-w-2xl">
-
         {/* ── Brand header ─────────────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, y: -16 }}
@@ -110,26 +114,34 @@ export default function Signup() {
                 `}
               >
                 {/* Gradient top bar */}
-                <div className={`absolute top-0 left-0 right-0 h-1 bg-linear-to-r ${card.gradient}`} />
+                <div
+                  className={`absolute top-0 left-0 right-0 h-1 bg-linear-to-r ${card.gradient}`}
+                />
 
                 <div className="flex items-start gap-4">
                   {/* Icon */}
-                  <div className={`shrink-0 w-12 h-12 rounded-xl ${card.iconBg} flex items-center justify-center`}>
+                  <div
+                    className={`shrink-0 w-12 h-12 rounded-xl ${card.iconBg} flex items-center justify-center`}
+                  >
                     <Icon className={`w-6 h-6 ${card.iconColor}`} />
                   </div>
 
                   {/* Text */}
                   <div className="flex-1 min-w-0 pt-0.5">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-base font-bold text-slate-900">{card.label}</p>
-                      <ChevronRight
-                        className="w-4 h-4 text-slate-400 group-hover:text-slate-600 group-hover:translate-x-0.5 transition-all shrink-0"
-                      />
+                      <p className="text-base font-bold text-slate-900">
+                        {card.label}
+                      </p>
+                      <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-600 group-hover:translate-x-0.5 transition-all shrink-0" />
                     </div>
-                    <p className="text-sm text-slate-500 mt-0.5 leading-snug">{card.description}</p>
+                    <p className="text-sm text-slate-500 mt-0.5 leading-snug">
+                      {card.description}
+                    </p>
 
                     {/* Tag */}
-                    <span className={`inline-block mt-2.5 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${card.tagColor} border ${card.badgeBg.split(" ")[1]}`}>
+                    <span
+                      className={`inline-block mt-2.5 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${card.tagColor} border ${card.badgeBg.split(" ")[1]}`}
+                    >
                       {card.tag}
                     </span>
                   </div>

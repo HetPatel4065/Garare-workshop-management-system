@@ -6,7 +6,7 @@ import { getDashboardRoute } from "./utils/roles";
 
 // ── Pages ─────────────────────────────────────
 import LandingPage from "./pages/LandingPage";
-import Login from "./pages/Login";           // Role selector hub
+import Login from "./pages/Login"; // Role selector hub
 import OwnerLogin from "./pages/OwnerLogin";
 import StaffLogin from "./pages/StaffLogin";
 import AdminLogin from "./pages/AdminLogin";
@@ -28,7 +28,7 @@ import StaffMembers from "./pages/StaffMembers";
 import Services from "./pages/Services";
 import Vehicles from "./pages/Vehicles";
 import ServiceReminders from "./pages/ServiceReminders";
-import PortalLogin from "./pages/portal/PortalLogin";  // modal — used in PortalHome
+import PortalLogin from "./pages/portal/PortalLogin"; // modal — used in PortalHome
 import PortalHome from "./pages/portal/PortalHome";
 import PortalDashboard from "./pages/portal/PortalDashboard";
 import HelpCenter from "./pages/HelpCenter";
@@ -61,7 +61,9 @@ function PublicOnlyRoute({ children }) {
       <div className="h-screen w-screen bg-gray-950 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-gray-400 font-medium animate-pulse">Initializing…</p>
+          <p className="text-gray-400 font-medium animate-pulse">
+            Initializing…
+          </p>
         </div>
       </div>
     );
@@ -80,11 +82,11 @@ function App() {
   const location = useLocation();
 
   const [portalToken, setPortalToken] = useState(
-    sessionStorage.getItem("portal_token")
+    localStorage.getItem("portal_token"),
   );
 
   useEffect(() => {
-    setPortalToken(sessionStorage.getItem("portal_token"));
+    setPortalToken(localStorage.getItem("portal_token"));
   }, [location]);
 
   // ── Global loading screen (token being verified on boot) ────────────────
@@ -107,11 +109,14 @@ function App() {
 
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
-
           {/* ── Landing ──────────────────────────────────────────────── */}
           <Route
             path="/"
-            element={<PageTransition><LandingPage /></PageTransition>}
+            element={
+              <PageTransition>
+                <LandingPage />
+              </PageTransition>
+            }
           />
 
           {/* ── Role selector hub (shows when not authenticated) ─────── */}
@@ -119,7 +124,9 @@ function App() {
             path="/login"
             element={
               <PublicOnlyRoute>
-                <PageTransition><Login /></PageTransition>
+                <PageTransition>
+                  <Login />
+                </PageTransition>
               </PublicOnlyRoute>
             }
           />
@@ -129,7 +136,9 @@ function App() {
             path="/owner/login"
             element={
               <PublicOnlyRoute>
-                <PageTransition><OwnerLogin /></PageTransition>
+                <PageTransition>
+                  <OwnerLogin />
+                </PageTransition>
               </PublicOnlyRoute>
             }
           />
@@ -137,7 +146,9 @@ function App() {
             path="/staff/login"
             element={
               <PublicOnlyRoute>
-                <PageTransition><StaffLogin /></PageTransition>
+                <PageTransition>
+                  <StaffLogin />
+                </PageTransition>
               </PublicOnlyRoute>
             }
           />
@@ -145,7 +156,9 @@ function App() {
             path="/admin/login"
             element={
               <PublicOnlyRoute>
-                <PageTransition><AdminLogin /></PageTransition>
+                <PageTransition>
+                  <AdminLogin />
+                </PageTransition>
               </PublicOnlyRoute>
             }
           />
@@ -155,7 +168,9 @@ function App() {
             path="/signup"
             element={
               <PublicOnlyRoute>
-                <PageTransition><Signup /></PageTransition>
+                <PageTransition>
+                  <Signup />
+                </PageTransition>
               </PublicOnlyRoute>
             }
           />
@@ -163,7 +178,9 @@ function App() {
             path="/owner/signup"
             element={
               <PublicOnlyRoute>
-                <PageTransition><OwnerSignup /></PageTransition>
+                <PageTransition>
+                  <OwnerSignup />
+                </PageTransition>
               </PublicOnlyRoute>
             }
           />
@@ -171,35 +188,58 @@ function App() {
             path="/staff/signup"
             element={
               <PublicOnlyRoute>
-                <PageTransition><StaffSignup /></PageTransition>
+                <PageTransition>
+                  <StaffSignup />
+                </PageTransition>
               </PublicOnlyRoute>
             }
           />
 
           {/* ── Customer login alias → standalone CustomerLogin page ─ */}
-          <Route path="/customer/login" element={<PageTransition><CustomerLogin /></PageTransition>} />
+          <Route
+            path="/customer/login"
+            element={
+              <PageTransition>
+                <CustomerLogin />
+              </PageTransition>
+            }
+          />
 
           {/* ── Unauthorized 403 ─────────────────────────────────────── */}
           <Route
             path="/unauthorized"
-            element={<PageTransition><Unauthorized /></PageTransition>}
+            element={
+              <PageTransition>
+                <Unauthorized />
+              </PageTransition>
+            }
           />
 
           {/* ── Customer Portal (separate OTP auth) ──────────────────── */}
           <Route
             path="/portal"
-            element={<PageTransition><PortalHome /></PageTransition>}
+            element={
+              <PageTransition>
+                <PortalHome />
+              </PageTransition>
+            }
           />
           {/* /portal/login → standalone CustomerLogin (not the modal) */}
           <Route
             path="/portal/login"
-            element={<PageTransition><CustomerLogin /></PageTransition>}
+            element={
+              <PageTransition>
+                <CustomerLogin />
+              </PageTransition>
+            }
           />
           <Route
             path="/portal/dashboard"
             element={
               portalToken ? (
-                <PageTransition><PortalDashboard /></PageTransition>
+                <PageTransition>
+                  <PortalDashboard />
+                </PageTransition>
               ) : (
                 <Navigate to="/portal" replace />
               )
@@ -215,22 +255,87 @@ function App() {
             }
           >
             {/* All roles */}
-            <Route path="/dashboard" element={<PageTransition><Dashboard /></PageTransition>} />
-            <Route path="/customers" element={<PageTransition><Customers /></PageTransition>} />
-            <Route path="/vehicles" element={<PageTransition><Vehicles /></PageTransition>} />
-            <Route path="/job-cards" element={<PageTransition><JobCards /></PageTransition>} />
-            <Route path="/services" element={<PageTransition><Services /></PageTransition>} />
-            <Route path="/inventory" element={<PageTransition><Inventory /></PageTransition>} />
-            <Route path="/search" element={<PageTransition><SearchPage /></PageTransition>} />
-            <Route path="/notifications" element={<PageTransition><Notifications /></PageTransition>} />
-            <Route path="/profile" element={<PageTransition><Profile /></PageTransition>} />
+            <Route
+              path="/dashboard"
+              element={
+                <PageTransition>
+                  <Dashboard />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/customers"
+              element={
+                <PageTransition>
+                  <Customers />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/vehicles"
+              element={
+                <PageTransition>
+                  <Vehicles />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/job-cards"
+              element={
+                <PageTransition>
+                  <JobCards />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/services"
+              element={
+                <PageTransition>
+                  <Services />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/inventory"
+              element={
+                <PageTransition>
+                  <Inventory />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/search"
+              element={
+                <PageTransition>
+                  <SearchPage />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/notifications"
+              element={
+                <PageTransition>
+                  <Notifications />
+                </PageTransition>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <PageTransition>
+                  <Profile />
+                </PageTransition>
+              }
+            />
 
             {/* Owner / Admin only */}
             <Route
               path="/billing"
               element={
                 <ProtectedRoute allowedRoles={["owner", "admin"]}>
-                  <PageTransition><Billing /></PageTransition>
+                  <PageTransition>
+                    <Billing />
+                  </PageTransition>
                 </ProtectedRoute>
               }
             />
@@ -238,7 +343,9 @@ function App() {
               path="/staff-members"
               element={
                 <ProtectedRoute allowedRoles={["owner", "admin"]}>
-                  <PageTransition><StaffMembers /></PageTransition>
+                  <PageTransition>
+                    <StaffMembers />
+                  </PageTransition>
                 </ProtectedRoute>
               }
             />
@@ -246,7 +353,9 @@ function App() {
               path="/requested-customers"
               element={
                 <ProtectedRoute allowedRoles={["owner", "admin"]}>
-                  <PageTransition><RequestedCustomers /></PageTransition>
+                  <PageTransition>
+                    <RequestedCustomers />
+                  </PageTransition>
                 </ProtectedRoute>
               }
             />
@@ -254,7 +363,9 @@ function App() {
               path="/reminders"
               element={
                 <ProtectedRoute allowedRoles={["owner", "admin"]}>
-                  <PageTransition><ServiceReminders /></PageTransition>
+                  <PageTransition>
+                    <ServiceReminders />
+                  </PageTransition>
                 </ProtectedRoute>
               }
             />
@@ -262,7 +373,9 @@ function App() {
               path="/help"
               element={
                 <ProtectedRoute allowedRoles={["owner", "admin", "advisor"]}>
-                  <PageTransition><HelpCenter /></PageTransition>
+                  <PageTransition>
+                    <HelpCenter />
+                  </PageTransition>
                 </ProtectedRoute>
               }
             />
@@ -272,7 +385,9 @@ function App() {
               path="/settings"
               element={
                 <ProtectedRoute allowedRoles={["owner", "admin", "advisor"]}>
-                  <PageTransition><Settings /></PageTransition>
+                  <PageTransition>
+                    <Settings />
+                  </PageTransition>
                 </ProtectedRoute>
               }
             />

@@ -52,7 +52,7 @@ export default function StockUpdateModal({
     <Modal isOpen={isOpen} onClose={onClose} title="Update Stock" size="sm">
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden max-w-md mx-auto"
+        className="bg-white rounded-3xl  border border-gray-100 overflow-hidden max-w-md mx-auto"
       >
         {/* Header Section */}
         <div className="px-6 pt-6 pb-4 border-b bg-gray-800">
@@ -78,7 +78,7 @@ export default function StockUpdateModal({
               <button
                 type="button"
                 onClick={() => setAmount((prev) => prev - 1)}
-                className="w-12 h-12 flex items-center justify-center rounded-xl bg-white shadow-sm border border-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-600 hover:border-red-100 active:scale-90 transition-all"
+                className="w-12 h-12 flex items-center justify-center rounded-xl bg-white  border border-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-600 hover:border-red-100 active:scale-90 transition-all"
               >
                 <Minus className="w-5 h-5" />
               </button>
@@ -95,7 +95,7 @@ export default function StockUpdateModal({
               <button
                 type="button"
                 onClick={() => setAmount((prev) => prev + 1)}
-                className="w-12 h-12 flex items-center justify-center rounded-xl bg-white shadow-sm border border-gray-100 text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-100 active:scale-90 transition-all"
+                className="w-12 h-12 flex items-center justify-center rounded-xl bg-white border border-gray-100 text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-100 active:scale-90 transition-all"
               >
                 <Plus className="w-5 h-5" />
               </button>
@@ -128,10 +128,8 @@ export default function StockUpdateModal({
           {/* New Stock Preview */}
           <div
             className={`rounded-2xl p-4 flex justify-between items-center transition-all duration-500 ${
-              newStock < 5
-                ? "bg-orange-500 shadow-orange-200"
-                : "bg-slate-900 shadow-slate-200"
-            } shadow-lg text-white`}
+              newStock < 5 ? "bg-orange-500" : "bg-slate-900"
+            } text-white`}
           >
             <div className="flex flex-col">
               <span className="text-sm font-medium">After update</span>
@@ -145,7 +143,7 @@ export default function StockUpdateModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 py-3 text-sm font-bold text-gray-500 hover:bg-white hover:text-gray-700 rounded-xl transition-all"
+            className="flex-1 py-3 text-sm font-bold text-gray-500 hover:bg-gray-100 hover:text-gray-700 rounded-xl transition-all"
           >
             Cancel
           </button>
@@ -156,8 +154,8 @@ export default function StockUpdateModal({
               isInvalid
                 ? "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none"
                 : amount > 0
-                  ? "bg-emerald-500 text-white shadow-emerald-200 hover:bg-emerald-600"
-                  : "bg-red-500 text-white shadow-red-200 hover:bg-red-600"
+                  ? "bg-emerald-500 text-white  hover:bg-emerald-600"
+                  : "bg-red-500 text-white hover:bg-red-600"
             }`}
           >
             {isSubmitting ? (

@@ -36,14 +36,16 @@ const PortalDashboard = ({ garageSettings }) => {
   const [expandedSvcId, setExpandedSvcId] = useState(null);
   const [expandedVehicleId, setExpandedVehicleId] = useState(null);
   const [expandedInvoiceId, setExpandedInvoiceId] = useState(null);
-  const [token, setToken] = useState(sessionStorage.getItem("portal_token") || sessionStorage.getItem("token"));
+  const [token, setToken] = useState(
+    localStorage.getItem("portal_token") || localStorage.getItem("token"),
+  );
   const navigate = useNavigate();
   const fullYear = new Date().getFullYear();
   const [user, setUser] = useState(() => {
     try {
       return (
-        JSON.parse(sessionStorage.getItem("portal_user")) ||
-        JSON.parse(sessionStorage.getItem("user")) ||
+        JSON.parse(localStorage.getItem("portal_user")) ||
+        JSON.parse(localStorage.getItem("user")) ||
         null
       );
     } catch {
@@ -52,7 +54,8 @@ const PortalDashboard = ({ garageSettings }) => {
   });
 
   useEffect(() => {
-    const storedToken = sessionStorage.getItem("portal_token") || sessionStorage.getItem("token");
+    const storedToken =
+      localStorage.getItem("portal_token") || localStorage.getItem("token");
     if (!storedToken) {
       navigate("/portal");
       return;
@@ -102,7 +105,7 @@ const PortalDashboard = ({ garageSettings }) => {
     switch (status?.toLowerCase()) {
       case "completed":
       case "paid":
-        return "bg-green-50 text-green-600 border-green-100";
+        return "bg-emerald-50 text-emerald-600 border-emerald-100";
       case "in-progress":
       case "sent":
         return "bg-blue-50 text-blue-600 border-blue-100";

@@ -28,8 +28,8 @@ const DashboardStats = ({ vehicleCount, serviceCount, invoiceCount }) => (
       </p>
     </div>
     <div className="bg-white rounded-4xl p-8 border border-slate-100 shadow-sm">
-      <div className="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center mb-6">
-        <HiDocumentCurrencyRupee className="w-7 h-7 text-green-600" />
+      <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center mb-6">
+        <HiDocumentCurrencyRupee className="w-7 h-7 text-emerald-600" />
       </div>
       <h3 className="text-4xl font-black text-slate-900 mb-2">
         {invoiceCount}

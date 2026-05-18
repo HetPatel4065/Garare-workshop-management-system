@@ -372,7 +372,7 @@ export default function Customers() {
 
       <div className="flex flex-wrap gap-2 mb-6">
         {[
-          ["Active", "bg-green-100 text-green-700 border-green-300"],
+          ["Active", "bg-emerald-100 text-emerald-700 border-emerald-300"],
           ["Pending", "bg-blue-100 text-blue-700 border-blue-300"],
           ["Inactive", "bg-gray-100 text-gray-700 border-gray-300"],
           ["Blocked", "bg-red-100 text-red-700 border-red-300"],

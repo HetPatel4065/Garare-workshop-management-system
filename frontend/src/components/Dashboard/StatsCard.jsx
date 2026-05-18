@@ -1,7 +1,6 @@
 import React from "react";
 import { ResponsiveContainer, AreaChart, Area } from "recharts";
 
-
 export function StatsGrid({ children }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4 w-full auto-rows-fr">
@@ -21,7 +20,11 @@ export default function StatsCard({
 }) {
   const colorMap = {
     blue: { bg: "bg-blue-50", text: "text-blue-600", chart: "#3b82f6" },
-    green: { bg: "bg-green-50", text: "text-green-600", chart: "#22c55e" },
+    emerald: {
+      bg: "bg-emerald-50",
+      text: "text-emerald-600",
+      chart: "#22c55e",
+    },
     yellow: { bg: "bg-yellow-50", text: "text-yellow-600", chart: "#eab308" },
     red: { bg: "bg-red-50", text: "text-red-600", chart: "#ef4444" },
     purple: { bg: "bg-purple-50", text: "text-purple-600", chart: "#a855f7" },
@@ -51,11 +54,7 @@ export default function StatsCard({
         </div>
       </div>
 
-      {children && (
-        <div className="mt-6 relative z-10">
-          {children}
-        </div>
-      )}
+      {children && <div className="mt-6 relative z-10">{children}</div>}
 
       {sparklineData.length > 0 && (
         <div className="h-12 w-full mt-4 -mx-6 opacity-40 group-hover:opacity-100 transition-all duration-700">

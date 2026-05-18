@@ -31,7 +31,7 @@ export default function CustomerCard({
   onReject,
 }) {
   const STATUS_META = {
-    Active: "text-green-700 bg-green-100 border-green-100",
+    Active: "text-emerald-700 bg-emerald-100 border-emerald-100",
     Inactive: "text-gray-600 bg-gray-100 border-gray-100",
     Blocked: "text-red-700 bg-red-100 border-red-100",
     Pending: "text-blue-700 bg-blue-100 border-blue-100",
@@ -200,7 +200,7 @@ export default function CustomerCard({
             <div className="flex gap-2 w-full sm:w-auto">
               <button
                 onClick={() => onApprove(customer._id)}
-                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 text-[12px] font-bold text-white bg-green-600 hover:bg-green-700 rounded-xl transition active:scale-95 shadow-sm shadow-green-100"
+                className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 text-[12px] font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl transition active:scale-95 shadow-sm shadow-emerald-100"
               >
                 Approve
               </button>

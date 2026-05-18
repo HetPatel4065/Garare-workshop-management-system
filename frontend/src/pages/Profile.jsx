@@ -295,13 +295,19 @@ export default function Profile({ isAdvisor }) {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-4 md:px-6 py-3 md:py-3.5 text-xs md:text-sm font-bold rounded-xl md:rounded-2xl transition-all whitespace-nowrap shrink-0
-            ${isActive
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-200"
-                    : "bg-white text-slate-500 hover:bg-slate-50 border border-slate-100"
-                  }`}
+                className={`flex items-center gap-2 px-4 md:px-6 py-3 md:py-3.5 text-xs md:text-sm font-bold rounded-xl md:rounded-2xl transition-all whitespace-nowrap shrink-0 ${
+                  isActive
+                    ? "bg-blue-600 text-white shadow-md shadow-blue-600/10"
+                    : "bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60 border border-slate-100 dark:border-slate-800"
+                }`}
               >
-                <span className={isActive ? "text-white" : "text-slate-400"}>
+                <span
+                  className={
+                    isActive
+                      ? "text-white"
+                      : "text-slate-400 dark:text-slate-500"
+                  }
+                >
                   {tab.icon}
                 </span>
                 {tab.label}
@@ -310,99 +316,102 @@ export default function Profile({ isAdvisor }) {
           })}
         </div>
 
-        {/* 2. TAB CONTENT: The white card now sits below the buttons */}
-        <div className="flex-1 bg-white rounded-2xl md:rounded-4xl shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+        {/* 2. MAIN UNIFIED CARD CONTAINER */}
+        <div className="flex-1 bg-white dark:bg-slate-900 rounded-2xl md:rounded-[2.5rem] shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 overflow-hidden">
           <div className="p-6 md:p-10">
             {activeTab === "personal" && (
               <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-300">
-                <section className="space-y-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-1.5 h-6 bg-black rounded-full" />
-                    <h3 className="text-lg font-bold text-slate-800">
-                      Personal Information
-                    </h3>
-                  </div>
-                  {/* Grid for Inputs */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <InputField
-                      label="Full Name"
-                      name="name"
-                      value={formData.name}
+                <div className="max-w-3xl mx-auto p-0.5 space-y-12">
+                  <section className="space-y-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-1.5 h-6 bg-black dark:bg-white rounded-full" />
+                      <h3 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">
+                        Personal Information
+                      </h3>
+                    </div>
+
+                    {/* Grid Layout Row */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <InputField
+                        label="Full Name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        disabled={!canEdit}
+                        icon={<User size={16} />}
+                        required
+                      />
+                      <InputField
+                        label="Email Address"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        disabled={!canEdit}
+                        icon={<Mail size={16} />}
+                        required
+                      />
+                      <InputField
+                        label="Mobile Number"
+                        name="mobileNumber"
+                        value={formData.mobileNumber || "+91 "}
+                        onChange={handlePhone}
+                        disabled={!canEdit}
+                        icon={<Phone size={16} />}
+                        placeholder="+91 XXXXX XXXXX"
+                        required
+                      />
+                    </div>
+                  </section>
+
+                  <hr className="border-slate-100 dark:border-slate-800" />
+
+                  {/* Notes Field Block */}
+                  <section className="space-y-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-1.5 h-6 bg-black dark:bg-white rounded-full" />
+                      <h3 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">
+                        Owner Notes
+                      </h3>
+                    </div>
+                    <textarea
+                      name="note"
+                      value={formData.note}
                       onChange={handleChange}
                       disabled={!canEdit}
-                      icon={<User size={16} />}
-                      required
+                      rows={4}
+                      className="w-full bg-slate-50 dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800 rounded-2xl md:rounded-3xl px-5 py-4 text-sm font-semibold text-slate-800 dark:text-slate-200 focus:ring-4 focus:ring-blue-500/5 focus:border-blue-600 outline-none transition-all resize-none placeholder:text-slate-300 dark:placeholder:text-slate-700 disabled:bg-slate-100 dark:disabled:bg-slate-900/50"
+                      placeholder="Add a short note about yourself..."
                     />
-                    <InputField
-                      label="Email Address"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      disabled={!canEdit}
-                      icon={<Mail size={16} />}
-                      required
-                    />
-                    <InputField
-                      label="Mobile Number"
-                      name="mobileNumber"
-                      value={formData.mobileNumber || "+91 "}
-                      onChange={handlePhone}
-                      disabled={!canEdit}
-                      icon={<Phone size={16} />}
-                      placeholder="+91 XXXXX XXXXX"
-                      required
-                    />
-                  </div>
-                </section>
-
-                <hr className="border-slate-100" />
-
-                {/* Owner Notes Section */}
-                <section className="space-y-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-1.5 h-6 bg-black rounded-full" />
-                    <h3 className="text-lg font-bold text-slate-800">
-                      Owner Notes
-                    </h3>
-                  </div>
-                  <textarea
-                    name="note"
-                    value={formData.note}
-                    onChange={handleChange}
-                    disabled={!canEdit}
-                    rows={4}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-4xl px-6 py-4 text-sm font-semibold text-slate-800 focus:ring-4 focus:ring-blue-500/5 focus:border-blue-600 outline-none transition-all resize-none placeholder:text-slate-300 disabled:bg-slate-100"
-                    placeholder="Add a short note about yourself..."
-                  />
-                </section>
+                  </section>
+                </div>
               </div>
             )}
 
             {activeTab === "business" && (
-              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out">
-                <div className="max-w-3xl mx-auto space-y-12">
-                  {/* --- LOGO SECTION --- */}
-                  <section>
-                    <div className="flex flex-col mb-8">
+              <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-300">
+                <div className="max-w-3xl mx-auto p-0.5 space-y-12">
+                  {/* --- BRANDING LOGO SECTION --- */}
+                  <section className="space-y-6">
+                    <div className="flex flex-col mb-4">
                       <div className="flex items-center gap-3 mb-2">
-                        <div className="w-1.5 h-6 bg-black rounded-full" />
-                        <h3 className="text-xl font-bold text-slate-800 tracking-tight">
+                        <div className="w-1.5 h-6 bg-black dark:bg-white rounded-full" />
+                        <h3 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">
                           Business Branding
                         </h3>
                       </div>
-                      <p className="text-sm text-slate-500 leading-relaxed ml-4 max-w-lg">
+                      <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed ml-4.5 max-w-lg">
                         This logo will appear on your dashboard and
                         professionally generated PDF invoices. Use a
                         high-resolution transparent background for best results.
                       </p>
                     </div>
 
+                    {/* Logo Presentation Frame */}
                     <div className="relative group">
-                      <div className="flex flex-col items-center gap-8 p-10 bg-slate-50 border-2 border-dashed border-slate-200 rounded-[3rem] transition-all duration-300 hover:bg-white hover:border-blue-300 hover:shadow-2xl hover:shadow-blue-500/5">
-                        {/* Unified Logo Preview Area */}
+                      <div className="flex flex-col items-center gap-6 p-6 bg-slate-50 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-4xl transition-all duration-300 hover:bg-white dark:hover:bg-slate-900/40 hover:border-blue-300 dark:hover:border-blue-900/60 hover:shadow-xl hover:shadow-blue-500/5">
                         <div className="relative">
                           {logoFile || formData.logo ? (
-                            <div className="w-48 h-48 md:w-56 md:h-56 rounded-3xl md:rounded-4xl bg-white shadow-xl shadow-slate-200/60 overflow-hidden flex items-center justify-center p-4 md:p-6 border border-slate-100 transition-transform duration-500 group-hover:scale-[1.02]">
+                            <div className="w-40 h-40 md:w-44 md:h-44 rounded-2xl md:rounded-3xl bg-white overflow-hidden flex items-center justify-center p-4 border border-slate-100 dark:border-slate-800 transition-transform duration-500 group-hover:scale-[1.02] shadow-sm">
                               <img
                                 src={
                                   logoFile
@@ -416,20 +425,20 @@ export default function Profile({ isAdvisor }) {
                               />
                             </div>
                           ) : (
-                            <div className="w-56 h-56 rounded-4xl bg-slate-100 border-2 border-slate-200 flex flex-col items-center justify-center text-slate-300 shadow-inner">
-                              <ImageIcon size={64} strokeWidth={1} />
-                              <span className="text-[10px] font-bold mt-2 uppercase tracking-widest">
+                            <div className="w-44 h-44 rounded-3xl bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 flex flex-col items-center justify-center text-slate-300 dark:text-slate-700 shadow-inner">
+                              <ImageIcon size={48} strokeWidth={1.5} />
+                              <span className="text-[10px] font-bold mt-2 uppercase tracking-widest text-slate-400 dark:text-slate-500">
                                 No Logo Set
                               </span>
                             </div>
                           )}
                         </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex flex-col items-center gap-4">
+                        {/* Actions Row Elements */}
+                        <div className="flex flex-col items-center gap-3">
                           {canEdit && (
                             <div className="flex flex-wrap justify-center gap-3">
-                              <label className="cursor-pointer bg-slate-900 text-white px-8 py-3.5 rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-blue-600 transition-all shadow-lg active:scale-95 flex items-center gap-2">
+                              <label className="cursor-pointer bg-slate-900  hover:bg-blue-600 dark:hover:bg-blue-600 text-white dark:text-slate-900 hover:text-white dark:hover:text-white px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest transition-all shadow-md active:scale-95 flex items-center gap-2">
                                 <Upload size={14} />
                                 Upload New
                                 <input
@@ -462,14 +471,14 @@ export default function Profile({ isAdvisor }) {
                                     setTempImage(src);
                                     setIsCropperOpen(true);
                                   }}
-                                  className="bg-white border-2 border-slate-200 text-slate-700 px-8 py-3.5 rounded-2xl text-xs font-bold uppercase tracking-widest hover:border-blue-600 hover:text-blue-600 transition-all active:scale-95 flex items-center gap-2"
+                                  className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:border-blue-600 hover:text-blue-600 dark:hover:border-blue-500 dark:hover:text-blue-400 transition-all active:scale-95"
                                 >
                                   Crop Logo
                                 </button>
                               )}
                             </div>
                           )}
-                          <p className="text-[11px] font-medium text-slate-400 bg-slate-200/50 px-3 py-1 rounded-full">
+                          <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 bg-slate-200/40 dark:bg-slate-800/50 px-3 py-1 rounded-full">
                             Recommended: Square PNG/JPG • Max 5MB
                           </p>
                         </div>
@@ -477,16 +486,19 @@ export default function Profile({ isAdvisor }) {
                     </div>
                   </section>
 
-                  {/* --- BUSINESS DETAILS SECTION --- */}
-                  <section className="space-y-8 pb-10">
-                    <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-                      <div className="w-1.5 h-6 bg-black rounded-full" />
-                      <h3 className="text-lg font-bold text-slate-800 tracking-tight">
+                  <hr className="border-slate-100 dark:border-slate-800" />
+
+                  {/* --- IDENTITY DETAILS FORM SECTION --- */}
+                  <section className="space-y-6 pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-1.5 h-6 bg-black dark:bg-white rounded-full" />
+                      <h3 className="text-lg font-black text-slate-900 dark:text-white tracking-tight">
                         Garage Identity & Documentation
                       </h3>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    {/* Functional Fields Matching Structure Matrix */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <InputField
                         label="Garage Name"
                         name="garageName"
@@ -528,6 +540,7 @@ export default function Profile({ isAdvisor }) {
                           required
                         />
                       </div>
+
                       <InputField
                         label="WhatsApp Number"
                         name="whatsappNumber"
@@ -535,7 +548,10 @@ export default function Profile({ isAdvisor }) {
                         onChange={handleWhatsApp}
                         disabled={!canEdit}
                         icon={
-                          <MessageSquare size={18} className="text-green-500" />
+                          <MessageSquare
+                            size={18}
+                            className="text-emerald-500"
+                          />
                         }
                         placeholder="WhatsApp Number"
                         required

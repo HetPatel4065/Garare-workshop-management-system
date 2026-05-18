@@ -62,7 +62,7 @@ export default function PortalHome() {
   );
 
   const getPortalToken = () =>
-    sessionStorage.getItem("portal_token") || sessionStorage.getItem("token");
+    localStorage.getItem("portal_token") || localStorage.getItem("token");
   const isAuthenticated = !!getPortalToken();
 
   useEffect(() => {
@@ -113,7 +113,7 @@ export default function PortalHome() {
             className="flex items-center gap-3 group bg-transparent border-none cursor-pointer"
           >
             <div className="bg-blue-600 p-2.5 rounded-[10px] group-hover:bg-blue-700 group-hover:shadow-blue-300 transition-all duration-200">
-              <Wrench className="w-4 h-4 text-white" strokeWidth={2.5} />
+              <Wrench className="w-5 h-5 text-white" strokeWidth={2.5} />
             </div>
             <span className="font-black text-[1.1rem] tracking-tight text-slate-900">
               Garage<span className="text-blue-600">Pro</span>
@@ -272,10 +272,9 @@ export default function PortalHome() {
                     className="group relative bg-white rounded-2xl border border-slate-100 hover:border-blue-200  transition-all duration-300 cursor-pointer overflow-hidden"
                   >
                     {/* Top accent line */}
-                    <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 rounded-t-2xl" />
+                    <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-blue-500 to-indigo-500 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 rounded-t-2xl" />
 
                     <div className="p-5">
-                      {/* Top row */}
                       <div className="flex items-start justify-between mb-4">
                         <div className="w-11 h-11 rounded-xl border border-slate-100 bg-slate-50 group-hover:bg-blue-50 group-hover:border-blue-100 flex items-center justify-center transition-all duration-300 shrink-0">
                           {garage.logo ? (

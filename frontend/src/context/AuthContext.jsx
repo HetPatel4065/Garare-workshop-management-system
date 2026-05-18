@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import { useLoading } from "./LoadingContext";
 import { getDashboardRoute } from "../utils/roles";
@@ -14,9 +20,9 @@ const setStoredToken = (t) => localStorage.setItem(TOKEN_KEY, t);
 const clearStoredToken = () => localStorage.removeItem(TOKEN_KEY);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser]         = useState(null);
-  const [token, setToken]       = useState(null);
-  const [loading, setLoading]   = useState(true);
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
 
   const { startLoading, stopLoading } = useLoading();
@@ -25,8 +31,8 @@ export const AuthProvider = ({ children }) => {
   // ─── Core logout helper (no navigate — used internally) ────────────────────
   const _clearSession = useCallback(() => {
     clearStoredToken();
-    sessionStorage.removeItem("portal_token");
-    sessionStorage.removeItem("service_reminder_shown");
+    localStorage.removeItem("portal_token");
+    localStorage.removeItem("service_reminder_shown");
     setToken(null);
     setUser(null);
     setIsVerified(false);
@@ -49,11 +55,11 @@ export const AuthProvider = ({ children }) => {
             Authorization: `Bearer ${storedToken}`,
             "Cache-Control": "no-cache",
           },
-        }
+        },
       );
 
       if (res.ok) {
-        const payload  = await res.json();
+        const payload = await res.json();
         const userData = payload?.data ?? payload;
         setUser(userData);
         setToken(storedToken);
@@ -91,9 +97,9 @@ export const AuthProvider = ({ children }) => {
         throw new Error(errorData.error || "Login failed");
       }
 
-      const data     = await res.json();
+      const data = await res.json();
       const userData = data.user;
-      const jwt      = data.token;
+      const jwt = data.token;
 
       setStoredToken(jwt);
       setToken(jwt);
@@ -152,7 +158,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/auth/me?t=${Date.now()}`,
-        { headers: { Authorization: `Bearer ${currentToken}` } }
+        { headers: { Authorization: `Bearer ${currentToken}` } },
       );
 
       if (res.ok) {

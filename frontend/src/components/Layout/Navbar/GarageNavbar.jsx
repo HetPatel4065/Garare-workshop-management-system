@@ -345,10 +345,7 @@ const ResultsDropdown = ({
 
 import { useNotifications } from "../../../context/NotificationContext";
 
-export default function TopNavbar({
-  userName = "User",
-  onToggleSidebar
-}) {
+export default function TopNavbar({ userName = "User", onToggleSidebar }) {
   const { logout, user, token } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -473,7 +470,6 @@ export default function TopNavbar({
         setMenuOpen(false);
       if (searchRef.current && !searchRef.current.contains(e.target))
         setShowResults(false);
-      
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -496,7 +492,7 @@ export default function TopNavbar({
     <>
       <header
         className={`
-          h-16 sm:h-20 flex items-center px-4 sm:px-8 sticky top-0 transition-all duration-500 z-40
+          h-16 sm:h-20 flex items-center px-4 sm:px-8 sticky top-0 transition-all duration-500 z-40 border-b border-slate-200
           ${scrolled ? "bg-gray-900/80 backdrop-blur-xl border-b border-white/5 shadow-[0_10px_30px_rgba(0,0,0,0.3)]" : "bg-transparent"}
         `}
       >
@@ -515,10 +511,11 @@ export default function TopNavbar({
             <div className="relative group">
               <Search
                 size={18}
-                className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 pointer-events-none ${showResults
+                className={`absolute left-4 top-1/2 -translate-y-1/2 transition-colors duration-300 pointer-events-none ${
+                  showResults
                     ? "text-blue-500"
                     : "text-gray-500 group-focus-within:text-blue-400"
-                  }`}
+                }`}
               />
               <input
                 type="text"
@@ -589,10 +586,11 @@ export default function TopNavbar({
           <div className="flex items-center gap-1.5 sm:gap-3" ref={dropdownRef}>
             <button
               onClick={() => setMobileSearchOpen((v) => !v)}
-              className={`md:hidden p-2.5 rounded-xl transition-all duration-300 ${mobileSearchOpen
+              className={`md:hidden p-2.5 rounded-xl transition-all duration-300 ${
+                mobileSearchOpen
                   ? "bg-blue-500/10 text-blue-400"
                   : "text-gray-400 hover:text-white hover:bg-white/5"
-                }`}
+              }`}
             >
               <Search size={20} />
             </button>
@@ -600,7 +598,6 @@ export default function TopNavbar({
             <ThemeToggle />
 
             <div className="w-px h-6 bg-white/10 mx-1 hidden sm:block" />
-
             <div className="relative">
               <button
                 onClick={() => setMenuOpen(!menuOpen)}

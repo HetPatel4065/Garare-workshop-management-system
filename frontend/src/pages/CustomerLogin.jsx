@@ -47,7 +47,7 @@ const GREETINGS = [
   "Giving your car the care it deserves",
   "Welcome to your personal garage portal",
   "Let’s get your vehicle sorted",
-  "Keep your vehicle running smoothly. Log in to check status"
+  "Keep your vehicle running smoothly. Log in to check status",
 ];
 
 // ─── Step indicator ───────────────────────────────────────────────────────────
@@ -166,8 +166,8 @@ export default function CustomerLogin() {
         }
 
         // ✅ Auth success — store portal token
-        sessionStorage.setItem("portal_token", data.token);
-        sessionStorage.setItem("portal_user", JSON.stringify(data.user));
+        localStorage.setItem("portal_token", data.token);
+        localStorage.setItem("portal_user", JSON.stringify(data.user));
 
         // Store linked garage for multi-garage support
         const garage = data.user?.garage;
