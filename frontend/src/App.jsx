@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect,lazy,Suspense } from "react";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "./context/AuthContext";
 import { getDashboardRoute } from "./utils/roles";
 
-// ── Pages ─────────────────────────────────────
 import LandingPage from "./pages/LandingPage";
-import Login from "./pages/Login"; // Role selector hub
+import Login from "./pages/Login"; 
 import OwnerLogin from "./pages/OwnerLogin";
 import StaffLogin from "./pages/StaffLogin";
 import AdminLogin from "./pages/AdminLogin";
@@ -15,31 +14,29 @@ import Signup from "./pages/Signup";
 import OwnerSignup from "./pages/OwnerSignup";
 import StaffSignup from "./pages/StaffSignup";
 import Unauthorized from "./pages/Unauthorized";
-import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./context/ProtectedRoutes";
-import Settings from "./pages/Settings";
-import Inventory from "./pages/Inventory";
-import JobCards from "./pages/JobCards";
-import Customers from "./pages/Customers";
-import RequestedCustomers from "./pages/RequestedCustomers";
-import Profile from "./pages/Profile";
-import Billing from "./pages/Billing";
-import StaffMembers from "./pages/StaffMembers";
-import Services from "./pages/Services";
-import Vehicles from "./pages/Vehicles";
-import ServiceReminders from "./pages/ServiceReminders";
-import PortalLogin from "./pages/portal/PortalLogin"; // modal — used in PortalHome
 import PortalHome from "./pages/portal/PortalHome";
 import PortalDashboard from "./pages/portal/PortalDashboard";
-import HelpCenter from "./pages/HelpCenter";
-import SearchPage from "./pages/SearchPage";
-import Notifications from "./pages/Notifications";
 
-// ── Components ─────────────────────────────────────────────────────────────────
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Settings = lazy(() => import("./pages/Settings"));
+const Inventory = lazy(() => import("./pages/Inventory"));
+const JobCards = lazy(() => import("./pages/JobCards"));
+const Customers = lazy(() => import("./pages/Customers"));
+const RequestedCustomers = lazy(() => import("./pages/RequestedCustomers"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Billing = lazy(() => import("./pages/Billing"));
+const StaffMembers = lazy(() => import("./pages/StaffMembers"));
+const Services = lazy(() => import("./pages/Services"));
+const Vehicles = lazy(() => import("./pages/Vehicles"));
+const ServiceReminders = lazy(() => import("./pages/ServiceReminders"));
+const HelpCenter = lazy(() => import("./pages/HelpCenter"));
+const SearchPage = lazy(() => import("./pages/SearchPage"));
+const Notifications = lazy(() => import("./pages/Notifications"));
+
 import ToastContainer from "./components/UI/ToastContainer";
 import GarageLayout from "./components/Layout/GarageLayout";
 
-// ── Page transition wrapper ────────────────────────────────────────────────────
 const PageTransition = ({ children }) => (
   <motion.div
     initial={{ opacity: 0, y: 8 }}
@@ -52,7 +49,6 @@ const PageTransition = ({ children }) => (
   </motion.div>
 );
 
-// ── Helper: public route that redirects if already authenticated ───────────────
 function PublicOnlyRoute({ children }) {
   const { user, token, loading, isVerified } = useAuth();
 
@@ -76,20 +72,18 @@ function PublicOnlyRoute({ children }) {
   return children;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
 function App() {
   const { user, token, loading, isVerified } = useAuth();
   const location = useLocation();
 
   const [portalToken, setPortalToken] = useState(
-    localStorage.getItem("portal_token"),
+    sessionStorage.getItem("portal_token"),
   );
 
   useEffect(() => {
-    setPortalToken(localStorage.getItem("portal_token"));
+    setPortalToken(sessionStorage.getItem("portal_token"));
   }, [location]);
 
-  // ── Global loading screen (token being verified on boot) ────────────────
   if (loading) {
     return (
       <div className="h-screen w-screen bg-gray-950 flex items-center justify-center">
@@ -107,9 +101,14 @@ function App() {
     <>
       <ToastContainer />
 
-      <AnimatePresence mode="wait">
+      <Suspense fallback={
+        <div className="h-screen w-screen flex flex-col items-center justify-center bg-white dark:bg-zinc-950 transition-colors">
+          <div className="w-10 h-10 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin" />
+          <p className="mt-4 text-sm font-semibold text-slate-500 uppercase tracking-widest animate-pulse">Loading View...</p>
+        </div>
+      }>
+        <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
-          {/* ── Landing ──────────────────────────────────────────────── */}
           <Route
             path="/"
             element={
@@ -119,7 +118,6 @@ function App() {
             }
           />
 
-          {/* ── Role selector hub (shows when not authenticated) ─────── */}
           <Route
             path="/login"
             element={
@@ -131,7 +129,6 @@ function App() {
             }
           />
 
-          {/* ── Dedicated login pages ────────────────────────────────── */}
           <Route
             path="/owner/login"
             element={
@@ -163,7 +160,6 @@ function App() {
             }
           />
 
-          {/* ── Signup ───────────────────────────────────────────────── */}
           <Route
             path="/signup"
             element={
@@ -195,7 +191,6 @@ function App() {
             }
           />
 
-          {/* ── Customer login alias → standalone CustomerLogin page ─ */}
           <Route
             path="/customer/login"
             element={
@@ -205,7 +200,6 @@ function App() {
             }
           />
 
-          {/* ── Unauthorized 403 ─────────────────────────────────────── */}
           <Route
             path="/unauthorized"
             element={
@@ -215,7 +209,6 @@ function App() {
             }
           />
 
-          {/* ── Customer Portal (separate OTP auth) ──────────────────── */}
           <Route
             path="/portal"
             element={
@@ -224,7 +217,6 @@ function App() {
               </PageTransition>
             }
           />
-          {/* /portal/login → standalone CustomerLogin (not the modal) */}
           <Route
             path="/portal/login"
             element={
@@ -246,7 +238,6 @@ function App() {
             }
           />
 
-          {/* ── Protected Garage Routes (persistent layout) ───────────── */}
           <Route
             element={
               <ProtectedRoute>
@@ -393,7 +384,7 @@ function App() {
             />
           </Route>
 
-          {/* ── 404 ──────────────────────────────────────────────────── */}
+          {/* ── 404 ── */}
           <Route
             path="*"
             element={
@@ -413,6 +404,7 @@ function App() {
           />
         </Routes>
       </AnimatePresence>
+      </Suspense>
     </>
   );
 }

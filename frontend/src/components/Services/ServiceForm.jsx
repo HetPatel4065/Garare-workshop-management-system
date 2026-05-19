@@ -201,7 +201,7 @@ export default function ServiceForm({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
 
         // If there's no token at all, stop early instead of sending requests destined to fail
         if (!token) {

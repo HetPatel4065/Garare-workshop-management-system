@@ -12,8 +12,6 @@ import {
 import {
   motion,
   AnimatePresence,
-  useScroll,
-  useTransform,
 } from "framer-motion";
 import RegistrationModal from "./RegistrationModal";
 import GarageDetailsModal from "./GarageDetailsModal";
@@ -53,16 +51,16 @@ export default function PortalHome() {
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [loginPrefill, setLoginPrefill] = useState("");
+  const [scrolled, setScrolled] = useState(false);
 
-  const { scrollY } = useScroll();
-  const headerBg = useTransform(
-    scrollY,
-    [0, 60],
-    ["rgba(15, 23, 42, 0.7)", "rgba(15, 23, 42, 0.95)"], // Interpolates Slate-900 alphas
-  );
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const getPortalToken = () =>
-    localStorage.getItem("portal_token") || localStorage.getItem("token");
+    sessionStorage.getItem("portal_token") || sessionStorage.getItem("token");
   const isAuthenticated = !!getPortalToken();
 
   useEffect(() => {
@@ -103,28 +101,48 @@ export default function PortalHome() {
     /* Explicitly added light background and slate text colors to counter structural dark mode configs */
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-blue-100 selection:text-blue-700">
       {/* ── Header ── */}
-      <motion.header
-        style={{ backgroundColor: headerBg }}
-        className="sticky top-0 z-40 backdrop-blur-xl border-b border-slate-100 px-6 py-3.5"
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? "py-2 md:py-3" : "py-4 md:py-5"}`}
+        style={
+          scrolled
+            ? {
+              background: "rgba(248,250,255,0.92)",
+              backdropFilter: "blur(24px)",
+              borderBottom: "1px solid rgba(99,102,241,0.10)",
+              boxShadow: "0 4px 32px rgba(99,102,241,0.08)",
+            }
+            : { background: "transparent" }
+        }
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
           <button
-            onClick={() => window.scrollToj({ top: 0, behavior: "smooth" })}
-            className="flex items-center gap-3 group bg-transparent border-none cursor-pointer"
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            className="flex items-center gap-2 md:gap-2.5 group bg-transparent border-none cursor-pointer"
+            style={{ textDecoration: "none" }}
           >
-            <div className="bg-blue-600 p-2.5 rounded-[10px] group-hover:bg-blue-700 group-hover:shadow-blue-300 transition-all duration-200">
-              <Wrench className="w-5 h-5 text-white" strokeWidth={2.5} />
+            <div
+              className="w-8 h-8 md:w-9 md:h-9 rounded-xl flex items-center justify-center text-white font-extrabold text-xs md:text-sm group-hover:scale-110 transition-transform duration-300"
+              style={{
+                background: "linear-gradient(135deg, #6366f1 0%, #3b82f6 100%)",
+                boxShadow: "0 4px 16px rgba(99,102,241,0.35)",
+              }}
+            >
+              GP
             </div>
-            <span className="font-black text-[1.1rem] tracking-tight text-slate-900">
-              Garage<span className="text-blue-600">Pro</span>
+            <span
+              className="text-lg md:text-xl font-extrabold tracking-tight"
+              style={{ color: "#1e1b4b" }}
+            >
+              GaragePro
             </span>
           </button>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 md:gap-3">
             {!isAuthenticated && (
               <button
                 onClick={() => setIsLoginModalOpen(true)}
-                className="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors px-3 py-2 rounded-xl hover:bg-slate-100"
+                className="px-4 md:px-5 py-2 text-xs md:text-sm font-bold transition-colors duration-200 hover:text-indigo-600 rounded-xl hover:bg-indigo-50 bg-transparent border-none cursor-pointer"
+                style={{ color: "#64748b" }}
               >
                 Sign in
               </button>
@@ -135,14 +153,28 @@ export default function PortalHome() {
                   ? navigate("/portal/dashboard")
                   : setIsLoginModalOpen(true)
               }
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-700  transition-all duration-200 active:scale-95"
+              className="px-4 md:px-6 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-bold text-white flex items-center gap-1.5 transition-all duration-200 border-none cursor-pointer"
+              style={{
+                background: "linear-gradient(135deg, #6366f1 0%, #3b82f6 100%)",
+                boxShadow: "0 4px 16px rgba(99,102,241,0.32)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow =
+                  "0 6px 24px rgba(99,102,241,0.48)";
+                e.currentTarget.style.transform = "translateY(-1px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow =
+                  "0 4px 16px rgba(99,102,241,0.32)";
+                e.currentTarget.style.transform = "translateY(0)";
+              }}
             >
               {isAuthenticated ? "Dashboard" : "Get Started"}
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight size={14} className="hidden sm:block" />
             </button>
           </div>
         </div>
-      </motion.header>
+      </header>
 
       <main>
         {/* ── Hero ── */}

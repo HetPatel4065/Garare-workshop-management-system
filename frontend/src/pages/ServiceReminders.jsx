@@ -19,8 +19,9 @@ import {
   Car,
 } from "lucide-react";
 import { format } from "date-fns";
+import { FaCar } from "react-icons/fa6";
 
-// ─── MetaField (mirrors RequestedCustomers) ───────────────────────
+// ─── MetaField (mirrors RequestedCustomers) ───
 function MetaField({
   label,
   primary,
@@ -49,9 +50,6 @@ function MetaField({
   );
 }
 
-// ─── Status Badge ─────────────────────────────────────────────────
-// Mirrors the same dual-condition used in filteredReminders:
-// "Completed" only when reminderStatus flag is set AND the scheduled date has passed.
 function getStatusMeta(reminderStatus, nextServiceDate) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -98,7 +96,7 @@ function StatusBadge({ reminderStatus, nextServiceDate }) {
   );
 }
 
-// ─── Skeleton Card ────────────────────────────────────────────────
+// ─── Skeleton Card ────
 const SkeletonCard = () => (
   <div className="bg-white rounded-3xl p-4 sm:p-5 mb-4 border border-slate-100 shadow-sm animate-pulse">
     <div className="flex flex-wrap items-center gap-3 mb-4">
@@ -119,7 +117,7 @@ const SkeletonCard = () => (
   </div>
 );
 
-// ─── Empty State ──────────────────────────────────────────────────
+// ─── Empty State ───
 const EmptyState = ({ hasSearch }) => (
   <div className="flex flex-col items-center gap-3 py-16 px-6 text-center bg-white rounded-3xl border border-slate-100">
     <div className="w-16 h-16 bg-slate-50 rounded-3xl flex items-center justify-center">
@@ -142,7 +140,7 @@ const EmptyState = ({ hasSearch }) => (
   </div>
 );
 
-// ─── Stat Card ────────────────────────────────────────────────────
+// ─── Stat Card ───
 const StatCard = ({
   label,
   count,
@@ -239,7 +237,7 @@ function ReminderCard({ r, onSendEmail, onSendSMS, onCall }) {
         {r.lastServiceDate ? (
           <div className="flex items-start gap-2">
             <div className="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center shrink-0 mt-0.5">
-              <Car size={11} className="text-slate-400" />
+              <FaCar size={11} className="text-slate-400" />
             </div>
             <div>
               <p className="text-[10px] font-black uppercase tracking-wide text-slate-400 leading-none mb-0.5">
@@ -311,6 +309,7 @@ export default function ServiceReminders() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const itemsPerPage = 10;
 
   const fetchReminders = async () => {
@@ -331,12 +330,14 @@ export default function ServiceReminders() {
     fetchReminders();
   }, []);
 
-  // ── Filter logic ──
-  // A vehicle is truly "Completed" only when:
-  //   (1) reminderStatus === "Completed"  AND
-  //   (2) nextServiceDate is today or in the past
-  // This prevents vehicles whose *next* service cycle is still upcoming from
-  // being incorrectly shown as Completed just because the DB flag was set.
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => {
+      fetchReminders();
+      setIsRefreshing(false);
+    }, 5000);
+  };
+
   const filteredReminders = reminders.filter((r) => {
     if (!r.nextServiceDate) return false;
 
@@ -481,9 +482,9 @@ export default function ServiceReminders() {
       icon: CheckCircle,
       value: "Completed",
       colorClasses: {
-        activeBg: "bg-emerald-50 dark:bg-emerald-950/40",
-        activeBorder: "border-emerald-200 dark:border-emerald-800",
-        iconBg: "bg-emerald-100 dark:bg-emerald-900/50",
+        activeBg: "bg-emerald-50 dark:!bg-emerald-950/40",
+        activeBorder: "border-emerald-300 dark:!border-emerald-800",
+        iconBg: "bg-emerald-100 dark:!bg-emerald-900/50",
         iconColor: "text-emerald-600 dark:text-emerald-400",
         label: "text-emerald-600 dark:text-emerald-400",
         count: "text-emerald-700 dark:text-emerald-300",
@@ -513,11 +514,12 @@ export default function ServiceReminders() {
             </p>
           </div>
           <button
-            onClick={fetchReminders}
-            className="self-start sm:self-auto flex items-center gap-2 px-5 py-3 bg-blue-600 hover:bg-blue-700 rounded-2xl text-sm font-bold text-white transition-all duration-300 shadow-sm hover:shadow-md"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="self-start sm:self-auto flex items-center gap-2 px-5 py-3 bg-blue-600 hover:bg-blue-700 rounded-2xl text-sm font-bold text-white transition-all duration-300 shadow-sm hover:shadow-md disabled:opacity-70"
           >
             <svg
-              className="w-4 h-4"
+              className={`w-4 h-4 ${isRefreshing ? "animate-spin [animation-direction:reverse]" : ""}`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -529,7 +531,7 @@ export default function ServiceReminders() {
                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
               />
             </svg>
-            Refresh
+            {isRefreshing ? "Refreshing..." : "Refresh"}
           </button>
         </div>
       </div>

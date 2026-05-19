@@ -1,11 +1,3 @@
-/**
- * utility to calculate invoice totals based on stored prices
- * @param {Array} partsUsed - Array of { priceAtTimeOfService, quantity }
- * @param {Array} selectedServices - Array of { priceAtTimeOfService }
- * @param {Number} labourCost - Fixed labour charge
- * @param {Number} gstRate - Percentage (e.g. 18)
- * @returns {Object} Calculated totals
- */
 export const calculateInvoiceTotals = (partsUsed = [], selectedServices = [], labourCost = 0, gstRate = 18, discountPercent = 0) => {
   const partsTotal = partsUsed.reduce((sum, part) => {
     const price = Number(part.priceAtTimeOfService) || 0;

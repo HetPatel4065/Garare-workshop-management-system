@@ -5,17 +5,17 @@ export const ThemeContext = createContext(undefined);
 export function ThemeProvider({ children }) {
   const [theme, setThemeState] = useState(() => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("theme") || "system";
+      // FIX: Default to "light" instead of "system" for first-time visitors
+      return sessionStorage.getItem("theme") || "light";
     }
-    return "system";
+    return "light";
   });
 
-  // Simplified setTheme—all DOM manipulation is safely offloaded to the useEffect
   const setTheme = (newTheme) => {
     if (newTheme !== "light" && newTheme !== "dark" && newTheme !== "system")
       return;
     setThemeState(newTheme);
-    localStorage.setItem("theme", newTheme);
+    sessionStorage.setItem("theme", newTheme);
   };
 
   useEffect(() => {
@@ -23,31 +23,20 @@ export function ThemeProvider({ children }) {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
     const updateThemeDOM = () => {
-      // 1. Freeze transitions across the whole page to protect frame rates
-      root.classList.add("disable-transitions");
-
-      // 2. Determine and apply correct class
       root.classList.remove("light", "dark");
+
       const isDarkNow =
         theme === "dark" || (theme === "system" && mediaQuery.matches);
 
       if (isDarkNow) {
         root.classList.add("dark");
       } else {
-        root.classList.add("light"); // explicitly setting light can help style hooks
+        root.classList.add("light");
       }
-
-      // 3. Force browser reflow to render the color swap instantly
-      window.getComputedStyle(root).opacity;
-
-      // 4. Safely unfreeze transitions for everyday elements/hovers
-      root.classList.remove("disable-transitions");
     };
 
-    // Run theme update on mount or whenever 'theme' state changes
     updateThemeDOM();
 
-    // Listen to system preference changes if "system" is selected
     if (theme === "system") {
       mediaQuery.addEventListener("change", updateThemeDOM);
     }
@@ -57,7 +46,8 @@ export function ThemeProvider({ children }) {
     };
   }, [theme]);
 
-  // Sync theme changes across browser tabs/windows
+  // NOTE: The 'storage' event listener only triggers for localStorage,
+  // sessionStorage does not sync across tabs by default.
   useEffect(() => {
     const handleStorageChange = (e) => {
       if (e.key === "theme" && e.newValue) {

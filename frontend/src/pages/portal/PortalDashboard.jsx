@@ -37,15 +37,15 @@ const PortalDashboard = ({ garageSettings }) => {
   const [expandedVehicleId, setExpandedVehicleId] = useState(null);
   const [expandedInvoiceId, setExpandedInvoiceId] = useState(null);
   const [token, setToken] = useState(
-    localStorage.getItem("portal_token") || localStorage.getItem("token"),
+    sessionStorage.getItem("portal_token") || sessionStorage.getItem("token"),
   );
   const navigate = useNavigate();
   const fullYear = new Date().getFullYear();
   const [user, setUser] = useState(() => {
     try {
       return (
-        JSON.parse(localStorage.getItem("portal_user")) ||
-        JSON.parse(localStorage.getItem("user")) ||
+        JSON.parse(sessionStorage.getItem("portal_user")) ||
+        JSON.parse(sessionStorage.getItem("user")) ||
         null
       );
     } catch {
@@ -55,7 +55,7 @@ const PortalDashboard = ({ garageSettings }) => {
 
   useEffect(() => {
     const storedToken =
-      localStorage.getItem("portal_token") || localStorage.getItem("token");
+      sessionStorage.getItem("portal_token") || sessionStorage.getItem("token");
     if (!storedToken) {
       navigate("/portal");
       return;
@@ -96,8 +96,8 @@ const PortalDashboard = ({ garageSettings }) => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("portal_token");
-    localStorage.removeItem("portal_user");
+    sessionStorage.removeItem("portal_token");
+    sessionStorage.removeItem("portal_user");
     navigate("/portal");
   };
 

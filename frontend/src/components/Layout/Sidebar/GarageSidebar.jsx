@@ -24,6 +24,7 @@ import {
   HardHat,
 } from "lucide-react";
 import { useAuth } from "../../../context/AuthContext";
+import { useNotifications } from "../../../context/NotificationContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { ROLE_LABELS } from "../../../utils/roles";
 
@@ -128,12 +129,13 @@ export default function GarageSidebar({ isOpen, onClose, showNotifications }) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const role = user?.role?.toLowerCase() || "mechanic";
+  const { unreadCount } = useNotifications();
 
   const [collapsed, setCollapsed] = useState(() => {
-    return localStorage.getItem("sidebar_collapsed") === "true";
+    return sessionStorage.getItem("sidebar_collapsed") === "true";
   });
   const [openSections, setOpenSections] = useState(() => {
-    const saved = localStorage.getItem("sidebar_open_sections");
+    const saved = sessionStorage.getItem("sidebar_open_sections");
     return saved ? JSON.parse(saved) : NAV_SECTIONS.map(() => true);
   });
 
@@ -155,25 +157,28 @@ export default function GarageSidebar({ isOpen, onClose, showNotifications }) {
 
   // Persist collapsed state
   useEffect(() => {
-    localStorage.setItem("sidebar_collapsed", collapsed);
+    sessionStorage.setItem("sidebar_collapsed", collapsed);
     const width = collapsed ? "80px" : "260px";
     document.documentElement.style.setProperty("--sidebar-width", width);
   }, [collapsed]);
 
   // Persist open sections state
   useEffect(() => {
-    localStorage.setItem("sidebar_open_sections", JSON.stringify(openSections));
+    sessionStorage.setItem(
+      "sidebar_open_sections",
+      JSON.stringify(openSections),
+    );
   }, [openSections]);
 
   // Restore scroll position
   useEffect(() => {
     const nav = sidebarRef.current;
     if (nav) {
-      const savedScroll = localStorage.getItem("sidebar_scroll");
+      const savedScroll = sessionStorage.getItem("sidebar_scroll");
       if (savedScroll) nav.scrollTop = parseInt(savedScroll, 10);
 
       const handleScroll = () => {
-        localStorage.setItem("sidebar_scroll", nav.scrollTop);
+        sessionStorage.setItem("sidebar_scroll", nav.scrollTop);
       };
       nav.addEventListener("scroll", handleScroll);
       return () => nav.removeEventListener("scroll", handleScroll);
@@ -210,7 +215,7 @@ export default function GarageSidebar({ isOpen, onClose, showNotifications }) {
               : `${import.meta.env.VITE_BASE_URL}/${user.logo}`
           }
           alt="logo"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain"
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = "";
@@ -264,8 +269,8 @@ export default function GarageSidebar({ isOpen, onClose, showNotifications }) {
         animate={isOpen || isDesktop ? "open" : "closed"}
         variants={sidebarVariants}
         className={`
-          fixed inset-y-0 left-0 z-50 flex flex-col bg-gray-950 border-r border-white/5
-          gpu-accelerated sidebar-persistent overflow-hidden
+          fixed inset-y-0 left-0 z-50 flex flex-col bg-gray-950 border-r
+          gpu-accelerated sidebar-persistent overflow-hidden border-slate-200
         `}
         style={{
           width: "var(--sidebar-width)",
@@ -364,10 +369,15 @@ export default function GarageSidebar({ isOpen, onClose, showNotifications }) {
               ${active ? "bg-blue-600 text-white" : "text-gray-400 hover:bg-white/10 hover:text-white"}
             `}
                         >
-                          <Icon
-                            size={18}
-                            className={`shrink-0 ${active ? "text-white" : "text-gray-500 group-hover:text-gray-300"}`}
-                          />
+                          <div className="relative flex shrink-0 items-center justify-center">
+                            <Icon
+                              size={18}
+                              className={`${active ? "text-white" : "text-gray-500 group-hover:text-gray-300"}`}
+                            />
+                            {item.name === "Notifications" && unreadCount > 0 && !active && (
+                              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-gray-950 shadow-sm animate-pulse"></span>
+                            )}
+                          </div>
                           {!isCollapsedDesktop && (
                             <span className="truncate">{item.name}</span>
                           )}

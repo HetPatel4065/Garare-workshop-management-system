@@ -246,9 +246,9 @@ export default function StaffMembers() {
       count: stats.total,
       icon: Users,
       colorClasses: {
-        activeBg: "bg-emerald-50 dark:bg-emerald-950/40",
-        activeBorder: "border-emerald-200 dark:border-emerald-800",
-        iconBg: "bg-emerald-100 dark:bg-emerald-900/50",
+        activeBg: "bg-emerald-50 dark:!bg-emerald-950/40",
+        activeBorder: "border-emerald-300 dark:!border-emerald-800",
+        iconBg: "bg-emerald-100 dark:!bg-emerald-900/50",
         iconColor: "text-emerald-600 dark:text-emerald-400",
         label: "text-emerald-600 dark:text-emerald-400",
         count: "text-emerald-700 dark:text-emerald-300",
@@ -1138,7 +1138,7 @@ export default function StaffMembers() {
                 </span>
                 ? They will lose all access to the garage immediately.
               </p>
- 
+
               {deleteTarget.role === "owner" && (
                 <div className="mt-5 flex items-start gap-3 text-left bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-800/50 rounded-2xl p-4">
                   <div className="mt-0.5 shrink-0 text-amber-600 dark:text-amber-400">

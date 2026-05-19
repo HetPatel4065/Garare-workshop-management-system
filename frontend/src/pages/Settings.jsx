@@ -207,7 +207,7 @@ export default function Settings() {
   const [garageId, setGarageId] = useState("");
   const [lastExportedAt, setLastExportedAt] = useState(null);
   const [lastMailedAt, setLastMailedAt] = useState(
-    localStorage.getItem("lastMailedAt") || null,
+    sessionStorage.getItem("lastMailedAt") || null,
   );
   const [isTestingNotif, setIsTestingNotif] = useState({
     email: false,

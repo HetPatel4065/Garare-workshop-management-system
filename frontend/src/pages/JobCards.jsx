@@ -28,8 +28,8 @@ export default function JobCards() {
   const { user, token: authToken } = useAuth();
   const { addToast } = useToast();
   const navigate = useNavigate();
-  const token = authToken || localStorage.getItem("garage_token");
-  const role = user?.role || localStorage.getItem("role") || "user";
+  const token = authToken || sessionStorage.getItem("garage_token");
+  const role = user?.role || sessionStorage.getItem("role") || "user";
 
   const [vehicles, setVehicles] = useState([]);
   const [jobCards, setJobCards] = useState([]);

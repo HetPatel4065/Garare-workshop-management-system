@@ -166,15 +166,15 @@ export default function CustomerLogin() {
         }
 
         // ✅ Auth success — store portal token
-        localStorage.setItem("portal_token", data.token);
-        localStorage.setItem("portal_user", JSON.stringify(data.user));
+        sessionStorage.setItem("portal_token", data.token);
+        sessionStorage.setItem("portal_user", JSON.stringify(data.user));
 
         // Store linked garage for multi-garage support
         const garage = data.user?.garage;
         if (garage) {
           try {
             const stored = JSON.parse(
-              localStorage.getItem("linkedGarages") || "[]",
+              sessionStorage.getItem("linkedGarages") || "[]",
             );
             if (!stored.find((g) => g.id === garage._id)) {
               stored.push({
@@ -182,7 +182,7 @@ export default function CustomerLogin() {
                 garageName: garage.garageName,
                 email,
               });
-              localStorage.setItem("linkedGarages", JSON.stringify(stored));
+              sessionStorage.setItem("linkedGarages", JSON.stringify(stored));
             }
           } catch {
             /* non-critical */

@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
-import LogoCropperModal from "../components/UI/LogoCropperModal";
+
 function InputField({
   label,
   name,
@@ -96,9 +96,7 @@ export default function Profile({ isAdvisor }) {
   const [logoFile, setLogoFile] = useState(null);
   const [invoiceLogoFile, setInvoiceLogoFile] = useState(null);
 
-  // Cropper States
-  const [isCropperOpen, setIsCropperOpen] = useState(false);
-  const [tempImage, setTempImage] = useState(null);
+
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -447,35 +445,14 @@ export default function Profile({ isAdvisor }) {
                                   accept="image/*"
                                   onChange={(e) => {
                                     if (e.target.files?.[0]) {
-                                      const file = e.target.files[0];
-                                      const reader = new FileReader();
-                                      reader.onload = () => {
-                                        setTempImage(reader.result);
-                                        setIsCropperOpen(true);
-                                      };
-                                      reader.readAsDataURL(file);
+                                      setLogoFile(e.target.files[0]);
+                                      setHasChanges(true);
                                     }
                                   }}
                                 />
                               </label>
 
-                              {(logoFile || formData.logo) && (
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    const src = logoFile
-                                      ? URL.createObjectURL(logoFile)
-                                      : formData.logo.startsWith("http")
-                                        ? formData.logo
-                                        : `${import.meta.env.VITE_BASE_URL}/${formData.logo}`;
-                                    setTempImage(src);
-                                    setIsCropperOpen(true);
-                                  }}
-                                  className="bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:border-blue-600 hover:text-blue-600 dark:hover:border-blue-500 dark:hover:text-blue-400 transition-all active:scale-95"
-                                >
-                                  Crop Logo
-                                </button>
-                              )}
+
                             </div>
                           )}
                           <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 bg-slate-200/40 dark:bg-slate-800/50 px-3 py-1 rounded-full">
@@ -597,62 +574,7 @@ export default function Profile({ isAdvisor }) {
         </div>
       </div>
 
-      <LogoCropperModal
-        isOpen={isCropperOpen}
-        image={tempImage}
-        onCropComplete={async (croppedBlob) => {
-          const file = new File([croppedBlob], "logo.jpg", {
-            type: "image/jpeg",
-          });
 
-          // Use a local variable for the updated file to ensure handleSave uses the latest
-          setIsCropperOpen(false);
-          setTempImage(null);
-
-          // Immediate upload to server
-          setIsSaving(true);
-          try {
-            const data = new FormData();
-            // Append all current form data
-            Object.keys(formData).forEach((key) => {
-              data.append(key, formData[key]);
-            });
-            // Append the new cropped logo
-            data.append("logo", file);
-
-            const res = await fetch(
-              `${import.meta.env.VITE_API_URL}/v1/settings`,
-              {
-                method: "PUT",
-                headers: { Authorization: `Bearer ${token}` },
-                body: data,
-              },
-            );
-
-            if (res.ok) {
-              addToast("Logo updated and applied successfully!");
-              await refreshUser();
-              setLogoFile(null);
-              fetchProfile();
-            } else {
-              const err = await res.json();
-              addToast(
-                `Error: ${err.message || "Failed to update logo"}`,
-                "error",
-              );
-            }
-          } catch (err) {
-            console.error("Logo upload error:", err);
-            addToast("Failed to upload cropped logo.", "error");
-          } finally {
-            setIsSaving(false);
-          }
-        }}
-        onCancel={() => {
-          setIsCropperOpen(false);
-          setTempImage(null);
-        }}
-      />
     </div>
   );
 }

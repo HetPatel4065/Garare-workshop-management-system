@@ -13,11 +13,11 @@ const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
-// ─── Token storage helpers (localStorage for cross-session persistence) ───────
+// ─── Token storage helpers (sessionStorage for cross-session persistence) ───────
 const TOKEN_KEY = "garage_token";
-const getStoredToken = () => localStorage.getItem(TOKEN_KEY);
-const setStoredToken = (t) => localStorage.setItem(TOKEN_KEY, t);
-const clearStoredToken = () => localStorage.removeItem(TOKEN_KEY);
+const getStoredToken = () => sessionStorage.getItem(TOKEN_KEY);
+const setStoredToken = (t) => sessionStorage.setItem(TOKEN_KEY, t);
+const clearStoredToken = () => sessionStorage.removeItem(TOKEN_KEY);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -31,8 +31,8 @@ export const AuthProvider = ({ children }) => {
   // ─── Core logout helper (no navigate — used internally) ────────────────────
   const _clearSession = useCallback(() => {
     clearStoredToken();
-    localStorage.removeItem("portal_token");
-    localStorage.removeItem("service_reminder_shown");
+    sessionStorage.removeItem("portal_token");
+    sessionStorage.removeItem("service_reminder_shown");
     setToken(null);
     setUser(null);
     setIsVerified(false);

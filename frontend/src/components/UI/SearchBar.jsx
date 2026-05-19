@@ -79,7 +79,7 @@ export default function SearchBar({
           <span className="text-[11px] font-bold text-slate-500">Active Search:</span>
           <button
             onClick={onClearActive}
-            className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 border border-blue-200 rounded-full text-[11px] font-bold text-blue-700 hover:bg-blue-100 transition-colors"
+            className="inline-flex items-center capitalize gap-1.5 px-3 py-1 bg-blue-50 border border-blue-200 rounded-full text-[11px] font-bold text-blue-700 hover:bg-blue-100 transition-colors"
           >
             "{activeSearch}" <X size={11} />
           </button>

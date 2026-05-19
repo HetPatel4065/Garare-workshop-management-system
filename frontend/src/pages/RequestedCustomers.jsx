@@ -323,6 +323,7 @@ export default function RequestedCustomers() {
   const [inspectionTime, setInspectionTime] = useState("");
   const [rejectionReason, setRejectionReason] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const itemsPerPage = 10;
 
   const { addToast } = useToast();
@@ -349,6 +350,14 @@ export default function RequestedCustomers() {
   useEffect(() => {
     fetchRequests();
   }, []);
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => {
+      fetchRequests();
+      setIsRefreshing(false);
+    }, 5000);
+  };
 
   const handleSearch = (e) => {
     e?.preventDefault();
@@ -503,9 +512,9 @@ export default function RequestedCustomers() {
       icon: UserCheck,
       value: "approved",
       colorClasses: {
-        activeBg: "bg-emerald-50 dark:bg-emerald-950/40",
-        activeBorder: "border-emerald-200 dark:border-emerald-800",
-        iconBg: "bg-emerald-100 dark:bg-emerald-900/50",
+        activeBg: "bg-emerald-50 dark:!bg-emerald-950/40",
+        activeBorder: "border-emerald-300 dark:!border-emerald-800",
+        iconBg: "bg-emerald-100 dark:!bg-emerald-900/50",
         iconColor: "text-emerald-600 dark:text-emerald-400",
         label: "text-emerald-600 dark:text-emerald-400",
         count: "text-emerald-700 dark:text-emerald-300",
@@ -544,11 +553,12 @@ export default function RequestedCustomers() {
             </p>
           </div>
           <button
-            onClick={fetchRequests}
-            className="self-start sm:self-auto flex items-center gap-2 px-5 py-3  bg-blue-600 hover:bg-blue-700 rounded-2xl text-sm font-bold text-white transition-all duration-300 shadow-sm hover:shadow-md"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="self-start sm:self-auto flex items-center gap-2 px-5 py-3  bg-blue-600 hover:bg-blue-700 rounded-2xl text-sm font-bold text-white transition-all duration-300 shadow-sm hover:shadow-md disabled:opacity-70"
           >
             <svg
-              className="w-4 h-4"
+              className={`w-4 h-4 ${isRefreshing ? "animate-spin [animation-direction:reverse]" : ""}`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -560,7 +570,7 @@ export default function RequestedCustomers() {
                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
               />
             </svg>
-            Refresh
+            {isRefreshing ? "Refreshing..." : "Refresh"}
           </button>
         </div>
       </div>
@@ -603,7 +613,7 @@ export default function RequestedCustomers() {
           {statusFilter !== "All" && (
             <button
               onClick={() => handleFilterChange("All")}
-              className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 border border-blue-200 rounded-full text-[11px] font-bold text-blue-700 hover:bg-blue-100 transition-colors"
+              className="inline-flex items-center capitalize gap-1.5 px-3 py-1 bg-blue-50 border border-blue-200 rounded-full text-[11px] font-bold text-blue-700 hover:bg-blue-100 transition-colors"
             >
               Status: {statusFilter} <X size={11} />
             </button>

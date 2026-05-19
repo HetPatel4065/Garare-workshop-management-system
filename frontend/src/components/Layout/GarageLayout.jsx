@@ -30,7 +30,7 @@ export default function GarageLayout({ children }) {
         !["owner", "admin"].includes(user.role?.toLowerCase())
       )
         return;
-      if (localStorage.getItem("service_reminder_shown") === "true") return;
+      if (sessionStorage.getItem("service_reminder_shown") === "true") return;
 
       try {
         const res = await axios.get(
@@ -57,7 +57,7 @@ export default function GarageLayout({ children }) {
         if (urgent.length > 0) {
           setUrgentReminders(urgent);
           setReminderModalOpen(true);
-          localStorage.setItem("service_reminder_shown", "true");
+          sessionStorage.setItem("service_reminder_shown", "true");
         }
       } catch (err) {
         console.error("Failed to check reminders:", err);

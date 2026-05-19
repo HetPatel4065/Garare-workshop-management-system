@@ -430,8 +430,8 @@ html.dark .theme-indicator-active {
 .theme-transition *:before,
 .theme-transition *:after {
   transition:
-    background-color 150ms ease-out,
-    border-color 150ms ease-out,
-    color 150ms ease-out !important;
+    background-color 300ms ease,
+    border-color 300ms ease,
+    color 300ms ease !important;
   will-change: background-color, border-color, color;
 }

@@ -174,14 +174,17 @@ const PortalLogin = ({ isOpen, onClose, prefilledEmail }) => {
           return;
         }
 
-        localStorage.setItem("portal_token", response.data.token);
-        localStorage.setItem("portal_user", JSON.stringify(response.data.user));
+        sessionStorage.setItem("portal_token", response.data.token);
+        sessionStorage.setItem(
+          "portal_user",
+          JSON.stringify(response.data.user),
+        );
 
         const userGarage = response.data.user.garage;
         if (userGarage) {
           try {
             let storedGarages = JSON.parse(
-              localStorage.getItem("linkedGarages") || "[]",
+              sessionStorage.getItem("linkedGarages") || "[]",
             );
             if (!storedGarages.find((g) => g.id === userGarage._id)) {
               storedGarages.push({
@@ -189,7 +192,7 @@ const PortalLogin = ({ isOpen, onClose, prefilledEmail }) => {
                 garageName: userGarage.garageName,
                 email: email,
               });
-              localStorage.setItem(
+              sessionStorage.setItem(
                 "linkedGarages",
                 JSON.stringify(storedGarages),
               );
@@ -289,7 +292,7 @@ const PortalLogin = ({ isOpen, onClose, prefilledEmail }) => {
                 <button
                   disabled={loading}
                   type="submit"
-                  className="w-full bg-blue-600 text-white py-5 rounded-3xl font-bold text-lg flex items-center justify-center gap-3 hover:bg-blue-700 transition-all shadow-xl shadow-blue-200"
+                  className="w-full bg-blue-600 text-white py-5 rounded-3xl font-bold text-lg flex items-center justify-center gap-3 hover:bg-blue-700 transition-all"
                 >
                   {loading ? (
                     <Loader2 className="w-6 h-6 animate-spin" />
