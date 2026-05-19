@@ -213,7 +213,7 @@ export default function Notifications() {
           <div className="flex items-center gap-3 self-start sm:self-auto shrink-0">
             <button
               onClick={markAllAsRead}
-              className="flex items-center gap-2 px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-sm font-bold transition-all duration-300 shadow-md hover:shadow-xl"
+              className="flex items-center gap-2 px-5 py-3 bg-blue-600 dark:bg-blue-700/50 hover:bg-blue-700 text-white rounded-2xl text-sm font-bold transition-all duration-300 shadow-md hover:shadow-xl"
             >
               <CheckCheck size={17} />
               Mark All Read

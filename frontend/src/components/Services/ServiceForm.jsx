@@ -152,7 +152,7 @@ export default function ServiceForm({
     gstRate: 18,
   });
   const { addToast } = useToast();
-  const { user } = useAuth();
+  const { user, token } = useAuth();
 
   const isOwner = ["owner", "admin", "advisor", "mechanic"].includes(
     user?.role,
@@ -201,8 +201,6 @@ export default function ServiceForm({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = sessionStorage.getItem("token");
-
         // If there's no token at all, stop early instead of sending requests destined to fail
         if (!token) {
           addToast(
@@ -301,7 +299,7 @@ export default function ServiceForm({
     };
 
     fetchData();
-  }, [user?.role, user?._id]);
+  }, [user?.role, user?._id, token]);
 
   /* ── Role-based data filtering ── */
   const filteredCustomers = useMemo(() => {
@@ -2435,7 +2433,7 @@ export default function ServiceForm({
               className={`px-6 py-2 text-sm font-bold rounded-lg text-white flex items-center gap-2 transition-all ${
                 isDisabled
                   ? "bg-gray-200 cursor-not-allowed"
-                  : "bg-gray-900 hover:bg-black active:scale-[0.98] shadow-sm"
+                  : "bg-gray-900 hover:bg-blue-600 active:scale-[0.98] dark:bg-blue-700/50 shadow-sm"
               }`}
             >
               {!isDisabled && (

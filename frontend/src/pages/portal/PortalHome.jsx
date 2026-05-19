@@ -60,7 +60,7 @@ export default function PortalHome() {
   }, []);
 
   const getPortalToken = () =>
-    sessionStorage.getItem("portal_token") || sessionStorage.getItem("token");
+    sessionStorage.getItem("portal_token") || sessionStorage.getItem("garage_token");
   const isAuthenticated = !!getPortalToken();
 
   useEffect(() => {

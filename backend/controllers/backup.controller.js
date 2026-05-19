@@ -25,27 +25,33 @@ export const generateBackup = async (req, res) => {
   try {
     const { range } = req.query;
     const ownerId = req.user.effectiveOwnerId;
-    const days = parseInt(range) || 7;
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - days);
+    
+    let serviceInvoiceFilter = { ownerId };
+    let jobCardFilter = { garageId: ownerId };
+    let rangeText = range === "all" ? "all_time" : `${range || 7}_days`;
+    
+    if (range !== "all") {
+      const days = parseInt(range) || 7;
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - days);
+      serviceInvoiceFilter.createdAt = { $gte: startDate };
+      jobCardFilter.$or = [
+        { serviceDate: { $gte: startDate } },
+        { createdAt: { $gte: startDate } }
+      ];
+    }
 
     // 1. Fetch Data
     const [services, invoices, payments, customers, inventory, advisors, mechanics, vehicles, jobcards, owner, settings] = await Promise.all([
-      Service.find({ ownerId, createdAt: { $gte: startDate } }).lean(),
-      Invoice.find({ ownerId, createdAt: { $gte: startDate } }).lean(),
-      Invoice.find({ ownerId, amountPaid: { $gt: 0 }, createdAt: { $gte: startDate } }).lean(),
+      Service.find(serviceInvoiceFilter).lean(),
+      Invoice.find(serviceInvoiceFilter).lean(),
+      Invoice.find({ ...serviceInvoiceFilter, amountPaid: { $gt: 0 } }).lean(),
       Customer.find({ ownerId }).lean(),
       Inventory.find({ ownerId }).lean(),
       Advisor.find({ ownerId }).lean(),
       Mechanic.find({ ownerId }).lean(),
       Vehicle.find({ garageId: ownerId }).lean(),
-      JobCard.find({ 
-        garageId: ownerId,
-        $or: [
-          { serviceDate: { $gte: startDate } },
-          { createdAt: { $gte: startDate } }
-        ]
-      }).lean(),
+      JobCard.find(jobCardFilter).lean(),
       Owner.findById(ownerId).lean(),
       GarageSettings.findOne({ ownerId }).lean()
     ]);
@@ -86,7 +92,7 @@ export const generateBackup = async (req, res) => {
 
     // 3. Zip and Stream
     const archive = archiver("zip", { zlib: { level: 9 } });
-    const filename = `garage_backup_${days}_days_${new Date().toISOString().split("T")[0]}.zip`;
+    const filename = `garage_backup_${rangeText}_${new Date().toISOString().split("T")[0]}.zip`;
 
     res.setHeader("Content-Type", "application/zip");
     res.setHeader("Content-Disposition", `attachment; filename=${filename}`);
@@ -95,7 +101,7 @@ export const generateBackup = async (req, res) => {
     const json2csvParser = new Parser();
     const metadata = {
       backupDate: new Date().toISOString(),
-      selectedRange: `${days} days`,
+      selectedRange: rangeText,
       totalRecords: {},
     };
 

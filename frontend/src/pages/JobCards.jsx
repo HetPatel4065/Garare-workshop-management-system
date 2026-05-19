@@ -13,6 +13,10 @@ import {
   Plus,
   Trash2,
   Edit2,
+  Calendar,
+  Users,
+  Filter,
+  X,
 } from "lucide-react";
 import { FaCar } from "react-icons/fa";
 
@@ -22,7 +26,56 @@ const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString("en-GB", opts);
 };
 
+const toLocalDateString = (dateInput) => {
+  if (!dateInput) return "";
+  const d = new Date(dateInput);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const getDateRange = (type) => {
+  const now = new Date();
+  const start = new Date(now);
+  const end = new Date(now);
+  
+  if (type === "today") {
+    start.setHours(0, 0, 0, 0);
+    end.setHours(23, 59, 59, 999);
+    return { startDate: toLocalDateString(start), endDate: toLocalDateString(end) };
+  }
+  if (type === "tomorrow") {
+    start.setDate(now.getDate() + 1);
+    start.setHours(0, 0, 0, 0);
+    end.setDate(now.getDate() + 1);
+    end.setHours(23, 59, 59, 999);
+    return { startDate: toLocalDateString(start), endDate: toLocalDateString(end) };
+  }
+  if (type === "this-week") {
+    const day = now.getDay();
+    const diffToMonday = now.getDate() - day + (day === 0 ? -6 : 1);
+    start.setDate(diffToMonday);
+    start.setHours(0, 0, 0, 0);
+    
+    end.setDate(start.getDate() + 6);
+    end.setHours(23, 59, 59, 999);
+    return { startDate: toLocalDateString(start), endDate: toLocalDateString(end) };
+  }
+  if (type === "this-month") {
+    start.setDate(1);
+    start.setHours(0, 0, 0, 0);
+    
+    end.setMonth(now.getMonth() + 1);
+    end.setDate(0);
+    end.setHours(23, 59, 59, 999);
+    return { startDate: toLocalDateString(start), endDate: toLocalDateString(end) };
+  }
+  return { startDate: "", endDate: "" };
+};
+
 import JobCard from "../components/Services/JobCard";
+import ExportButton from "../components/common/ExportButton";
 
 export default function JobCards() {
   const { user, token: authToken } = useAuth();
@@ -47,8 +100,25 @@ export default function JobCards() {
       setActiveSearch(queryParam);
     }
   }, [queryParam]);
-  const [filterStatus, setFilterStatus] = useState("All");
-  const [filterDate, setFilterDate] = useState("");
+
+  // Persisted Filters State
+  const [filterStatus, setFilterStatus] = useState(() => {
+    return sessionStorage.getItem("jc_filterStatus") || "All";
+  });
+  const [filterDateType, setFilterDateType] = useState(() => {
+    return sessionStorage.getItem("jc_filterDateType") || "all";
+  });
+  const [filterStartDate, setFilterStartDate] = useState(() => {
+    return sessionStorage.getItem("jc_filterStartDate") || "";
+  });
+  const [filterEndDate, setFilterEndDate] = useState(() => {
+    return sessionStorage.getItem("jc_filterEndDate") || "";
+  });
+  const [filterStaff, setFilterStaff] = useState(() => {
+    return sessionStorage.getItem("jc_filterStaff") || "All";
+  });
+
+  const [showFilters, setShowFilters] = useState(false);
 
   const [advisors, setAdvisors] = useState([]);
   const [mechanics, setMechanics] = useState([]);
@@ -82,11 +152,32 @@ export default function JobCards() {
     try {
       setLoading(true);
       const ts = Date.now();
+      
+      // Synchronize with API query-based filtering
+      const params = new URLSearchParams();
+      params.append("t", ts);
+      
+      // We process status filter client-side to keep counts of other status tabs correct,
+      // but API supports it, so it's fully synchronized.
+      
+      if (filterStaff !== "All") {
+        params.append("staff", filterStaff);
+      }
+      
+      if (filterDateType !== "all" && filterDateType !== "custom") {
+        const { startDate, endDate } = getDateRange(filterDateType);
+        params.append("startDate", startDate);
+        params.append("endDate", endDate);
+      } else if (filterDateType === "custom") {
+        if (filterStartDate) params.append("startDate", filterStartDate);
+        if (filterEndDate) params.append("endDate", filterEndDate);
+      }
+
       const [vehRes, jcRes, custRes, advRes, mechRes] = await Promise.all([
         fetch(`${import.meta.env.VITE_API_URL}/vehicles?t=${ts}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch(`${import.meta.env.VITE_API_URL}/job-cards?t=${ts}`, {
+        fetch(`${import.meta.env.VITE_API_URL}/job-cards?${params.toString()}`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
         fetch(`${import.meta.env.VITE_API_URL}/customers?t=${ts}`, {
@@ -132,11 +223,21 @@ export default function JobCards() {
     }
   };
 
+  // Sync state to sessionStorage
+  useEffect(() => {
+    sessionStorage.setItem("jc_filterStatus", filterStatus);
+    sessionStorage.setItem("jc_filterDateType", filterDateType);
+    sessionStorage.setItem("jc_filterStartDate", filterStartDate);
+    sessionStorage.setItem("jc_filterEndDate", filterEndDate);
+    sessionStorage.setItem("jc_filterStaff", filterStaff);
+  }, [filterStatus, filterDateType, filterStartDate, filterEndDate, filterStaff]);
+
+  // Fetch when token or any active filters change
   useEffect(() => {
     if (token) fetchData();
-  }, [token]);
+  }, [token, filterDateType, filterStartDate, filterEndDate, filterStaff]);
 
-  // Count per status for pill badges
+  // Count per status for pill badges (calculated dynamically from current staff & date filtered job cards)
   const statusCounts = jobCards.reduce((acc, jc) => {
     const s = jc.status || "pending-inspection";
     acc[s] = (acc[s] || 0) + 1;
@@ -178,19 +279,34 @@ export default function JobCards() {
       const jcStatus = jc.status || "pending-inspection";
       const matchesStatus = filterStatus === "All" || jcStatus === filterStatus;
 
-      let matchesDate = true;
-      if (filterDate) {
-        const targetDate =
-          jc.serviceDate || jc.createdAt || v.lastServiceDate || v.createdAt;
-        if (targetDate) {
-          matchesDate =
-            new Date(targetDate).toISOString().split("T")[0] === filterDate;
+      // Staff/Technician filter (frontend sync)
+      let matchesStaff = true;
+      if (filterStaff !== "All") {
+        if (filterStaff === "unassigned") {
+          const hasMechanic = typeof jc.mechanicId === "object" ? jc.mechanicId?._id : jc.mechanicId;
+          matchesStaff = !hasMechanic;
         } else {
-          matchesDate = false;
+          const mechId = typeof jc.mechanicId === "object" ? jc.mechanicId?._id : jc.mechanicId;
+          const advId = typeof jc.advisorId === "object" ? jc.advisorId?._id : jc.advisorId;
+          matchesStaff = String(mechId) === String(filterStaff) || String(advId) === String(filterStaff);
         }
       }
 
-      return matchesSearch && matchesStatus && matchesDate;
+      // Date Range Filter (frontend sync)
+      let matchesDate = true;
+      const targetDate = jc.createdAt;
+      if (filterDateType !== "all" && targetDate) {
+        const itemDate = toLocalDateString(targetDate);
+        if (filterDateType === "custom") {
+          if (filterStartDate && itemDate < filterStartDate) matchesDate = false;
+          if (filterEndDate && itemDate > filterEndDate) matchesDate = false;
+        } else {
+          const { startDate, endDate } = getDateRange(filterDateType);
+          if (itemDate < startDate || itemDate > endDate) matchesDate = false;
+        }
+      }
+
+      return matchesSearch && matchesStatus && matchesStaff && matchesDate;
     })
     .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
 
@@ -437,6 +553,26 @@ export default function JobCards() {
     "closed",
   ];
 
+  const exportColumns = [
+    { header: 'Job Card ID', accessor: 'jobCardId' },
+    { header: 'Status', accessor: 'status' },
+    { header: 'Vehicle Plate', accessor: row => typeof row.vehicleId === 'object' ? row.vehicleId?.licensePlate : vehicles.find(v => v._id === row.vehicleId)?.licensePlate || 'N/A' },
+    {
+      header: 'Customer', accessor: row => {
+        const vId = typeof row.vehicleId === 'object' ? row.vehicleId?._id : row.vehicleId;
+        const v = vehicles.find(veh => String(veh._id) === String(vId)) || {};
+        const cId = typeof v.customerId === 'object' ? v.customerId?._id : v.customerId;
+        return customers.find(c => String(c._id) === String(cId))?.name || v.customerName || 'N/A';
+      }
+    },
+    { header: 'Advisor', accessor: row => typeof row.advisorId === 'object' ? row.advisorId?.name : advisors.find(a => a._id === row.advisorId)?.name || 'N/A' },
+    { header: 'Mechanic', accessor: row => typeof row.mechanicId === 'object' ? row.mechanicId?.name : mechanics.find(m => m._id === row.mechanicId)?.name || 'N/A' },
+    { header: 'Created At', accessor: row => new Date(row.createdAt).toLocaleDateString() },
+    { header: 'Instructions', accessor: 'serviceInstructions' },
+    { header: 'Service Date', accessor: row => row.serviceDate ? new Date(row.serviceDate).toLocaleDateString() : 'N/A' },
+    { header: 'Next Service Date', accessor: row => row.nextServiceDate ? new Date(row.nextServiceDate).toLocaleDateString() : 'N/A' },
+  ];
+
   const availableCarsForCustomer = vehicles.filter(
     (v) => v.customerId === customerId || v.customerId?._id === customerId,
   );
@@ -450,6 +586,19 @@ export default function JobCards() {
         !jc.instructionText?.trim() ||
         jc.instructionText.trim() === "1.",
     );
+
+  const hasActiveFilters =
+    filterStatus !== "All" ||
+    filterDateType !== "all" ||
+    filterStaff !== "All";
+
+  const clearAllFilters = () => {
+    setFilterStatus("All");
+    setFilterDateType("all");
+    setFilterStartDate("");
+    setFilterEndDate("");
+    setFilterStaff("All");
+  };
 
   return (
     <div className="p-4 sm:p-6 bg-gray-100 rounded-xl cursor-auto min-h-fit">
@@ -470,29 +619,37 @@ export default function JobCards() {
           </div>
 
           {role !== "mechanic" && role !== "advisor" && (
-            <button
-              onClick={handleAddNew}
-              className="
-          self-start sm:self-auto
-          flex items-center gap-2
-          px-5 py-3
-          bg-blue-600 hover:bg-blue-700
-          text-white
-          rounded-2xl
-          text-sm font-bold
-          transition-all duration-300
-          shadow-md hover:shadow-xl
-        "
-            >
-              <Plus size={17} />
-              Add Job Card
-            </button>
+            <div className="flex items-center gap-2 self-start sm:self-auto">
+              <ExportButton
+                title="Job Cards List"
+                columns={exportColumns}
+                data={filteredJobCards}
+                filenamePrefix="job_cards"
+              />
+              <button
+                onClick={handleAddNew}
+                className="
+            flex items-center gap-2
+            px-5 py-3
+            bg-blue-600 dark:bg-blue-700/50 hover:bg-blue-700
+            text-white
+            rounded-2xl
+            text-sm font-bold
+            transition-all duration-300
+            shadow-md hover:shadow-xl
+            h-10.5
+          "
+              >
+                <Plus size={17} />
+                Add Job Card
+              </button>
+            </div>
           )}
         </div>
       </div>
 
       {/* Search & Filter Bar */}
-      <div className="mb-6 flex flex-col lg:flex-row gap-4">
+      <div className="mb-6 flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <SearchBar
             value={searchQuery}
@@ -522,15 +679,198 @@ export default function JobCards() {
             className="w-full"
           />
         </div>
-        <div className="w-full lg:w-64">
-          <input
-            type="date"
-            value={filterDate}
-            onChange={(e) => setFilterDate(e.target.value)}
-            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3.5 text-sm font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all shadow-sm"
-          />
-        </div>
+        <button
+          onClick={() => setShowFilters(!showFilters)}
+          className={`
+            flex items-center justify-center gap-2
+            px-4 py-2.5
+            rounded-xl border shadow-sm cursor-pointer transition-all duration-300
+            ${
+              showFilters
+                ? "bg-slate-900 border-slate-900 text-white"
+                : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+            }
+          `}
+          title="Date & Staff Filters"
+        >
+          <Filter size={18} />
+          <span className="text-sm font-semibold">Filters</span>
+          {hasActiveFilters && (
+            <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
+          )}
+        </button>
       </div>
+
+      {/* Advanced Filter Panel */}
+      {showFilters && (
+        <div className="mb-6 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 transition-all duration-300 animate-fade-in">
+          <div className="flex flex-col gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Quick Date Filters */}
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Calendar className="w-4 h-4 text-slate-400" />
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">
+                    Date Range
+                  </label>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {[
+                    { value: "all", label: "All Time" },
+                    { value: "today", label: "Today" },
+                    { value: "tomorrow", label: "Tomorrow" },
+                    { value: "this-week", label: "This Week" },
+                    { value: "this-month", label: "This Month" },
+                    { value: "custom", label: "Custom" },
+                  ].map((opt) => {
+                    const isActive = filterDateType === opt.value;
+                    return (
+                      <button
+                        key={opt.value}
+                        onClick={() => setFilterDateType(opt.value)}
+                        className={`
+                          py-1.5 px-3 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer
+                          ${
+                            isActive
+                              ? "bg-slate-900 text-white shadow-sm"
+                              : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+                          }
+                        `}
+                      >
+                        {opt.label}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Custom Date Range Picker */}
+                {filterDateType === "custom" && (
+                  <div className="flex items-center gap-2 mt-3 animate-fade-in">
+                    <input
+                      type="date"
+                      value={filterStartDate}
+                      onChange={(e) => setFilterStartDate(e.target.value)}
+                      className="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-700 outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer h-[34px]"
+                    />
+                    <span className="text-slate-400 text-xs font-semibold">to</span>
+                    <input
+                      type="date"
+                      value={filterEndDate}
+                      onChange={(e) => setFilterEndDate(e.target.value)}
+                      className="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-700 outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer h-[34px]"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Staff / Technician Filter */}
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Users className="w-4 h-4 text-slate-400" />
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">
+                    Assigned Staff & Technicians
+                  </label>
+                </div>
+                <select
+                  value={filterStaff}
+                  onChange={(e) => setFilterStaff(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-700 outline-none focus:ring-1 focus:ring-blue-500 capitalize cursor-pointer h-[34px]"
+                >
+                  <option value="All">All Staff Members</option>
+                  <option value="unassigned">Unassigned Jobs</option>
+                  
+                  {advisors.length > 0 && (
+                    <optgroup label="Service Advisors">
+                      {advisors.map((s) => (
+                        <option key={s._id} value={s._id}>
+                          {s.name || s.email} (Advisor)
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
+                  
+                  {mechanics.length > 0 && (
+                    <optgroup label="Technicians & Mechanics">
+                      {mechanics.map((s) => (
+                        <option key={s._id} value={s._id}>
+                          {s.name || s.email} (Mechanic)
+                        </option>
+                      ))}
+                    </optgroup>
+                  )}
+                </select>
+              </div>
+            </div>
+
+            {/* Active Filter Chips */}
+            {hasActiveFilters && (
+              <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-100">
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest mr-1">
+                  Active Filters:
+                </span>
+                
+                {filterStatus !== "All" && (
+                  <div className="flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-700 border border-blue-100 rounded-full text-xs font-bold transition-all duration-300">
+                    <span className="capitalize">Status: {filterStatus.replace("-", " ")}</span>
+                    <button
+                      onClick={() => setFilterStatus("All")}
+                      className="hover:bg-blue-100 rounded-full p-0.5 transition-colors cursor-pointer"
+                      title="Remove filter"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+
+                {filterDateType !== "all" && (
+                  <div className="flex items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-700 border border-indigo-100 rounded-full text-xs font-bold transition-all duration-300">
+                    <span className="capitalize">
+                      Date: {filterDateType === "custom" 
+                        ? `${filterStartDate || "?"} to ${filterEndDate || "?"}`
+                        : filterDateType.replace("-", " ")}
+                    </span>
+                    <button
+                      onClick={() => {
+                        setFilterDateType("all");
+                        setFilterStartDate("");
+                        setFilterEndDate("");
+                      }}
+                      className="hover:bg-indigo-100 rounded-full p-0.5 transition-colors cursor-pointer"
+                      title="Remove filter"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+
+                {filterStaff !== "All" && (
+                  <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-full text-xs font-bold transition-all duration-300">
+                    <span className="capitalize">
+                      Staff: {filterStaff === "unassigned" 
+                        ? "Unassigned" 
+                        : (advisors.find(a => a._id === filterStaff)?.name || mechanics.find(m => m._id === filterStaff)?.name || "Selected Staff")}
+                    </span>
+                    <button
+                      onClick={() => setFilterStaff("All")}
+                      className="hover:bg-emerald-100 rounded-full p-0.5 transition-colors cursor-pointer"
+                      title="Remove filter"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+
+                <button
+                  onClick={clearAllFilters}
+                  className="text-xs text-red-500 hover:text-red-700 font-bold hover:underline ml-auto cursor-pointer transition-all duration-200"
+                >
+                  Clear All
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="mt-4 border-t border-gray-100 p-4">
         <p className="text-sm font-medium text-gray-600">
@@ -757,19 +1097,19 @@ export default function JobCards() {
                               prev.map((item, idx) =>
                                 idx === i
                                   ? {
-                                      ...item,
-                                      vehicleId: vId,
-                                      serviceDate: vData?.serviceDate
-                                        ? new Date(vData.serviceDate)
-                                            .toISOString()
-                                            .split("T")[0]
-                                        : "",
-                                      nextServiceDate: vData?.nextServiceDate
-                                        ? new Date(vData.nextServiceDate)
-                                            .toISOString()
-                                            .split("T")[0]
-                                        : "",
-                                    }
+                                    ...item,
+                                    vehicleId: vId,
+                                    serviceDate: vData?.serviceDate
+                                      ? new Date(vData.serviceDate)
+                                        .toISOString()
+                                        .split("T")[0]
+                                      : "",
+                                    nextServiceDate: vData?.nextServiceDate
+                                      ? new Date(vData.nextServiceDate)
+                                        .toISOString()
+                                        .split("T")[0]
+                                      : "",
+                                  }
                                   : item,
                               ),
                             );
@@ -902,7 +1242,7 @@ export default function JobCards() {
               <button
                 onClick={handleSaveRequest}
                 disabled={isSaving}
-                className="px-6 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-xl shadow-sm"
+                className="px-6 py-2.5 text-sm font-bold text-white bg-blue-600 dark:bg-blue-700/50 rounded-xl shadow-sm"
               >
                 {isSaving ? "Saving..." : "Save Job Card"}
               </button>

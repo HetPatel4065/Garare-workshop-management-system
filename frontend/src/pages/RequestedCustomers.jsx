@@ -25,6 +25,7 @@ import Modal from "../components/UI/Modal";
 import ConfirmModal from "../components/UI/ConfirmModal";
 import { Meta } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import ExportButton from "../components/common/ExportButton";
 
 // ─── MetaField (mirrors CustomerCard) ────────────────────────────
 function MetaField({
@@ -536,6 +537,20 @@ export default function RequestedCustomers() {
     },
   ];
 
+  const exportColumns = [
+    { header: 'Request ID', accessor: row => row._id?.slice(-6)?.toUpperCase() || 'N/A' },
+    { header: 'Customer Name', accessor: 'customerName' },
+    { header: 'Phone', accessor: 'phone' },
+    { header: 'Email', accessor: 'email' },
+    { header: 'Vehicle Number', accessor: 'vehicleNumber' },
+    { header: 'Vehicle Model', accessor: 'vehicleModel' },
+    { header: 'Status', accessor: 'status' },
+    { header: 'Location', accessor: 'location' },
+    { header: 'Submitted On', accessor: row => new Date(row.createdAt).toLocaleDateString() },
+    { header: 'Appointment Date', accessor: row => row.appointmentDate ? new Date(row.appointmentDate).toLocaleDateString() : 'N/A' },
+    { header: 'Appointment Time', accessor: row => row.appointmentTime || 'N/A' },
+  ];
+
   return (
     <div className="p-4 sm:p-6 bg-gray-100 rounded-xl min-h-screen">
       {/* ── Header ── */}
@@ -552,26 +567,34 @@ export default function RequestedCustomers() {
               Review and approve new customer registrations from the portal
             </p>
           </div>
-          <button
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-            className="self-start sm:self-auto flex items-center gap-2 px-5 py-3  bg-blue-600 hover:bg-blue-700 rounded-2xl text-sm font-bold text-white transition-all duration-300 shadow-sm hover:shadow-md disabled:opacity-70"
-          >
-            <svg
-              className={`w-4 h-4 ${isRefreshing ? "animate-spin [animation-direction:reverse]" : ""}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <ExportButton 
+              title="Registration Requests" 
+              columns={exportColumns} 
+              data={filteredRequests} 
+              filenamePrefix="registration_requests"
+            />
+            <button
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="flex items-center gap-2 px-5 py-3 bg-blue-600 dark:bg-blue-700/50 hover:bg-blue-700 rounded-2xl text-sm font-bold text-white transition-all duration-300 shadow-sm hover:shadow-md disabled:opacity-70 h-10.5"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2.5}
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-              />
-            </svg>
-            {isRefreshing ? "Refreshing..." : "Refresh"}
-          </button>
+              <svg
+                className={`w-4 h-4 ${isRefreshing ? "animate-spin [animation-direction:reverse]" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              {isRefreshing ? "Refreshing..." : "Refresh"}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -733,24 +756,24 @@ export default function RequestedCustomers() {
                 </div>
                 <div className="space-y-4">
                   <DetailRow
-                    icon={<Mail size={16} className="text-black" />}
+                    icon={<Mail size={16} className="text-black dark:text-white" />}
                     label="Customer Email"
                     value={selectedRequest.email}
                   />
                   <DetailRow
-                    icon={<Phone size={16} className="text-black" />}
+                    icon={<Phone size={16} className="text-black dark:text-white" />}
                     label="Contact Number"
                     value={selectedRequest.phone}
                   />
                   <DetailRow
-                    icon={<MapPin size={16} className="text-black" />}
+                    icon={<MapPin size={16} className="text-black dark:text-white" />}
                     label="Service Location"
                     value={selectedRequest.location}
                   />
                   {selectedRequest.status === "approved" && (
                     <DetailRow
                       icon={
-                        <CalendarCheck size={16} className="text-emerald-600" />
+                        <CalendarCheck size={16} className="text-black dark:text-white" />
                       }
                       label="Scheduled Appointment"
                       value={

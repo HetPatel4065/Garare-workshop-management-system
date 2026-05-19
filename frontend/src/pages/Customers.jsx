@@ -10,6 +10,7 @@ import { useAuth } from "../context/AuthContext";
 import ConfirmModal from "../components/UI/ConfirmModal";
 import VehicleHistoryModal from "../components/Customers/VehicleHistoryModal";
 import { Plus } from "lucide-react";
+import ExportButton from "../components/common/ExportButton";
 
 export default function Customers() {
   const { user, token } = useAuth();
@@ -280,6 +281,20 @@ export default function Customers() {
     }
   };
 
+  const exportColumns = [
+    { header: 'Name', accessor: 'name' },
+    { header: 'Email', accessor: 'email' },
+    { header: 'Phone', accessor: 'phone' },
+    { header: 'Status', accessor: 'status' },
+    { header: 'Location', accessor: row => {
+        const parts = [];
+        if (row.address?.street) parts.push(row.address.street);
+        if (row.address?.city) parts.push(row.address.city);
+        if (row.address?.zip) parts.push(row.address.zip);
+        return parts.length > 0 ? parts.join(", ") : "N/A";
+    } }
+  ];
+
   return (
     <div className="p-4 sm:p-6 bg-gray-100 rounded-xl min-h-screen">
       <div className="mb-8 pb-5 border-b border-slate-200/80">
@@ -299,23 +314,31 @@ export default function Customers() {
           </div>
 
           {role !== "mechanic" && role !== "advisor" && (
-            <button
-              onClick={handleAdd}
-              className="
-          self-start sm:self-auto
-          flex items-center gap-2
-          px-5 py-3
-          bg-blue-600 hover:bg-blue-700
-          text-white
-          rounded-2xl
-          text-sm font-bold
-          transition-all duration-300
-          shadow-md hover:shadow-xl
-        "
-            >
-              <Plus size={17} />
-              Add Customer
-            </button>
+            <div className="flex items-center gap-2 self-start sm:self-auto">
+              <ExportButton 
+                title="Customers List" 
+                columns={exportColumns} 
+                data={filteredCustomers} 
+                filenamePrefix="customers"
+              />
+              <button
+                onClick={handleAdd}
+                className="
+            flex items-center gap-2
+            px-5 py-3
+            bg-blue-600 dark:bg-blue-700/50 hover:bg-blue-700
+            text-white
+            rounded-2xl
+            text-sm font-bold
+            transition-all duration-300
+            shadow-md hover:shadow-xl
+            h-10.5
+          "
+              >
+                <Plus size={17} />
+                Add Customer
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -372,11 +395,11 @@ export default function Customers() {
 
       <div className="flex flex-wrap gap-2 mb-6">
         {[
-          ["Active", "bg-emerald-100 text-emerald-700 border-emerald-300"],
-          ["Pending", "bg-blue-100 text-blue-700 border-blue-300"],
-          ["Inactive", "bg-gray-100 text-gray-700 border-gray-300"],
-          ["Blocked", "bg-red-100 text-red-700 border-red-300"],
-          ["Rejected", "bg-orange-100 text-orange-700 border-orange-300"],
+          ["Active", "bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 border-emerald-300"],
+          ["Pending", "bg-blue-100 dark:bg-blue-700/50 text-blue-700 border-blue-300"],
+          ["Inactive", "bg-gray-100 dark:bg-gray-700/50 text-gray-700 border-gray-300"],
+          ["Blocked", "bg-red-100 dark:bg-blue-950/50 text-red-700 border-red-300"],
+          ["Rejected", "bg-orange-100 dark:bg-orange-950/50 text-orange-700 border-orange-300"],
         ].map(([status, classes]) => (
           <span
             key={status}

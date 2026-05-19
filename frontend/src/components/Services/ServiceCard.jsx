@@ -251,7 +251,7 @@ export default function ServiceCard({
                     e.stopPropagation();
                     onEdit(service);
                   }}
-                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 text-[12px] font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition active:scale-95 shadow-sm"
+                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 text-[12px] font-bold text-white bg-blue-600 dark:bg-blue-700/50 hover:bg-blue-700 rounded-xl transition active:scale-95 shadow-sm"
                 >
                   <svg
                     className="w-3.5 h-3.5"

@@ -15,16 +15,47 @@ import { sendEmail, buildDailyReportEmail } from "../utils/notifications.js";
 export const exportData = async (req, res) => {
   try {
     const ownerId = req.user.effectiveOwnerId;
+    const { range } = req.query;
+
+    let serviceInvoiceFilter = { ownerId };
+    let jobCardFilter = { garageId: ownerId };
+
+    if (range && range !== "all") {
+      const days = parseInt(range) || 7;
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - days);
+      serviceInvoiceFilter.createdAt = { $gte: startDate };
+      jobCardFilter.$or = [
+        { serviceDate: { $gte: startDate } },
+        { createdAt: { $gte: startDate } }
+      ];
+    }
 
     const [customers, services, invoices, inventory, vehicles, jobCards] =
       await Promise.all([
         Customer.find({ ownerId }),
-        Service.find({ ownerId }),
-        Invoice.find({ ownerId }),
+        Service.find(serviceInvoiceFilter).populate("customerId").populate("vehicleId").populate("advisorId"),
+        Invoice.find(serviceInvoiceFilter).populate("customerId").populate("serviceId"),
         Inventory.find({ ownerId }),
-        Vehicle.find({ garageId: ownerId }),
-        JobCard.find({ garageId: ownerId }),
+        Vehicle.find({ garageId: ownerId }).populate("customerId"),
+        JobCard.find(jobCardFilter).populate("customerId").populate("vehicleId").populate("advisorId"),
       ]);
+
+    if (req.query.format === "json") {
+      await GarageSettings.findOneAndUpdate(
+        { ownerId },
+        { $set: { lastExportedAt: new Date() } },
+        { upsert: true },
+      );
+      return res.status(200).json({
+        customers,
+        services,
+        invoices,
+        inventory,
+        vehicles,
+        jobCards,
+      });
+    }
 
     let csv = "Type,ID,Details,Amount,Date\n";
 
@@ -42,7 +73,7 @@ export const exportData = async (req, res) => {
     );
     inventory.forEach(
       (iv) =>
-        (csv += `Inventory,${iv.sku || iv._id},"${iv.name}",${iv.retailPrice},${iv.stock},${iv.supplier},${iv.updatedAt}\n`),
+        (csv += `Inventory,${iv.sku || iv._id},"${iv.name} (Supplier: ${iv.supplier?.name || "N/A"}, Stock: ${iv.stock})",${iv.retailPrice},${iv.updatedAt || iv.createdAt}\n`),
     );
     vehicles.forEach(
       (v) =>

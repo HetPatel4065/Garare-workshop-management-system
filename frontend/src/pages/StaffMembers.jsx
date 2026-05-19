@@ -22,6 +22,7 @@ import {
 import { FaUsers } from "react-icons/fa6";
 import SearchBar from "../components/UI/SearchBar";
 import { CardSkeleton, TableSkeleton } from "../components/UI/Skeleton";
+import ExportButton from "../components/common/ExportButton";
 
 const ROLE_CONFIG = {
   owner: {
@@ -492,6 +493,16 @@ export default function StaffMembers() {
       setter((p) => ({ ...p, mobileNumber: formattedValue }));
   };
 
+  const exportColumns = [
+    { header: 'ID', accessor: row => row._id?.slice(-6)?.toUpperCase() },
+    { header: 'Name', accessor: 'name' },
+    { header: 'Role', accessor: 'role' },
+    { header: 'Email', accessor: 'email' },
+    { header: 'Mobile Number', accessor: 'mobileNumber' },
+    { header: 'Status', accessor: row => row.isActive !== false ? 'Active' : 'Inactive' },
+    { header: 'Join Date', accessor: row => row.createdAt ? new Date(row.createdAt).toLocaleDateString() : 'N/A' },
+  ];
+
   // Shared input class
   const inputCls =
     "w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 dark:focus:border-blue-500 transition";
@@ -513,13 +524,21 @@ export default function StaffMembers() {
             </p>
           </div>
           {canManage && (
-            <button
-              onClick={openAdd}
-              className="self-start sm:self-auto flex items-center gap-2 px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-sm font-bold transition-all duration-300 shadow-md hover:shadow-xl"
-            >
-              <Plus size={17} />
-              Add New Staff
-            </button>
+            <div className="flex items-center gap-2 self-start sm:self-auto">
+              <ExportButton 
+                title="Staff Members List" 
+                columns={exportColumns} 
+                data={filteredStaff} 
+                filenamePrefix="staff_members"
+              />
+              <button
+                onClick={openAdd}
+                className="flex items-center gap-2 px-5 py-3 bg-blue-600 dark:bg-blue-700/50 hover:bg-blue-700 text-white rounded-2xl text-sm font-bold transition-all duration-300 shadow-md hover:shadow-xl h-[42px]"
+              >
+                <Plus size={17} />
+                Add New Staff
+              </button>
+            </div>
           )}
         </div>
       </div>

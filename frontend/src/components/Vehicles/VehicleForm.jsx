@@ -420,7 +420,7 @@ export default function VehicleForm({
               onClick={handleSubmit}
               disabled={isInvalid}
               className={`px-5 py-2 text-sm font-medium rounded-lg text-white transition
-                ${isInvalid ? "bg-gray-200 cursor-not-allowed" : "bg-gray-900 hover:bg-black"}`}
+                ${isInvalid ? "bg-gray-200 cursor-not-allowed" : "bg-gray-900 hover:bg-black "}`}
             >
               {isEditing ? "Save changes" : "Register profile"}
             </button>

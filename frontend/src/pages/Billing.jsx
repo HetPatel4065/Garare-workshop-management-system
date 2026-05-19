@@ -12,6 +12,7 @@ import InvoicePreview from "../components/Billing/InvoicePreview";
 import UnbilledServiceCard from "../components/Services/UnbilledServiceCard";
 import { ClipboardClock, FileText, ReceiptIndianRupee } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import ExportButton from "../components/common/ExportButton";
 
 const EmptyState = ({ icon, title, description }) => (
   <div className="text-center py-32 bg-gray-200 dark:bg-gray-900 rounded-[40px] border-2 border-dashed border-gray-300 flex flex-col items-center">
@@ -320,6 +321,23 @@ export default function Billing() {
     }
   };
 
+  const exportColumns = activeTab === 'unbilled' ? [
+    { header: 'Job Card', accessor: row => row.jobId?.jobCardId || 'N/A' },
+    { header: 'Service', accessor: 'serviceName' },
+    { header: 'Customer', accessor: row => row.customerId?.name || 'N/A' },
+    { header: 'Vehicle', accessor: row => row.vehicle?.licensePlate || 'N/A' },
+    { header: 'Cost', accessor: row => Number(row.labourCost || row.labourAtTime || 0) + Number(row.partsTotal || 0) + Number(row.catalogTotal || 0) }
+  ] : [
+    { header: 'Invoice Number', accessor: 'invoiceNumber' },
+    { header: 'Date', accessor: row => row.createdAt ? new Date(row.createdAt).toLocaleDateString() : 'N/A' },
+    { header: 'Customer', accessor: row => row.customerId?.name || 'N/A' },
+    { header: 'Vehicle', accessor: row => row.serviceId?.vehicle?.licensePlate || 'N/A' },
+    { header: 'Total', accessor: 'total' },
+    { header: 'Status', accessor: 'status' }
+  ];
+
+  const exportData = activeTab === 'unbilled' ? filteredUnbilled : activeTab === 'current' ? filteredCurrent : filteredHistory;
+
   return (
     <div className="max-w-7xl mx-auto min-h-screen bg-gray-100 rounded-xl p-4 sm:p-6 md:p-8">
       {/* 🚀 Header */}
@@ -351,6 +369,15 @@ export default function Billing() {
                 </div>
               )}
             </div>
+          </div>
+          
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <ExportButton 
+              title={`Billing ${activeTab}`} 
+              columns={exportColumns} 
+              data={exportData} 
+              filenamePrefix={`billing_${activeTab}`}
+            />
           </div>
         </div>
       </div>

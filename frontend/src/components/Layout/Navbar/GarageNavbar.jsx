@@ -553,7 +553,7 @@ export default function TopNavbar({ userName = "User", onToggleSidebar }) {
                   )}
                   <button
                     onClick={handleSearchSubmit}
-                    className="px-3 py-1.5 bg-blue-600 text-white text-[10px] font-bold rounded-xl hover:bg-blue-700 transition-all active:scale-95 uppercase tracking-wider"
+                    className="px-3 py-1.5 bg-blue-600 dark:bg-blue-700/50 text-white text-[10px] font-bold rounded-xl hover:bg-blue-700 transition-all active:scale-95 uppercase tracking-wider"
                   >
                     Search
                   </button>
@@ -693,7 +693,7 @@ export default function TopNavbar({ userName = "User", onToggleSidebar }) {
                   />
                   <button
                     onClick={handleSearchSubmit}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-blue-600 text-white text-[10px] font-bold rounded-xl hover:bg-blue-700 transition-all active:scale-95 uppercase tracking-wider"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1.5 bg-blue-600  text-white text-[10px] font-bold rounded-xl hover:bg-blue-700 transition-all active:scale-95 uppercase tracking-wider"
                   >
                     Search
                   </button>

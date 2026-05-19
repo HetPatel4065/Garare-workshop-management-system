@@ -37,7 +37,7 @@ const PortalDashboard = ({ garageSettings }) => {
   const [expandedVehicleId, setExpandedVehicleId] = useState(null);
   const [expandedInvoiceId, setExpandedInvoiceId] = useState(null);
   const [token, setToken] = useState(
-    sessionStorage.getItem("portal_token") || sessionStorage.getItem("token"),
+    sessionStorage.getItem("portal_token") || sessionStorage.getItem("garage_token"),
   );
   const navigate = useNavigate();
   const fullYear = new Date().getFullYear();
@@ -55,7 +55,7 @@ const PortalDashboard = ({ garageSettings }) => {
 
   useEffect(() => {
     const storedToken =
-      sessionStorage.getItem("portal_token") || sessionStorage.getItem("token");
+      sessionStorage.getItem("portal_token") || sessionStorage.getItem("garage_token");
     if (!storedToken) {
       navigate("/portal");
       return;

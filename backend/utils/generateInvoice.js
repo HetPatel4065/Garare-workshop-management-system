@@ -2,6 +2,7 @@ import PDFDocument from "pdfkit";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import QRCode from "qrcode";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -74,20 +75,6 @@ const generateAndSaveInvoicePDF = (invoice, settings = {}) => {
 
          doc.fontSize(9).font("Helvetica")
             .text(`INVOICE: #${invoice.invoiceNumber || "N/A"}`, hasLogo ? 130 : 40, 52, { align: "right", width: PAGE_W - (hasLogo ? 170 : 80) });
-
-         // Small PAID marker (Badge style)
-         if (invoice.status === "Paid") {
-            const badgeW = 45;
-            const badgeH = 15;
-            const badgeX = PAGE_W - 40 - badgeW;
-            const badgeY = 65;
-
-            doc.rect(badgeX, badgeY, badgeW, badgeH).fill("#16a34a");
-            doc.fillColor("#ffffff").fontSize(8).font("Helvetica-Bold")
-               .text("PAID", badgeX, badgeY + 4, { width: badgeW, align: "center" });
-         }
-
-
 
          // ─── 2. Business & Customer Info ────────────────────────────────────
          const infoY = 110;
@@ -210,6 +197,20 @@ const generateAndSaveInvoicePDF = (invoice, settings = {}) => {
 
          // ─── 6. Footer ──────────────────────────────────────────────────────
          const footerY = doc.page.height - 80;
+
+         if (settings.upiId) {
+            try {
+               const upiString = `upi://pay?pa=${settings.upiId}&pn=${encodeURIComponent(settings.garageName || 'Garage')}&am=${invoice.total || invoice.totalAmount}&cu=INR`;
+               const qrBuffer = await QRCode.toBuffer(upiString, { errorCorrectionLevel: 'H', margin: 1, color: { dark: '#000000', light: '#ffffff' } });
+               // Draw QR Code on the left side
+               doc.image(qrBuffer, 40, rowY - 5, { width: 120 });
+               doc.fillColor(DARK).fontSize(8).font("Helvetica-Bold")
+                  .text("We are also accepting UPI Payments.", 40, rowY + 125, { width: 120, align: "center" });
+            } catch (qrErr) {
+               console.error("Failed to generate QR code:", qrErr);
+            }
+         }
+
          doc.moveTo(40, footerY - 10).lineTo(PAGE_W - 40, footerY - 10).strokeColor(BORDER_COLOR).lineWidth(0.5).stroke();
 
          doc.fillColor(GRAY).fontSize(9).font("Helvetica-Oblique")

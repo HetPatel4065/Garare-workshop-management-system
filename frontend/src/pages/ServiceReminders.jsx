@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { FaCar } from "react-icons/fa6";
+import ExportButton from "../components/common/ExportButton";
 
 // ─── MetaField (mirrors RequestedCustomers) ───
 function MetaField({
@@ -497,6 +498,17 @@ export default function ServiceReminders() {
   const handleSendSMS = (r) => console.log("SMS", r);
   const handleCall = (r) => console.log("Call", r);
 
+  const exportColumns = [
+    { header: 'License Plate', accessor: 'licensePlate' },
+    { header: 'Vehicle', accessor: row => `${row.make || ''} ${row.model || ''}`.trim() },
+    { header: 'Customer', accessor: row => row.customerId?.name || row.customerName || 'Walk-in' },
+    { header: 'Phone', accessor: row => row.customerId?.phone || 'N/A' },
+    { header: 'Email', accessor: row => row.customerId?.email || 'N/A' },
+    { header: 'Last Service', accessor: row => row.lastServiceDate ? format(new Date(row.lastServiceDate), "dd MMM yyyy") : 'N/A' },
+    { header: 'Next Service Due', accessor: row => row.nextServiceDate ? format(new Date(row.nextServiceDate), "dd MMM yyyy") : 'N/A' },
+    { header: 'Status', accessor: row => getStatusMeta(row.reminderStatus, row.nextServiceDate).label },
+  ];
+
   return (
     <div className="p-4 sm:p-6 bg-gray-100 rounded-xl min-h-screen">
       {/* ── Header ── */}
@@ -513,26 +525,34 @@ export default function ServiceReminders() {
               Manage and track upcoming vehicle service reminders
             </p>
           </div>
-          <button
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-            className="self-start sm:self-auto flex items-center gap-2 px-5 py-3 bg-blue-600 hover:bg-blue-700 rounded-2xl text-sm font-bold text-white transition-all duration-300 shadow-sm hover:shadow-md disabled:opacity-70"
-          >
-            <svg
-              className={`w-4 h-4 ${isRefreshing ? "animate-spin [animation-direction:reverse]" : ""}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <ExportButton 
+              title="Service Reminders" 
+              columns={exportColumns} 
+              data={filteredReminders} 
+              filenamePrefix="service_reminders"
+            />
+            <button
+              onClick={handleRefresh}
+              disabled={isRefreshing}
+              className="flex items-center gap-2 px-5 py-3 bg-blue-600 dark:bg-blue-700/50 hover:bg-blue-700 rounded-2xl text-sm font-bold text-white transition-all duration-300 shadow-sm hover:shadow-md disabled:opacity-70 h-[42px]"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2.5}
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-              />
-            </svg>
-            {isRefreshing ? "Refreshing..." : "Refresh"}
-          </button>
+              <svg
+                className={`w-4 h-4 ${isRefreshing ? "animate-spin [animation-direction:reverse]" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              </svg>
+              {isRefreshing ? "Refreshing..." : "Refresh"}
+            </button>
+          </div>
         </div>
       </div>
 

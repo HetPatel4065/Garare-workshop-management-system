@@ -33,6 +33,7 @@
     "nodemailer": "^8.0.5",
     "pdfkit": "^0.18.0",
     "puppeteer": "^24.42.0",
+    "qrcode": "^1.5.4",
     "socket.io": "^4.8.3"
   },
   "devDependencies": {

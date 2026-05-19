@@ -13,7 +13,6 @@ import {
   Bell,
   UserPlus,
   ReceiptIndianRupeeIcon,
-  Car,
   ChevronRight,
   ChevronLeft,
   ChevronDown,
@@ -23,6 +22,7 @@ import {
   Store,
   HardHat,
 } from "lucide-react";
+import { FaCar } from "react-icons/fa";
 import { useAuth } from "../../../context/AuthContext";
 import { useNotifications } from "../../../context/NotificationContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -53,7 +53,7 @@ const NAV_SECTIONS = [
       {
         name: "Vehicles",
         path: "/vehicles",
-        icon: Car,
+        icon: FaCar,
         roles: ["admin", "owner", "advisor", "mechanic"],
       },
       {
@@ -351,7 +351,7 @@ export default function GarageSidebar({ isOpen, onClose, showNotifications }) {
                 )}
 
                 {/* Items */}
-                {isOpenSection && (
+                {(isOpenSection || (collapsed && isDesktop)) && (
                   <div className="space-y-1">
                     {visibleItems.map((item) => {
                       const Icon = item.icon;
@@ -374,9 +374,11 @@ export default function GarageSidebar({ isOpen, onClose, showNotifications }) {
                               size={18}
                               className={`${active ? "text-white" : "text-gray-500 group-hover:text-gray-300"}`}
                             />
-                            {item.name === "Notifications" && unreadCount > 0 && !active && (
-                              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-gray-950 shadow-sm animate-pulse"></span>
-                            )}
+                            {item.name === "Notifications" &&
+                              unreadCount > 0 &&
+                              !active && (
+                                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-gray-950 shadow-sm animate-pulse"></span>
+                              )}
                           </div>
                           {!isCollapsedDesktop && (
                             <span className="truncate">{item.name}</span>

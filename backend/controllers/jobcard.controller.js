@@ -70,6 +70,47 @@ export const getJobCards = async (req, res) => {
       query.advisorId = userId;
     }
 
+    // Query-based filtering
+    const { status, staff, date, startDate, endDate } = req.query;
+
+    if (status && status !== "All") {
+      query.status = status;
+    }
+
+    if (staff && staff !== "All") {
+      if (staff === "unassigned") {
+        query.$or = [
+          { mechanicId: null },
+          { mechanicId: { $exists: false } }
+        ];
+      } else {
+        query.$or = [
+          { mechanicId: staff },
+          { advisorId: staff }
+        ];
+      }
+    }
+
+    if (date) {
+      const startOfDay = new Date(date);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(date);
+      endOfDay.setHours(23, 59, 59, 999);
+      query.createdAt = { $gte: startOfDay, $lte: endOfDay };
+    } else if (startDate || endDate) {
+      query.createdAt = {};
+      if (startDate) {
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+        query.createdAt.$gte = start;
+      }
+      if (endDate) {
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+        query.createdAt.$lte = end;
+      }
+    }
+
     const jobCards = await JobCard.find(query)
       .populate("customerId", "name phone")
       .populate("vehicleId", "make model licensePlate displayName")

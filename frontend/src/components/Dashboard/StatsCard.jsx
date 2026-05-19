@@ -3,7 +3,7 @@ import { ResponsiveContainer, AreaChart, Area } from "recharts";
 
 export function StatsGrid({ children }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4 w-full auto-rows-fr">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full auto-rows-fr">
       {children}
     </div>
   );
@@ -18,48 +18,89 @@ export default function StatsCard({
   sparklineData = [],
   children,
 }) {
+  // Configured specifically for your dark dashboard aesthetics
   const colorMap = {
-    blue: { bg: "bg-blue-50", text: "text-blue-600", chart: "#3b82f6" },
+    blue: {
+      bg: "bg-blue-500/10",
+      text: "text-blue-400",
+      chart: "#3b82f6",
+    },
     emerald: {
-      bg: "bg-emerald-50",
-      text: "text-emerald-600",
+      bg: "bg-emerald-500/10",
+      text: "text-emerald-400",
       chart: "#22c55e",
     },
-    yellow: { bg: "bg-yellow-50", text: "text-yellow-600", chart: "#eab308" },
-    red: { bg: "bg-red-50", text: "text-red-600", chart: "#ef4444" },
-    purple: { bg: "bg-purple-50", text: "text-purple-600", chart: "#a855f7" },
-    indigo: { bg: "bg-indigo-50", text: "text-indigo-600", chart: "#6366f1" },
+    yellow: {
+      bg: "bg-amber-500/10",
+      text: "text-amber-400",
+      chart: "#f59e0b",
+    },
+    red: {
+      bg: "bg-red-500/10",
+      text: "text-red-400",
+      chart: "#ef4444",
+    },
+    purple: {
+      bg: "bg-purple-500/10",
+      text: "text-purple-400",
+      chart: "#a855f7",
+    },
+    indigo: {
+      bg: "bg-indigo-500/10",
+      text: "text-indigo-400",
+      chart: "#6366f1",
+    },
   };
 
   const theme = colorMap[color] || colorMap.blue;
+  const isPositiveTrend = trend && !trend.startsWith("-");
 
   return (
-    <div className="group relative bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-7 shadow-[0_20px_50px_rgba(0,0,0,0.04)] hover:shadow-[0_40px_80px_rgba(0,0,0,0.08)] transition-all duration-500 border border-slate-100 flex flex-col min-w-0 h-full overflow-hidden hover:-translate-y-1">
-      <div className="flex justify-between items-start mb-4 sm:mb-6 z-10">
+    <div className="group relative bg-[#16161a] rounded-2xl p-6 shadow-xl border border-zinc-800/40 flex flex-col min-w-0 h-full overflow-hidden transition-all duration-300 hover:border-zinc-700/60 hover:-translate-y-0.5">
+      {/* Top Section: Icon & Optional Trend */}
+      <div className="flex justify-between items-start mb-5 z-10">
         <div
-          className={`p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl ${theme.bg} ${theme.text} transition-all duration-500 shadow-sm border border-white/50`}
+          className={`p-3 rounded-xl ${theme.bg} ${theme.text} transition-all duration-300 shadow-inner`}
         >
-          {React.cloneElement(icon, { size: 22, strokeWidth: 2.5 })}
+          {icon && React.cloneElement(icon, { size: 20, strokeWidth: 2.5 })}
         </div>
+
+        {trend && (
+          <span
+            className={`text-xs font-semibold px-2.5 py-1 rounded-md tracking-wide ${
+              isPositiveTrend
+                ? "bg-emerald-500/10 text-emerald-400"
+                : "bg-red-500/10 text-red-400"
+            }`}
+          >
+            {trend}
+          </span>
+        )}
       </div>
 
-      <div className="space-y-0.5 sm:space-y-1 relative z-10 flex-1 min-w-0">
-        <p className="text-slate-400 text-[9px] sm:text-[10px] font-black tracking-widest sm:tracking-[0.15em] uppercase ">
+      {/* Primary Value Section */}
+      <div className="space-y-1 relative z-10 flex-1 min-w-0">
+        <p className="text-zinc-500 text-[10px] font-bold tracking-widest uppercase">
           {title}
         </p>
         <div className="flex items-baseline gap-2 flex-wrap">
-          <p className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 tracking-tighter">
+          <p className="text-2xl sm:text-3xl font-black text-zinc-100 tracking-tight">
             {value}
           </p>
         </div>
       </div>
 
-      {children && <div className="mt-6 relative z-10">{children}</div>}
+      {/* Slot for anything extra */}
+      {children && <div className="mt-4 relative z-10">{children}</div>}
 
-      {sparklineData.length > 0 && (
-        <div className="h-12 w-full mt-4 -mx-6 opacity-40 group-hover:opacity-100 transition-all duration-700">
+      {/* Sparkline Overlay */}
+      {sparklineData && sparklineData.length > 0 && (
+        <div className="absolute bottom-0 left-0 right-0 h-12 w-full opacity-20 group-hover:opacity-40 transition-all duration-500 pointer-events-none">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={sparklineData}>
+            <AreaChart
+              data={sparklineData}
+              margin={{ top: 0, right: 0, left: 0, bottom: 0 }}
+            >
               <defs>
                 <linearGradient
                   id={`gradient-${color}`}
@@ -68,7 +109,7 @@ export default function StatsCard({
                   x2="0"
                   y2="1"
                 >
-                  <stop offset="0%" stopColor={theme.chart} stopOpacity={0.3} />
+                  <stop offset="0%" stopColor={theme.chart} stopOpacity={0.4} />
                   <stop offset="100%" stopColor={theme.chart} stopOpacity={0} />
                 </linearGradient>
               </defs>
@@ -76,7 +117,7 @@ export default function StatsCard({
                 type="monotone"
                 dataKey="value"
                 stroke={theme.chart}
-                strokeWidth={2}
+                strokeWidth={1.5}
                 fill={`url(#gradient-${color})`}
                 isAnimationActive={true}
               />

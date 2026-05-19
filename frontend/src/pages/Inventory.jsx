@@ -9,6 +9,7 @@ import InventoryList from "../components/Inventory/InventoryList";
 import StockUpdateModal from "../components/Inventory/StockUpdateModal";
 import ConfirmModal from "../components/UI/ConfirmModal";
 import { Plus } from "lucide-react";
+import ExportButton from "../components/common/ExportButton";
 
 export default function Inventory() {
   const [items, setItems] = useState([]);
@@ -229,6 +230,17 @@ export default function Inventory() {
     }
   };
 
+  const exportColumns = [
+    { header: 'Name', accessor: 'name' },
+    { header: 'SKU', accessor: 'sku' },
+    { header: 'Category', accessor: 'category' },
+    { header: 'Car Model', accessor: 'carModel' },
+    { header: 'Quantity', accessor: 'stock' },
+    { header: 'Unit Price', accessor: 'costPrice' },
+    { header: 'Selling Price', accessor: 'retailPrice' },
+    { header: 'Supplier', accessor: row => row.supplier?.name || 'N/A' },
+  ];
+
   return (
     <div className="p-4 sm:p-6 bg-gray-100 rounded-xl cursor-auto">
       <div className="mb-8 pb-5 border-b border-slate-200/80">
@@ -248,23 +260,31 @@ export default function Inventory() {
           </div>
 
           {role !== "mechanic" && (
-            <button
-              onClick={handleAdd}
-              className="
-          self-start sm:self-auto
-          flex items-center gap-2
-          px-5 py-3
-          bg-blue-600 hover:bg-blue-700
-          text-white
-          rounded-2xl
-          text-sm font-bold
-          transition-all duration-300
-          shadow-md hover:shadow-xl
-        "
-            >
-              <Plus size={17} />
-              Add Items
-            </button>
+            <div className="flex items-center gap-2 self-start sm:self-auto">
+              <ExportButton 
+                title="Inventory Items" 
+                columns={exportColumns} 
+                data={filteredItems} 
+                filenamePrefix="inventory"
+              />
+              <button
+                onClick={handleAdd}
+                className="
+            flex items-center gap-2
+            px-5 py-3
+            bg-blue-600 dark:bg-blue-700/50 hover:bg-blue-700
+            text-white
+            rounded-2xl
+            text-sm font-bold
+            transition-all duration-300
+            shadow-md hover:shadow-xl
+            h-10.5
+          "
+              >
+                <Plus size={17} />
+                Add Items
+              </button>
+            </div>
           )}
         </div>
       </div>

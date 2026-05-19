@@ -261,7 +261,7 @@ export default function Profile({ isAdvisor }) {
                   navigator.clipboard.writeText(garageId);
                   addToast("Garage ID copied!", "info");
                 }}
-                className="p-2 flex items-center justify-center bg-white border border-slate-200 rounded-2xl shadow-sm text-slate-500 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-all duration-300 active:scale-90"
+                className="p-2.5 flex items-center justify-center bg-white border border-slate-200 rounded-xl shadow-sm text-slate-500 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-all duration-300 active:scale-90"
                 title="Copy Garage ID"
               >
                 <Copy size={15} strokeWidth={2.5} />

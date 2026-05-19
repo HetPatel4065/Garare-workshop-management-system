@@ -435,3 +435,10 @@ html.dark .theme-indicator-active {
     color 300ms ease !important;
   will-change: background-color, border-color, color;
 }
+
+/* ─── Global Shadow Removal ─── */
+*, ::before, ::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  drop-shadow: none !important;
+}

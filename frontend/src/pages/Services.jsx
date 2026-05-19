@@ -9,6 +9,7 @@ import ServiceList from "../components/Services/ServiceList";
 import ConfirmModal from "../components/UI/ConfirmModal";
 import { useAuth } from "../context/AuthContext";
 import { Plus } from "lucide-react";
+import ExportButton from "../components/common/ExportButton";
 
 export default function Services() {
   const { user, token } = useAuth();
@@ -247,6 +248,26 @@ export default function Services() {
     }
   };
 
+  const exportColumns = [
+    { header: 'Service ID', accessor: row => row.serviceId || row._id?.slice(-6)?.toUpperCase() || 'N/A' },
+    { header: 'Customer', accessor: row => row.customer?.name || row.customerId?.name || 'N/A' },
+    { header: 'Vehicle Plate', accessor: row => row.vehicle?.licensePlate || 'N/A' },
+    { header: 'Status', accessor: 'status' },
+    { header: 'Tasks Done', accessor: row => {
+        const done = (row.requestedServices || []).filter(r => r.status === 'Done').map(r => r.description);
+        return done.length > 0 ? done.join(', ') : (row.serviceName || 'N/A');
+    } },
+    { header: 'Parts Used', accessor: row => Array.isArray(row.partsUsed) && row.partsUsed.length > 0 ? row.partsUsed.map(p => p.name || p.partName).join(', ') : 'None' },
+    { header: 'Cost', accessor: row => {
+        let total = 0;
+        if (row.labourCost) total += Number(row.labourCost);
+        if (row.labourCharges) total += row.labourCharges.reduce((sum, lc) => sum + Number(lc.labourCost || 0), 0);
+        if (row.partsUsed) total += row.partsUsed.reduce((sum, p) => sum + (Number(p.priceAtTime || p.priceAtTimeOfService || p.price || 0) * Number(p.quantity || p.qty || 1)), 0);
+        if (row.selectedServices) total += row.selectedServices.reduce((sum, s) => sum + Number(s.priceAtTimeOfService || 0), 0);
+        return total > 0 ? total : 'N/A';
+    } },
+  ];
+
   return (
     <div className="p-4 sm:p-6 bg-gray-100 rounded-xl">
       <div className="mb-8 pb-5 border-b border-slate-200/80">
@@ -265,23 +286,31 @@ export default function Services() {
             </p>
           </div>
 
-          <button
-            onClick={handleAdd}
-            className="
-        self-start sm:self-auto
-        flex items-center gap-2
-        px-5 py-3
-        bg-blue-600 hover:bg-blue-700
-        text-white
-        rounded-2xl
-        text-sm font-bold
-        transition-all duration-300
-        shadow-md hover:shadow-xl
-      "
-          >
-            <Plus size={17} />
-            Add Service
-          </button>
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <ExportButton 
+              title="Services List" 
+              columns={exportColumns} 
+              data={filteredServices} 
+              filenamePrefix="services"
+            />
+            <button
+              onClick={handleAdd}
+              className="
+          flex items-center gap-2
+          px-5 py-3
+          bg-blue-600 dark:bg-blue-700/50 hover:bg-blue-700
+          text-white
+          rounded-2xl
+          text-sm font-bold
+          transition-all duration-300
+          shadow-md hover:shadow-xl
+          h-10.5
+        "
+            >
+              <Plus size={17} />
+              Add Service
+            </button>
+          </div>
         </div>
       </div>
 

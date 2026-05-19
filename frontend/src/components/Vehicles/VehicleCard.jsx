@@ -27,9 +27,9 @@ export default function VehicleCard({
 }) {
   // Define status colors based on your requirements
   const statusStyles = {
-    "WITH OWNER": "bg-emerald-100 text-emerald-700 border-emerald-200",
-    "IN GARAGE": "bg-blue-100 text-blue-700 border-blue-200",
-    ARCHIVED: "bg-amber-100 text-amber-700 border-amber-200",
+    "WITH OWNER": "bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 border-emerald-200",
+    "IN GARAGE": "bg-blue-100 dark:bg-blue-950/50 text-blue-700 border-blue-200",
+    ARCHIVED: "bg-amber-100 dark:bg-amber-950/50 text-amber-700 border-amber-200",
   };
 
   const currentStatus = vehicle.status?.toUpperCase() || "ACTIVE";
@@ -121,7 +121,7 @@ export default function VehicleCard({
                 e.stopPropagation();
                 onEdit(vehicle);
               }}
-              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 text-[12px] font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition active:scale-95 shadow-sm"
+              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 text-[12px] font-bold text-white bg-blue-600 dark:bg-blue-700/50 hover:bg-blue-700 rounded-xl transition active:scale-95 shadow-sm"
             >
               <svg
                 className="w-3.5 h-3.5"

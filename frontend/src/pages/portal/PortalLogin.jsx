@@ -411,7 +411,7 @@ const PortalLogin = ({ isOpen, onClose, prefilledEmail }) => {
 
                   {registrationStatus.status === "approved" &&
                     registrationStatus.appointmentDate && (
-                      <div className="mt-4 p-5 bg-emerald-50 border border-emerald-100 rounded-[2rem] text-center shadow-sm">
+                      <div className="mt-4 p-5 bg-emerald-50 border border-emerald-100 rounded-4xl text-center shadow-sm">
                         <p className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em] mb-2">
                           Confirmed Appointment
                         </p>

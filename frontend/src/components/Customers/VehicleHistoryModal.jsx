@@ -17,8 +17,7 @@ export default function VehicleHistoryModal({
   const [isReadOnly, setIsReadOnly] = useState(true);
   const [formOpen, setFormOpen] = useState(false);
   const { addToast } = useToast();
-  const { user } = useAuth();
-  const token = sessionStorage.getItem("token");
+  const { user, token } = useAuth();
 
   useEffect(() => {
     if (isOpen && vehicle?._id) {

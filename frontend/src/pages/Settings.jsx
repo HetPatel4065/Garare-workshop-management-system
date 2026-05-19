@@ -27,9 +27,16 @@ import {
   EyeOff,
   CheckCircle2,
   Check,
+  FileText,
+  Table,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../context/ToastContext";
+import ExportButton from "../components/common/ExportButton";
+import { exportToPDF, exportToExcel } from "../utils/exportUtils";
+import * as XLSX from "xlsx";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 // Helper Components moved outside to prevent re-renders losing focus
 function ToggleItem({
@@ -445,6 +452,305 @@ export default function Settings() {
     }
   };
 
+  const handleExportReport = async (formatType) => {
+    setIsExporting(true);
+    try {
+      const suffix = backupRange === "all" ? "all_time" : `${backupRange}_days`;
+
+      const jsonRes = await fetch(
+        `${import.meta.env.VITE_API_URL}/v1/settings/export?range=${backupRange}&format=json`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      if (!jsonRes.ok) throw new Error("Export failed");
+      const rawData = await jsonRes.json();
+
+      const formatDateVal = (dateStr) => {
+        if (!dateStr) return "-";
+        try {
+          return new Date(dateStr).toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
+        } catch {
+          return dateStr;
+        }
+      };
+
+      if (formatType === "xlsx") {
+        const workbook = XLSX.utils.book_new();
+
+        // 1. Customers
+        const customerRows = (rawData.customers || []).map((c) => ({
+          "Customer ID": c.customerId || "-",
+          "Name": c.name || "-",
+          "Phone": c.phone || "-",
+          "Email": c.email || "-",
+          "Address": [c.address?.street, c.address?.city, c.address?.zip].filter(Boolean).join(", ") || "-",
+          "Created At": formatDateVal(c.createdAt),
+        }));
+        const customerWS = XLSX.utils.json_to_sheet(customerRows);
+        XLSX.utils.book_append_sheet(workbook, customerWS, "Customers");
+
+        // 2. Services
+        const serviceRows = (rawData.services || []).map((s) => ({
+          "Service ID": s.serviceId || s._id || "-",
+          "Vehicle Number": s.vehicleId?.licensePlate || s.vehicle?.licensePlate || s.vehicleNumber || "-",
+          "Customer Name": s.customerId?.name || s.customerName || "-",
+          "Status": s.status || "-",
+          "Total Price (₹)": s.totalPrice || s.cost || 0,
+          "Description": s.description || s.notes || "-",
+          "Created At": formatDateVal(s.createdAt),
+        }));
+        const serviceWS = XLSX.utils.json_to_sheet(serviceRows);
+        XLSX.utils.book_append_sheet(workbook, serviceWS, "Services");
+
+        // 3. Invoices
+        const invoiceRows = (rawData.invoices || []).map((i) => ({
+          "Invoice Number": i.invoiceNumber || "-",
+          "Customer Name": i.customerId?.name || i.customerName || "-",
+          "Customer Phone": i.customerId?.phone || i.customerPhone || "-",
+          "Subtotal (₹)": i.subTotal || i.subtotal || 0,
+          "Tax (₹)": i.gst || i.tax || 0,
+          "Discount (₹)": i.discountAmount || i.discount || 0,
+          "Total (₹)": i.total || 0,
+          "Amount Paid (₹)": i.amountPaid || 0,
+          "Balance (₹)": (i.total - i.amountPaid) || i.balance || 0,
+          "Payment Status": i.status || i.paymentStatus || "-",
+          "Payment Method": i.paymentMethod || "-",
+          "Date": formatDateVal(i.createdAt),
+        }));
+        const invoiceWS = XLSX.utils.json_to_sheet(invoiceRows);
+        XLSX.utils.book_append_sheet(workbook, invoiceWS, "Invoices");
+
+        // 4. Inventory
+        const inventoryRows = (rawData.inventory || []).map((iv) => ({
+          "Part Name": iv.name || "-",
+          "SKU / Part Number": iv.sku || "-",
+          "Category": iv.category || "Other",
+          "Car Model": iv.carModel || "Universal",
+          "Car Year": iv.carYear || "All Years",
+          "Cost Price (₹)": iv.costPrice || 0,
+          "Retail Price (₹)": iv.retailPrice || 0,
+          "Current Stock": iv.stock || 0,
+          "Min Stock Limit": iv.minLimit || 5,
+          "Unit": iv.unit || "pcs",
+          "Supplier Name": iv.supplier?.name || "-",
+          "Supplier Contact": iv.supplier?.contact || "-",
+          "Storage Location": iv.location || "-",
+          "Last Updated": formatDateVal(iv.updatedAt),
+        }));
+        const inventoryWS = XLSX.utils.json_to_sheet(inventoryRows);
+        XLSX.utils.book_append_sheet(workbook, inventoryWS, "Inventory");
+
+        // 5. Vehicles
+        const vehicleRows = (rawData.vehicles || []).map((v) => ({
+          "Vehicle Make": v.make || "-",
+          "Vehicle Model": v.model || "-",
+          "License Plate": v.licensePlate || "-",
+          "Mfg Year": v.year || "-",
+          "Engine Number": v.engineType || "-",
+          "Chassis Number": v.chassisnumber || v.chassisNumber || "-",
+          "Color": v.color || "-",
+          "Created At": formatDateVal(v.createdAt),
+        }));
+        const vehicleWS = XLSX.utils.json_to_sheet(vehicleRows);
+        XLSX.utils.book_append_sheet(workbook, vehicleWS, "Vehicles");
+
+        // 6. Job Cards
+        const jobCardRows = (rawData.jobCards || []).map((jc) => ({
+          "Job Card ID": jc.jobCardId || jc._id || "-",
+          "License Plate": jc.vehicleId?.licensePlate || jc.licensePlate || "-",
+          "Customer Name": jc.customerId?.name || jc.customerName || "-",
+          "Customer Phone": jc.customerId?.phone || jc.customerPhone || "-",
+          "Service Advisor": jc.advisorId?.name || jc.advisorName || "-",
+          "Created At": formatDateVal(jc.createdAt),
+        }));
+        const jobCardWS = XLSX.utils.json_to_sheet(jobCardRows);
+        XLSX.utils.book_append_sheet(workbook, jobCardWS, "Job Cards");
+
+        XLSX.writeFile(
+          workbook,
+          `garage_full_export_${suffix}_${new Date().toISOString().split("T")[0]}.xlsx`
+        );
+        addToast("Full Excel workbook exported successfully!", "success");
+      } else {
+        const doc = new jsPDF("p", "mm", "a4");
+
+        doc.setFontSize(18);
+        doc.setTextColor(15, 23, 42);
+        const garageTitle = `${formData.garageName || "Workshop"} Complete Database Report`;
+        doc.text(garageTitle, 14, 20);
+
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        const metaText = `Generated on: ${new Date().toLocaleString("en-IN")} | Interval: ${backupRange === "all" ? "All Time" : `${backupRange} Days`}`;
+        doc.text(metaText, 14, 27);
+
+        let currentY = 34;
+
+        const drawPDFSection = (sectionTitle, cols, rows) => {
+          if (currentY > 230) {
+            doc.addPage();
+            currentY = 20;
+          }
+
+          doc.setFontSize(13);
+          doc.setTextColor(30, 41, 59);
+          doc.setFont("helvetica", "bold");
+          doc.text(sectionTitle, 14, currentY);
+          currentY += 4;
+
+          autoTable(doc, {
+            startY: currentY,
+            head: [cols.map(c => c.header)],
+            body: rows.map(r => cols.map(c => {
+              const val = r[c.accessor];
+              const strVal = val !== undefined && val !== null ? String(val) : '';
+              return strVal.replace(/₹/g, 'Rs. ');
+            })),
+            theme: 'striped',
+            headStyles: { fillColor: [59, 130, 246] },
+            styles: { fontSize: 7.5, cellPadding: 1.8 },
+            margin: { left: 14, right: 14 },
+            didDrawPage: (data) => {
+              currentY = data.cursor.y + 12;
+            }
+          });
+        };
+
+        // 1. Customers
+        const customerCols = [
+          { header: "Customer ID", accessor: "id" },
+          { header: "Name", accessor: "name" },
+          { header: "Phone", accessor: "phone" },
+          { header: "Email", accessor: "email" },
+          { header: "Address", accessor: "address" },
+          { header: "Registered", accessor: "created" }
+        ];
+        const customerRows = (rawData.customers || []).map(c => ({
+          id: c.customerId || "-",
+          name: c.name || "-",
+          phone: c.phone || "-",
+          email: c.email || "-",
+          address: [c.address?.street, c.address?.city, c.address?.zip].filter(Boolean).join(", ") || "-",
+          created: formatDateVal(c.createdAt)
+        }));
+        drawPDFSection("1. Customers", customerCols, customerRows);
+
+        // 2. Services
+        const serviceCols = [
+          { header: "Service ID", accessor: "id" },
+          { header: "Vehicle", accessor: "vehicle" },
+          { header: "Customer", accessor: "customer" },
+          { header: "Status", accessor: "status" },
+          { header: "Price", accessor: "price" },
+          { header: "Description", accessor: "desc" }
+        ];
+        const serviceRows = (rawData.services || []).map(s => ({
+          id: s.serviceId || s._id || "-",
+          vehicle: s.vehicleId?.licensePlate || s.vehicle?.licensePlate || s.vehicleNumber || "-",
+          customer: s.customerId?.name || s.customerName || "-",
+          status: s.status || "-",
+          price: s.totalPrice || s.cost ? `Rs. ${s.totalPrice || s.cost}` : "Rs. 0",
+          desc: s.description || s.notes || "-"
+        }));
+        drawPDFSection("2. Services", serviceCols, serviceRows);
+
+        // 3. Invoices
+        const invoiceCols = [
+          { header: "Invoice No", accessor: "id" },
+          { header: "Customer", accessor: "customer" },
+          { header: "Total", accessor: "total" },
+          { header: "Paid", accessor: "paid" },
+          { header: "Balance", accessor: "bal" },
+          { header: "Status", accessor: "status" },
+          { header: "Date", accessor: "date" }
+        ];
+        const invoiceRows = (rawData.invoices || []).map(i => ({
+          id: i.invoiceNumber || "-",
+          customer: i.customerId?.name || i.customerName || "-",
+          total: i.total ? `Rs. ${i.total}` : "Rs. 0",
+          paid: i.amountPaid ? `Rs. ${i.amountPaid}` : "Rs. 0",
+          bal: (i.total - i.amountPaid) ? `Rs. ${i.total - i.amountPaid}` : "Rs. 0",
+          status: i.status || i.paymentStatus || "-",
+          date: formatDateVal(i.createdAt)
+        }));
+        drawPDFSection("3. Invoices", invoiceCols, invoiceRows);
+
+        // 4. Inventory
+        const inventoryCols = [
+          { header: "Part Name", accessor: "name" },
+          { header: "SKU", accessor: "sku" },
+          { header: "Category", accessor: "cat" },
+          { header: "Cost", accessor: "cost" },
+          { header: "Retail", accessor: "retail" },
+          { header: "Stock", accessor: "stock" },
+          { header: "Supplier Contact", accessor: "supplier" }
+        ];
+        const inventoryRows = (rawData.inventory || []).map(iv => ({
+          name: iv.name || "-",
+          sku: iv.sku || "-",
+          cat: iv.category || "Other",
+          cost: iv.costPrice ? `Rs. ${iv.costPrice}` : "Rs. 0",
+          retail: iv.retailPrice ? `Rs. ${iv.retailPrice}` : "Rs. 0",
+          stock: `${iv.stock} ${iv.unit || 'pcs'}`,
+          supplier: iv.supplier?.name ? `${iv.supplier.name} (${iv.supplier.contact || ''})` : "-"
+        }));
+        drawPDFSection("4. Inventory", inventoryCols, inventoryRows);
+
+        // 5. Vehicles
+        const vehicleCols = [
+          { header: "Make", accessor: "make" },
+          { header: "Model", accessor: "model" },
+          { header: "License Plate", accessor: "plate" },
+          { header: "Mfg Year", accessor: "year" },
+          { header: "Engine No", accessor: "engine" },
+          { header: "Chassis No", accessor: "chassis" }
+        ];
+        const vehicleRows = (rawData.vehicles || []).map(v => ({
+          make: v.make || "-",
+          model: v.model || "-",
+          plate: v.licensePlate || "-",
+          year: v.year || "-",
+          engine: v.engineType || "-",
+          chassis: v.chassisnumber || v.chassisNumber || "-"
+        }));
+        drawPDFSection("5. Vehicles", vehicleCols, vehicleRows);
+
+        // 6. Job Cards
+        const jobCardCols = [
+          { header: "Job Card ID", accessor: "id" },
+          { header: "License Plate", accessor: "plate" },
+          { header: "Customer Name", accessor: "customer" },
+          { header: "Advisor", accessor: "advisor" },
+          { header: "Status", accessor: "status" },
+        ];
+        const jobCardRows = (rawData.jobCards || []).map(jc => ({
+          id: jc.jobCardId || jc._id || "-",
+          plate: jc.vehicleId?.licensePlate || jc.licensePlate || "-",
+          customer: jc.customerId?.name || jc.customerName || "-",
+          advisor: jc.advisorId?.name || jc.advisorName || "-",
+          status: jc.status || "-",
+        }));
+        drawPDFSection("6. Job Cards", jobCardCols, jobCardRows);
+
+        const filename = `garage_full_export_${suffix}_${new Date().toISOString().split("T")[0]}`;
+        doc.save(`${filename}.pdf`);
+        addToast("Full PDF database report exported successfully!", "success");
+      }
+      
+      setLastExportedAt(new Date().toISOString());
+    } catch (err) {
+      console.error("EXPORT ERROR:", err);
+      addToast(err.message || "Failed to export report.", "error");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const handleSecurityToggle = (key) => {
     setHasChanges(true);
     setFormData((prev) => {
@@ -642,7 +948,7 @@ export default function Settings() {
               {garageId && isAdmin && (
                 <div className="mt-4 flex flex-wrap items-center gap-2 w-fit">
                   <div className="flex items-center gap-2 bg-white border border-slate-200 px-3 py-2 rounded-2xl shadow-sm">
-                    <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
+                    <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 dark:bg-swhite">
                       Garage ID
                     </span>
 
@@ -722,7 +1028,7 @@ export default function Settings() {
                   className={`flex items-center gap-2 px-6 py-3.5 text-sm font-bold rounded-2xl transition-all whitespace-nowrap
                   ${
                     isActive
-                      ? "bg-blue-600 text-white"
+                      ? "bg-blue-600 text-white dark:bg-blue-700/50"
                       : "bg-white text-slate-500 hover:bg-slate-50 border border-slate-100"
                   }`}
                 >
@@ -771,6 +1077,48 @@ export default function Settings() {
                         onChange={handlePhone}
                         icon={<Smartphone size={16} />}
                         required
+                      />
+                    </div>
+                  </section>
+
+                  {/* BUSINESS INFORMATION */}
+                  <section className="space-y-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-1.5 h-6 bg-black dark:bg-white rounded-full" />
+                      <h3 className="text-lg font-bold text-slate-800">
+                        Business Details
+                      </h3>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <InputField
+                        label="Garage Name"
+                        name="garageName"
+                        value={formData.garageName}
+                        onChange={handleInputChange}
+                        icon={<Building2 size={16} />}
+                        required
+                      />
+                      <InputField
+                        label="Business Address"
+                        name="address"
+                        value={formData.address}
+                        onChange={handleInputChange}
+                        icon={<MapPin size={16} />}
+                      />
+                      <InputField
+                        label="GST Number"
+                        name="gstNumber"
+                        value={formData.gstNumber}
+                        onChange={handleInputChange}
+                        icon={<FileText size={16} />}
+                      />
+                      <InputField
+                        label="UPI ID (For Payments)"
+                        name="upiId"
+                        value={formData.upiId}
+                        onChange={handleInputChange}
+                        icon={<CreditCard size={16} />}
+                        placeholder="e.g. shop@upi"
                       />
                     </div>
                   </section>
@@ -847,20 +1195,32 @@ export default function Settings() {
                       </div>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        handleChange();
-                        setCatalog([
-                          ...catalog,
-                          { name: "", defaultPrice: 0, category: "General" },
-                        ]);
-                      }}
-                      className="self-start sm:self-auto bg-slate-900 dark:bg-slate-100 hover:bg-blue-600 dark:hover:bg-blue-600 text-white dark:text-slate-900 hover:text-white dark:hover:text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all shadow-md active:scale-95 flex items-center gap-2"
-                    >
-                      <Plus size={14} />
-                      Add New
-                    </button>
+                    <div className="flex items-center gap-2 self-start sm:self-auto">
+                      <ExportButton
+                        title="Service Packages"
+                        columns={[
+                          { header: "Service Name", accessor: "name" },
+                          { header: "Base Price", accessor: (row) => `₹${row.defaultPrice || 0}` },
+                          { header: "Category", accessor: (row) => row.category || "General" }
+                        ]}
+                        data={catalog}
+                        filenamePrefix="service_packages"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleChange();
+                          setCatalog([
+                            ...catalog,
+                            { name: "", defaultPrice: 0, category: "General" },
+                          ]);
+                        }}
+                        className="bg-slate-900 dark:bg-blue-700/50 hover:bg-blue-600 dark:hover:bg-blue-600 text-white dark:text-slate-900 hover:text-white dark:hover:text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest transition-all shadow-md active:scale-95 flex items-center gap-2"
+                      >
+                        <Plus size={14} />
+                        Add New
+                      </button>
+                    </div>
                   </div>
 
                   {/* --- CATALOG CONTENT --- */}
@@ -1028,7 +1388,7 @@ export default function Settings() {
                       {/* BACKUP BOX */}
                       <div className="p-6 bg-linear-to-br from-blue-50 to-indigo-50 dark:from-zinc-900 dark:to-zinc-800/80 border border-blue-100 dark:border-zinc-800 rounded-4xl space-y-5 shadow-sm hover:shadow-md transition-all">
                         <div className="flex items-center gap-4">
-                          <div className="p-3 bg-blue-600 text-white rounded-2xl">
+                          <div className="p-3 bg-blue-600 dark:bg-blue-700/50 text-white rounded-2xl">
                             <Download size={22} />
                           </div>
                           <div>
@@ -1051,37 +1411,76 @@ export default function Settings() {
                           <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider px-1 block">
                             Time Range
                           </label>
-                          <div className="flex gap-2 p-1.5 bg-white/60 dark:bg-zinc-950/60 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-zinc-800/50">
-                            {["7", "15", "30"].map((r) => (
+                          <div className="grid grid-cols-3 gap-2 p-1.5 bg-white/60 dark:bg-zinc-950/60 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-zinc-800/50">
+                            {[
+                              { label: "7 Days", value: "7" },
+                              { label: "15 Days", value: "15" },
+                              { label: "30 Days", value: "30" },
+                              { label: "6 Months", value: "180" },
+                              { label: "1 Year", value: "365" },
+                              { label: "All Time", value: "all" },
+                            ].map((r) => (
                               <button
-                                key={r}
-                                onClick={() => setBackupRange(r)}
-                                className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all ${
-                                  backupRange === r
-                                    ? "bg-blue-600 text-white"
+                                key={r.value}
+                                type="button"
+                                onClick={() => setBackupRange(r.value)}
+                                className={`py-2.5 text-[11px] font-bold rounded-xl transition-all cursor-pointer ${
+                                  backupRange === r.value
+                                    ? "bg-blue-600 text-white dark:bg-blue-700/50"
                                     : "text-slate-500 hover:bg-white dark:hover:bg-zinc-800 hover:text-blue-600"
                                 }`}
                               >
-                                {r} Days
+                                {r.label}
                               </button>
                             ))}
                           </div>
                         </div>
 
-                        <button
-                          onClick={handleDownloadBackup}
-                          disabled={isExporting}
-                          className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-bold py-4 rounded-2xl text-sm transition-all shadow-xl shadow-blue-500/20 active:scale-[0.98]"
-                        >
-                          {isExporting ? (
-                            <Loader2 size={18} className="animate-spin" />
-                          ) : (
-                            <Download size={18} />
-                          )}
-                          {isExporting
-                            ? "Generating ZIP..."
-                            : "Download Backup"}
-                        </button>
+                        <div className="space-y-3">
+                          <button
+                            type="button"
+                            onClick={handleDownloadBackup}
+                            disabled={isExporting}
+                            className="w-full flex items-center justify-center gap-2 bg-blue-600 dark:bg-blue-700/50 hover:bg-blue-700 disabled:bg-slate-400 text-white font-bold py-4 rounded-2xl text-sm transition-all shadow-xl shadow-blue-500/20 active:scale-[0.98] cursor-pointer"
+                          >
+                            {isExporting ? (
+                              <Loader2 size={18} className="animate-spin" />
+                            ) : (
+                              <Download size={18} />
+                            )}
+                            {isExporting ? "Generating ZIP..." : "Download ZIP Backup"}
+                          </button>
+
+                          <div className="flex gap-3">
+                            <button
+                              type="button"
+                              onClick={() => handleExportReport("pdf")}
+                              disabled={isExporting}
+                              className="flex-1 flex items-center justify-center gap-2 bg-red-600 dark:bg-red-700/50 hover:bg-red-700 disabled:bg-slate-400 text-white font-bold py-3.5 rounded-2xl text-xs transition-all shadow-md active:scale-[0.98] cursor-pointer"
+                            >
+                              {isExporting ? (
+                                <Loader2 size={14} className="animate-spin" />
+                              ) : (
+                                <FileText size={14} />
+                              )}
+                              Export PDF
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => handleExportReport("xlsx")}
+                              disabled={isExporting}
+                              className="flex-1 flex items-center justify-center gap-2 bg-emerald-600 dark:bg-emerald-700/50 hover:bg-emerald-700 disabled:bg-slate-400 text-white font-bold py-3.5 rounded-2xl text-xs transition-all shadow-md active:scale-[0.98] cursor-pointer"
+                            >
+                              {isExporting ? (
+                                <Loader2 size={14} className="animate-spin" />
+                              ) : (
+                                <Table size={14} />
+                              )}
+                              Export Excel
+                            </button>
+                          </div>
+                        </div>
                       </div>
 
                       {/* RESTORE BOX */}
@@ -1091,7 +1490,7 @@ export default function Settings() {
                             <History size={22} />
                           </div>
                           <div>
-                            <h4 className="font-bold text-slate-800 dark:text-zinc-100 text-base">
+                            <h4 className="font-bold text-slate-800 dark:text-zinc-500 text-base">
                               Restore Data
                             </h4>
                             <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
@@ -1102,7 +1501,7 @@ export default function Settings() {
 
                         <p className="text-xs text-slate-600 dark:text-zinc-400 leading-relaxed px-1">
                           Upload a previously generated backup ZIP file to
-                          restore or merge records.{" "}
+                          restore or merge records.
                           <span className="font-bold text-red-500">
                             Note: This action is irreversible.
                           </span>
@@ -1154,7 +1553,7 @@ export default function Settings() {
                         <button
                           onClick={handleRestoreBackup}
                           disabled={isRestoring || !restoreFile}
-                          className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-black disabled:bg-slate-300 text-white font-bold py-4 rounded-2xl text-sm transition-all shadow-xl shadow-slate-900/20 active:scale-[0.98]"
+                          className="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-700/50 disabled:bg-slate-300 text-white font-bold py-4 rounded-2xl text-sm transition-all active:scale-[0.98]"
                         >
                           {isRestoring ? (
                             <Loader2 size={18} className="animate-spin" />
@@ -1321,7 +1720,7 @@ export default function Settings() {
                       <button
                         onClick={handleChangePassword}
                         disabled={pwLoading}
-                        className="w-full flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-700 disabled:bg-slate-300 text-white px-6 py-3 rounded-2xl text-sm font-bold transition-all active:scale-95"
+                        className="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-700/50 disabled:bg-slate-300 text-white px-6 py-3 rounded-2xl text-sm font-bold transition-all active:scale-95"
                       >
                         {pwLoading ? (
                           <Loader2 size={16} className="animate-spin" />

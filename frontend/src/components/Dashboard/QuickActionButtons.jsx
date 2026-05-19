@@ -20,7 +20,7 @@ export default function QuickActionButtons({
 
       <button
         onClick={onAddService}
-        className="flex-1 sm:flex-none flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-2xl font-black transition-all duration-300 shadow-[0_10px_20px_rgba(37,99,235,0.2)] hover:shadow-[0_20px_40px_rgba(37,99,235,0.3)] active:scale-95 group text-xs uppercase tracking-widest"
+        className="flex-1 sm:flex-none flex items-center justify-center gap-3 bg-blue-600 dark:bg-blue-700/50 hover:bg-blue-700 text-white px-6 py-4 rounded-2xl font-black transition-all duration-300 shadow-[0_10px_20px_rgba(37,99,235,0.2)] hover:shadow-[0_20px_40px_rgba(37,99,235,0.3)] active:scale-95 group text-xs uppercase tracking-widest"
       >
         <Wrench size={16} className="group-hover:scale-125 transition-transform group-hover:rotate-12" />
         Start Service

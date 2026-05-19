@@ -82,7 +82,7 @@ export default memo(function InvoicePreview({
             <div className="flex flex-wrap items-center gap-2 mt-1">
               <PaymentStatusBadge status={invoice.status} />
               <div className="flex items-center gap-1.5">
-                <span className="text-[10.5px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+                <span className="text-[10.5px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 dark:bg-blue-700/50 px-2 py-0.5 rounded-full">
                   ID:{" "}
                   {invoice.invoiceNumber ||
                     invoice._id?.slice(-6).toUpperCase()}
@@ -256,7 +256,7 @@ export default memo(function InvoicePreview({
         <div className="flex justify-between items-end mb-6">
           <div className="space-y-1">
             <p
-              className={`text-[10px] font-black uppercase tracking-widest leading-none ${ispayed ? "text-gray-400" : "text-blue-600 animate-pulse"}`}
+              className={`text-[10.5px] font-black uppercase tracking-widest leading-none ${ispayed ? "text-gray-400" : "text-blue-600"}`}
             >
               {ispayed ? "Total Amount Paid" : "Balance Amount Due"}
             </p>
@@ -289,11 +289,11 @@ export default memo(function InvoicePreview({
                 animate={{ opacity: 1, y: 0, height: "auto" }}
                 exit={{ opacity: 0, y: 10, height: 0 }}
                 transition={{ type: "spring", damping: 20, stiffness: 300 }}
-                className="space-y-4 p-4 bg-gray-50/80 backdrop-blur-sm rounded-3xl border border-gray-100 mb-2 overflow-hidden"
+                className="space-y-4 p-4 bg-gray-50/80 dark:bg-gray-950/80 backdrop-blur-sm rounded-3xl border border-gray-100 mb-2 overflow-hidden"
               >
-                <div className="flex justify-between items-center">
-                  <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                    Payment Method
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-[10px] font-black text-gray-400 dark:text-white uppercase tracking-widest">
+                    Collect Payment
                   </span>
                   <button
                     onClick={() => setShowPaymentOptions(false)}
@@ -301,22 +301,6 @@ export default memo(function InvoicePreview({
                   >
                     Cancel
                   </button>
-                </div>
-
-                <div className="flex gap-2">
-                  {["Cash", "UPI", "Card"].map((m) => (
-                    <button
-                      key={m}
-                      onClick={() => setSelectedMethod(m)}
-                      className={`flex-1 py-2.5 rounded-2xl text-xs font-black transition-all duration-300 ${
-                        selectedMethod === m
-                          ? "bg-blue-600 text-white shadow-lg shadow-blue-200 ring-2 ring-blue-100"
-                          : "bg-white text-gray-400 border border-gray-100 hover:border-blue-200"
-                      }`}
-                    >
-                      {m}
-                    </button>
-                  ))}
                 </div>
 
                 <div className="flex gap-2">
@@ -348,7 +332,7 @@ export default memo(function InvoicePreview({
                       );
                       setShowPaymentOptions(false);
                     }}
-                    className="bg-gray-900 text-white px-6 rounded-2xl text-xs font-black hover:bg-black transition-all shadow-md active:scale-95"
+                    className="bg-gray-900 dark:bg-emerald-600 text-white px-6 rounded-2xl text-xs font-black hover:bg-black dark:hover:bg-emerald-700 transition-all shadow-md active:scale-95"
                   >
                     Confirm
                   </button>
@@ -364,7 +348,7 @@ export default memo(function InvoicePreview({
                 {invoice.status !== "Paid" ? (
                   <button
                     onClick={() => setShowPaymentOptions(true)}
-                    className="flex-[2.5] bg-blue-600 text-white py-4 rounded-3xl text-sm font-black hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 active:scale-95 flex items-center justify-center gap-2"
+                    className="flex-[2.5] bg-blue-600 text-white py-4 rounded-3xl text-sm font-black hover:bg-blue-700 transition-all active:scale-95 flex items-center justify-center gap-2"
                   >
                     Collect Payment
                   </button>
@@ -389,7 +373,7 @@ export default memo(function InvoicePreview({
 
                 <button
                   onClick={() => onSendWhatsApp?.(invoice)}
-                  className="flex-1 flex items-center justify-center bg-emerald-500 text-white py-4 rounded-3xl transition-all shadow-xl shadow-emerald-100 hover:bg-emerald-600 active:scale-95"
+                  className="flex-1 flex items-center justify-center bg-emerald-500 dark:bg-emerald-700/50 text-white py-4 rounded-3xl transition-all  hover:bg-emerald-600 active:scale-95"
                 >
                   <svg
                     width="22"

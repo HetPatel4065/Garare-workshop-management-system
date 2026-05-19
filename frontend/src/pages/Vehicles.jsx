@@ -14,6 +14,7 @@ import VehicleForm, {
 import { Car, Plus, Filter } from "lucide-react";
 import { FaCar } from "react-icons/fa";
 import VehicleCard from "../components/Vehicles/VehicleCard";
+import ExportButton from "../components/common/ExportButton";
 
 export default function Vehicles() {
   const { user, token: authToken } = useAuth();
@@ -380,6 +381,18 @@ export default function Vehicles() {
     },
   ];
 
+  const exportColumns = [
+    { header: 'License Plate', accessor: 'licensePlate' },
+    { header: 'Make', accessor: 'make' },
+    { header: 'Model', accessor: 'model' },
+    { header: 'Year', accessor: 'year' },
+    { header: 'Fuel Type', accessor: 'fuelType' },
+    { header: 'Transmission', accessor: 'transmission' },
+    { header: 'Status', accessor: 'status' },
+    { header: 'Customer Name', accessor: row => row.customerName || row.customerId?.name || 'N/A' },
+    { header: 'Registered Date', accessor: row => row.createdAt ? new Date(row.createdAt).toLocaleDateString("en-GB") : 'N/A' },
+  ];
+
   return (
     <div className="p-4 sm:p-6 bg-gray-100 rounded-xl cursor-auto min-h-fit">
       <div className="mb-8 pb-5 border-b border-slate-200/80">
@@ -399,13 +412,21 @@ export default function Vehicles() {
           </div>
 
           {role !== "mechanic" && role !== "advisor" && (
-            <button
-              onClick={handleAddNew}
-              className="self-start sm:self-auto flex items-center gap-2 px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl text-sm font-bold transition-all duration-300 shadow-md hover:shadow-xl"
-            >
-              <Plus size={17} />
-              Add Vehicle
-            </button>
+            <div className="flex items-center gap-2 self-start sm:self-auto">
+              <ExportButton 
+                title="Vehicles List" 
+                columns={exportColumns} 
+                data={filteredFleet} 
+                filenamePrefix="vehicles"
+              />
+              <button
+                onClick={handleAddNew}
+                className="flex items-center gap-2 px-5 py-3 bg-blue-600 dark:bg-blue-700/50 hover:bg-blue-700 text-white rounded-2xl text-sm font-bold transition-all duration-300 shadow-md hover:shadow-xl h-10.5"
+              >
+                <Plus size={17} />
+                Add Vehicle
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -774,7 +795,7 @@ export default function Vehicles() {
                       className={`px-8 py-2.5 text-sm font-bold text-white rounded-xl transition-all ${
                         isBlocked
                           ? "bg-gray-300 cursor-not-allowed"
-                          : "bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-100"
+                          : "bg-blue-600 hover:bg-blue-700 dark:bg-blue-700/50 shadow-md shadow-blue-100"
                       }`}
                     >
                       {selectedVehicle?._id

@@ -117,7 +117,7 @@ export default function ConfirmModal({
         <div className="flex w-full gap-4">
           <button
             onClick={onClose}
-            className="flex-1 px-6 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all"
+            className="flex-1 px-6 py-4 bg-gray-100 text-gray-600 dark:bg-slate-300 dark:text-white font-bold rounded-2xl hover:bg-gray-200 transition-all"
           >
             {cancelText}
           </button>

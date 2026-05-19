@@ -171,7 +171,7 @@ export default function CustomerForm({
     <div className="flex flex-col h-[90vh]">
       {/* Internal Header Actions (Status Switcher Only) */}
       {!isReadOnly && (
-        <div className="px-6 border-b border-gray-100 flex items-center justify-between bg-gray-800">
+        <div className="px-6 border-b border-gray-100 flex items-center justify-between ">
           <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
             {isEditing ? "Modify Record" : "New Entry"}
           </p>
@@ -368,7 +368,7 @@ export default function CustomerForm({
         ${
           isInvalid
             ? "bg-gray-200 cursor-not-allowed"
-            : "bg-[#0f172a] hover:bg-black active:scale-95"
+            : "bg-[#0f172a] hover:bg-blue-600 dark:bg-blue-700/50 active:scale-95"
         }`}
           >
             {isEditing ? "Save changes" : "Register profile"}
