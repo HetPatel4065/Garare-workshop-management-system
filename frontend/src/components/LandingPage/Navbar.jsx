@@ -144,8 +144,8 @@ const Dropdown = ({ items, visible }) => (
         <div
           className="rounded-2xl p-4 shadow-2xl"
           style={{
-            background: "rgba(255,255,255,0.97)",
-            border: "1.5px solid rgba(99,102,241,0.13)",
+            background: "var(--dropdown-bg)",
+            border: "1.5px solid var(--dropdown-border)",
             backdropFilter: "blur(24px)",
             boxShadow:
               "0 24px 64px rgba(99,102,241,0.13), 0 4px 16px rgba(0,0,0,0.06)",
@@ -179,13 +179,13 @@ const Dropdown = ({ items, visible }) => (
                   <div>
                     <div
                       className="text-sm font-bold leading-snug"
-                      style={{ color: "#1e1b4b" }}
+                      style={{ color: "var(--dropdown-text)" }}
                     >
                       {item.label}
                     </div>
                     <div
                       className="text-xs font-medium mt-0.5 leading-snug"
-                      style={{ color: "#64748b" }}
+                      style={{ color: "var(--dropdown-desc)" }}
                     >
                       {item.desc}
                     </div>
@@ -214,7 +214,7 @@ const MobileNavItem = ({ item, onClose }) => {
           to={item.href}
           onClick={onClose}
           className="block text-base font-semibold py-2 transition-colors hover:text-indigo-600"
-          style={{ color: "#1e1b4b" }}
+          style={{ color: "var(--text-heading)" }}
         >
           {item.label}
         </Link>
@@ -225,7 +225,7 @@ const MobileNavItem = ({ item, onClose }) => {
         href={item.href}
         onClick={onClose}
         className="block text-base font-semibold py-2 transition-colors hover:text-indigo-600"
-        style={{ color: "#1e1b4b" }}
+        style={{ color: "var(--text-heading)" }}
       >
         {item.label}
       </a>
@@ -237,7 +237,7 @@ const MobileNavItem = ({ item, onClose }) => {
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between text-base font-semibold py-2 transition-colors"
-        style={{ color: open ? "#6366f1" : "#1e1b4b" }}
+        style={{ color: open ? "#6366f1" : "var(--text-heading)" }}
       >
         {item.label}
         <ChevronDown
@@ -283,7 +283,7 @@ const MobileNavItem = ({ item, onClose }) => {
                     </div>
                     <span
                       className="text-sm font-semibold"
-                      style={{ color: "#1e1b4b" }}
+                      style={{ color: "var(--text-heading)" }}
                     >
                       {child.label}
                     </span>
@@ -338,9 +338,9 @@ export const Navbar = () => {
       style={
         scrolled
           ? {
-            background: "rgba(248,250,255,0.92)",
+            background: "var(--nav-bg)",
             backdropFilter: "blur(24px)",
-            borderBottom: "1px solid rgba(99,102,241,0.10)",
+            borderBottom: "1px solid var(--nav-border)",
             boxShadow: "0 4px 32px rgba(99,102,241,0.08)",
           }
           : { background: "transparent" }
@@ -360,7 +360,7 @@ export const Navbar = () => {
           </div>
           <span
             className="text-lg md:text-xl font-extrabold tracking-tight"
-            style={{ color: "#1e1b4b" }}
+            style={{ color: "var(--text-heading)" }}
           >
             GaragePro
           </span>
@@ -380,7 +380,7 @@ export const Navbar = () => {
                   className="flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-150"
                   style={{
                     color:
-                      activeDropdown === item.label ? "#6366f1" : "#475569",
+                      activeDropdown === item.label ? "#6366f1" : "var(--text-muted)",
                     background:
                       activeDropdown === item.label
                         ? "rgba(99,102,241,0.07)"
@@ -410,7 +410,7 @@ export const Navbar = () => {
                 <Link
                   to={item.href}
                   className="block px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-150 hover:text-indigo-600 hover:bg-indigo-50"
-                  style={{ color: "#475569", textDecoration: "none" }}
+                  style={{ color: "var(--text-muted)", textDecoration: "none" }}
                 >
                   {item.label}
                 </Link>
@@ -418,7 +418,7 @@ export const Navbar = () => {
                 <a
                   href={item.href}
                   className="block px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-150 hover:text-indigo-600 hover:bg-indigo-50"
-                  style={{ color: "#475569", textDecoration: "none" }}
+                  style={{ color: "var(--text-muted)", textDecoration: "none" }}
                 >
                   {item.label}
                 </a>
@@ -448,7 +448,7 @@ export const Navbar = () => {
                 key={item.label}
                 to={item.href}
                 className="block px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-150 hover:text-indigo-600 hover:bg-indigo-50"
-                style={{ color: "#475569", textDecoration: "none" }}
+                style={{ color: "var(--text-muted)", textDecoration: "none" }}
               >
                 {item.label}
               </Link>
@@ -457,7 +457,7 @@ export const Navbar = () => {
                 key={item.label}
                 href={item.href}
                 className="block px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-150 hover:text-indigo-600 hover:bg-indigo-50"
-                style={{ color: "#475569", textDecoration: "none" }}
+                style={{ color: "var(--text-muted)", textDecoration: "none" }}
               >
                 {item.label}
               </a>
@@ -519,9 +519,9 @@ export const Navbar = () => {
             transition={{ duration: 0.22 }}
             className="absolute top-full left-0 right-0 overflow-hidden md:hidden"
             style={{
-              background: "rgba(248,250,255,0.99)",
+              background: "var(--nav-bg)",
               backdropFilter: "blur(24px)",
-              borderBottom: "1px solid rgba(99,102,241,0.12)",
+              borderBottom: "1px solid var(--nav-border)",
               boxShadow: "0 12px 40px rgba(99,102,241,0.10)",
             }}
           >

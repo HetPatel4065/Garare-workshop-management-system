@@ -24,11 +24,11 @@ const FeatureItem = ({ icon: Icon, title, description, delay = 0, colorScheme })
       className="group p-8 rounded-3xl flex flex-col transition-all duration-300 cursor-default"
       style={{
         background: hovered
-          ? "rgba(255,255,255,1)"
-          : "rgba(255,255,255,0.80)",
+          ? "var(--bg-secondary)"
+          : "var(--bg-tertiary)",
         border: hovered
           ? `1.5px solid ${colorScheme.text}33`
-          : "1.5px solid rgba(226,232,240,0.7)",
+          : "1.5px solid var(--border-color)",
         boxShadow: hovered
           ? `0 16px 48px ${colorScheme.text}18, 0 2px 8px rgba(0,0,0,0.04)`
           : "0 2px 12px rgba(0,0,0,0.04)",
@@ -45,10 +45,10 @@ const FeatureItem = ({ icon: Icon, title, description, delay = 0, colorScheme })
       >
         <Icon size={22} />
       </div>
-      <h3 className="text-lg font-bold mb-2" style={{ color: "#1e1b4b" }}>
+      <h3 className="text-lg font-bold mb-2" style={{ color: "var(--text-heading)" }}>
         {title}
       </h3>
-      <p className="text-sm leading-relaxed font-medium" style={{ color: "#64748b" }}>
+      <p className="text-sm leading-relaxed font-medium" style={{ color: "var(--text-body)" }}>
         {description}
       </p>
     </motion.div>
@@ -94,8 +94,7 @@ export const Features = () => {
       id="features"
       className="py-24 md:py-32 px-6 relative overflow-hidden"
       style={{
-        background:
-          "linear-gradient(180deg, #f8faff 0%, rgba(240,245,255,0.6) 100%)",
+        background: "var(--bg-primary)",
       }}
     >
       {/* Background decoration */}
@@ -136,7 +135,7 @@ export const Features = () => {
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
             className="text-3xl sm:text-4xl md:text-6xl font-extrabold tracking-tight mb-6 max-w-3xl mx-auto leading-[1.1] md:leading-tight"
-            style={{ color: "#1e1b4b" }}
+            style={{ color: "var(--text-heading)" }}
           >
             Everything you need to{" "}
             <span
@@ -156,7 +155,7 @@ export const Features = () => {
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
             className="max-w-2xl mx-auto font-medium text-base md:text-lg leading-relaxed px-4 md:px-0"
-            style={{ color: "#64748b" }}
+            style={{ color: "var(--text-body)" }}
           >
             Stop juggling apps and spreadsheets. GaragePro brings every part of your workshop together.
           </motion.p>

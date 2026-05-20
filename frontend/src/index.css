@@ -318,6 +318,46 @@ html.dark .bg-slate-100 {
 }
 
 /* ─── Landing Page Dark Mode Overrides ─── */
+:root {
+  --bg-primary: #f8faff;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: rgba(255, 255, 255, 0.7);
+  --text-heading: #1e1b4b;
+  --text-body: #64748b;
+  --text-muted: #475569;
+  --border-color: rgba(226, 232, 240, 0.8);
+  --border-active: rgba(99, 102, 241, 0.25);
+  --nav-bg: rgba(248, 250, 255, 0.92);
+  --nav-border: rgba(99, 102, 241, 0.10);
+  --dropdown-bg: rgba(255, 255, 255, 0.97);
+  --dropdown-border: rgba(99, 102, 241, 0.13);
+  --dropdown-text: #1e1b4b;
+  --dropdown-desc: #64748b;
+  --pricing-toggle-bg: rgba(226, 232, 240, 0.6);
+  --pricing-btn-bg: #ffffff;
+  --pricing-btn-text: #6366f1;
+}
+
+html.dark {
+  --bg-primary: #030712;
+  --bg-secondary: #18181b;
+  --bg-tertiary: rgba(24, 24, 27, 0.7);
+  --text-heading: #f4f4f5;
+  --text-body: #a1a1aa;
+  --text-muted: #d4d4d8;
+  --border-color: rgba(63, 63, 70, 0.8);
+  --border-active: rgba(99, 102, 241, 0.4);
+  --nav-bg: rgba(3, 7, 18, 0.92);
+  --nav-border: rgba(63, 63, 70, 0.4);
+  --dropdown-bg: rgba(24, 24, 27, 0.97);
+  --dropdown-border: rgba(63, 63, 70, 0.4);
+  --dropdown-text: #f4f4f5;
+  --dropdown-desc: #a1a1aa;
+  --pricing-toggle-bg: #27272a;
+  --pricing-btn-bg: rgba(255, 255, 255, 0.15);
+  --pricing-btn-text: #ffffff;
+}
+
 /* Main text colors conversion */
 html.dark [style*="color: #1e1b4b"],
 html.dark [style*="color:#1e1b4b"] {

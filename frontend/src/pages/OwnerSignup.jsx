@@ -386,7 +386,7 @@ export default function OwnerSignup() {
 
         {/* Footer legal disclaimer */}
         <p className="mt-5 text-center text-[11px] text-slate-400 px-4">
-          By registering, you agree to our Terms of Service and Privacy Policy.
+          By registering, you agree to our Terms of Service and <RouterLink to="/privacy-policy" className="hover:underline text-emerald-600 font-semibold">Privacy Policy</RouterLink>.
           All your data is encrypted natively.
         </p>
       </motion.div>

@@ -69,7 +69,7 @@ export const FAQ = () => {
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
           className="text-2xl sm:text-3xl font-extrabold mb-4"
-          style={{ color: "#1e1b4b" }}
+          style={{ color: "var(--text-heading)" }}
         >
           Got questions?{" "}
           <span
@@ -85,7 +85,7 @@ export const FAQ = () => {
         </motion.h2>
         <p
           className="font-medium text-sm md:text-base"
-          style={{ color: "#64748b" }}
+          style={{ color: "var(--text-body)" }}
         >
           Everything you need to know about GaragePro.
         </p>
@@ -101,11 +101,11 @@ export const FAQ = () => {
             transition={{ delay: i * 0.08 }}
             className="rounded-2xl overflow-hidden transition-all duration-300"
             style={{
-              background: active === i ? "#fff" : "rgba(255,255,255,0.7)",
+              background: active === i ? "var(--bg-secondary)" : "var(--bg-tertiary)",
               border:
                 active === i
-                  ? "1.5px solid rgba(99,102,241,0.25)"
-                  : "1.5px solid rgba(226,232,240,0.8)",
+                  ? "1.5px solid var(--border-active)"
+                  : "1.5px solid var(--border-color)",
               boxShadow:
                 active === i
                   ? "0 8px 32px rgba(99,102,241,0.10)"
@@ -118,7 +118,7 @@ export const FAQ = () => {
             >
               <span
                 className="text-sm md:text-base font-bold"
-                style={{ color: "#1e1b4b" }}
+                style={{ color: "var(--text-heading)" }}
               >
                 {item.q}
               </span>
@@ -146,7 +146,7 @@ export const FAQ = () => {
                 >
                   <div
                     className="px-5 md:px-8 pb-5 md:pb-8 text-xs md:text-sm font-medium leading-relaxed"
-                    style={{ color: "#64748b" }}
+                    style={{ color: "var(--text-body)" }}
                   >
                     {item.a}
                   </div>
@@ -167,8 +167,8 @@ export const Footer = () => {
     <footer
       className="py-24 px-6 relative overflow-hidden"
       style={{
-        background: "linear-gradient(180deg, #f8faff 0%, #eef2ff 100%)",
-        borderTop: "1px solid rgba(99,102,241,0.10)",
+        background: "linear-gradient(180deg, var(--bg-primary) 0%, var(--nav-bg) 100%)",
+        borderTop: "1px solid var(--nav-border)",
       }}
     >
       {/* Decorative glow */}
@@ -195,14 +195,14 @@ export const Footer = () => {
             </div>
             <span
               className="text-xl font-extrabold tracking-tight"
-              style={{ color: "#1e1b4b" }}
+              style={{ color: "var(--text-heading)" }}
             >
               GaragePro
             </span>
           </div>
           <p
             className="text-sm font-medium leading-relaxed max-w-sm mb-8"
-            style={{ color: "#64748b" }}
+            style={{ color: "var(--text-body)" }}
           >
             The all-in-one operating system for modern mechanical workshops.
             Manage jobs, track inventory, and bill customers effortlessly.
@@ -222,7 +222,7 @@ export const Footer = () => {
         <div>
           <h4
             className="text-xs font-extrabold uppercase tracking-widest mb-6"
-            style={{ color: "#1e1b4b" }}
+            style={{ color: "var(--text-heading)" }}
           >
             Product
           </h4>
@@ -236,7 +236,7 @@ export const Footer = () => {
                 <a
                   href={l.href}
                   className="text-sm font-medium transition-colors hover:text-indigo-600"
-                  style={{ color: "#64748b" }}
+                  style={{ color: "var(--text-body)" }}
                 >
                   {l.label}
                 </a>
@@ -248,7 +248,7 @@ export const Footer = () => {
         <div>
           <h4
             className="text-xs font-extrabold uppercase tracking-widest mb-6"
-            style={{ color: "#1e1b4b" }}
+            style={{ color: "var(--text-heading)" }}
           >
             Company
           </h4>
@@ -256,14 +256,14 @@ export const Footer = () => {
             {[
               { label: "About Us", href: "#", type: "anchor" },
               { label: "Staff Login", href: "/login", type: "link" },
-              { label: "Privacy Policy", href: "#", type: "anchor" },
+              { label: "Privacy Policy", href: "/privacy-policy", type: "link" },
             ].map((l) => (
               <li key={l.label}>
                 {l.type === "link" ? (
                   <Link
                     to={l.href}
                     className="text-sm font-medium transition-colors hover:text-indigo-600"
-                    style={{ color: "#64748b", textDecoration: "none" }}
+                    style={{ color: "var(--text-body)", textDecoration: "none" }}
                   >
                     {l.label}
                   </Link>
@@ -271,7 +271,7 @@ export const Footer = () => {
                   <a
                     href={l.href}
                     className="text-sm font-medium transition-colors hover:text-indigo-600"
-                    style={{ color: "#64748b", textDecoration: "none" }}
+                    style={{ color: "var(--text-body)", textDecoration: "none" }}
                   >
                     {l.label}
                   </a>
@@ -284,7 +284,7 @@ export const Footer = () => {
         <div>
           <h4
             className="text-xs font-extrabold uppercase tracking-widest mb-6"
-            style={{ color: "#1e1b4b" }}
+            style={{ color: "var(--text-heading)" }}
           >
             Theme
           </h4>

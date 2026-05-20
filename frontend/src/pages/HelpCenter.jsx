@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Search,
   BookOpen,
@@ -508,18 +509,34 @@ export default function HelpCenter() {
               <h3 className="font-bold text-slate-800 mb-4">Quick Links</h3>
               <ul className="space-y-3">
                 {["Video Tutorials", "Developer API", "Privacy Policy"].map(
-                  (link) => (
-                    <li
-                      key={link}
-                      className="flex items-center justify-between text-sm text-slate-600 hover:text-blue-600 cursor-pointer group"
-                    >
-                      {link}
-                      <ExternalLink
-                        size={14}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity"
-                      />
-                    </li>
-                  ),
+                  (link) => {
+                    const isPrivacy = link === "Privacy Policy";
+                    const content = (
+                      <>
+                        {link}
+                        <ExternalLink
+                          size={14}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        />
+                      </>
+                    );
+                    return isPrivacy ? (
+                      <Link
+                        key={link}
+                        to="/privacy-policy"
+                        className="flex items-center justify-between text-sm text-slate-600 hover:text-blue-600 cursor-pointer group"
+                      >
+                        {content}
+                      </Link>
+                    ) : (
+                      <li
+                        key={link}
+                        className="flex items-center justify-between text-sm text-slate-600 hover:text-blue-600 cursor-pointer group"
+                      >
+                        {content}
+                      </li>
+                    );
+                  }
                 )}
               </ul>
             </div>

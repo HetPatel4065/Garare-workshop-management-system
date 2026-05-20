@@ -44,7 +44,7 @@ export const Pricing = () => {
     <section
       id="pricing"
       className="py-24 md:py-32 px-6 relative overflow-hidden"
-      style={{ background: "#f8faff" }}
+      style={{ background: "var(--bg-primary)" }}
     >
       {/* Glow */}
       <div
@@ -77,7 +77,7 @@ export const Pricing = () => {
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
             className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight mb-8"
-            style={{ color: "#1e1b4b" }}
+            style={{ color: "var(--text-heading)" }}
           >
             Fair pricing.{" "}
             <span
@@ -96,7 +96,7 @@ export const Pricing = () => {
           <div
             className="inline-flex items-center p-1 rounded-2xl"
             style={{
-              background: "rgba(226,232,240,0.6)",
+              background: "var(--pricing-toggle-bg)",
               border: "1px solid rgba(99,102,241,0.12)",
             }}
           >
@@ -104,8 +104,8 @@ export const Pricing = () => {
               onClick={() => setAnnual(false)}
               className="px-6 md:px-8 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all duration-200"
               style={{
-                background: !annual ? "#fff" : "transparent",
-                color: !annual ? "#6366f1" : "#94a3b8",
+                background: !annual ? "var(--pricing-btn-bg)" : "transparent",
+                color: !annual ? "var(--pricing-btn-text)" : "#94a3b8",
                 boxShadow: !annual ? "0 2px 10px rgba(99,102,241,0.12)" : "none",
               }}
             >
@@ -115,8 +115,8 @@ export const Pricing = () => {
               onClick={() => setAnnual(true)}
               className="px-6 md:px-8 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all duration-200 flex items-center gap-2"
               style={{
-                background: annual ? "#fff" : "transparent",
-                color: annual ? "#6366f1" : "#94a3b8",
+                background: annual ? "var(--pricing-btn-bg)" : "transparent",
+                color: annual ? "var(--pricing-btn-text)" : "#94a3b8",
                 boxShadow: annual ? "0 2px 10px rgba(99,102,241,0.12)" : "none",
               }}
             >
@@ -150,10 +150,10 @@ export const Pricing = () => {
                         border: "none",
                       }
                     : {
-                        background: "#fff",
+                        background: "var(--bg-secondary)",
                         border: isSelected
                           ? "2px solid rgba(99,102,241,0.40)"
-                          : "2px solid rgba(226,232,240,0.8)",
+                          : "2px solid var(--border-color)",
                         boxShadow: isSelected
                           ? "0 16px 48px rgba(99,102,241,0.12)"
                           : "0 2px 12px rgba(0,0,0,0.04)",
@@ -173,14 +173,14 @@ export const Pricing = () => {
                 <div className="mb-8">
                   <h4
                     className="font-extrabold text-xl mb-2"
-                    style={{ color: isPro ? "#fff" : "#1e1b4b" }}
+                    style={{ color: isPro ? "#fff" : "var(--text-heading)" }}
                   >
                     {plan.name}
                   </h4>
                   <div className="flex items-baseline gap-1 mb-3">
                     <span
                       className="text-5xl font-extrabold"
-                      style={{ color: isPro ? "#fff" : "#1e1b4b" }}
+                      style={{ color: isPro ? "#fff" : "var(--text-heading)" }}
                     >
                       ₹{plan.price}
                     </span>
@@ -193,7 +193,7 @@ export const Pricing = () => {
                   </div>
                   <p
                     className="text-sm font-medium"
-                    style={{ color: isPro ? "rgba(255,255,255,0.75)" : "#64748b" }}
+                    style={{ color: isPro ? "rgba(255,255,255,0.75)" : "var(--text-body)" }}
                   >
                     {plan.description}
                   </p>
@@ -215,7 +215,7 @@ export const Pricing = () => {
                       </div>
                       <span
                         className="text-sm font-medium"
-                        style={{ color: isPro ? "rgba(255,255,255,0.88)" : "#475569" }}
+                        style={{ color: isPro ? "rgba(255,255,255,0.88)" : "var(--text-muted)" }}
                       >
                         {f}
                       </span>

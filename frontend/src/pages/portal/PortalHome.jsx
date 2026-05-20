@@ -16,7 +16,7 @@ import {
 import RegistrationModal from "./RegistrationModal";
 import GarageDetailsModal from "./GarageDetailsModal";
 import PortalLogin from "./PortalLogin";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 /* ─── Skeleton card ─── */
 function Skeleton() {
@@ -414,15 +414,28 @@ export default function PortalHome() {
           </div>
           <nav className="flex gap-6">
             {["Privacy Policy", "Terms of Service", "Contact Support"].map(
-              (l) => (
-                <a
-                  key={l}
-                  href="#"
-                  className="text-[13px] text-slate-400 font-medium hover:text-blue-600 transition-colors"
-                >
-                  {l}
-                </a>
-              ),
+              (l) => {
+                if (l === "Privacy Policy") {
+                  return (
+                    <Link
+                      key={l}
+                      to="/privacy-policy"
+                      className="text-[13px] text-slate-400 font-medium hover:text-blue-600 transition-colors"
+                    >
+                      {l}
+                    </Link>
+                  );
+                }
+                return (
+                  <a
+                    key={l}
+                    href="#"
+                    className="text-[13px] text-slate-400 font-medium hover:text-blue-600 transition-colors"
+                  >
+                    {l}
+                  </a>
+                );
+              }
             )}
           </nav>
           <p className="text-[12px] text-slate-400">

@@ -33,6 +33,7 @@ const ServiceReminders = lazy(() => import("./pages/ServiceReminders"));
 const HelpCenter = lazy(() => import("./pages/HelpCenter"));
 const SearchPage = lazy(() => import("./pages/SearchPage"));
 const Notifications = lazy(() => import("./pages/Notifications"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 
 import ToastContainer from "./components/UI/ToastContainer";
 import GarageLayout from "./components/Layout/GarageLayout";
@@ -205,6 +206,15 @@ function App() {
             element={
               <PageTransition>
                 <Unauthorized />
+              </PageTransition>
+            }
+          />
+
+          <Route
+            path="/privacy-policy"
+            element={
+              <PageTransition>
+                <PrivacyPolicy />
               </PageTransition>
             }
           />

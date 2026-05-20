@@ -11,7 +11,7 @@ export const Hero = () => {
         <div
           style={{
             background:
-              "radial-gradient(ellipse 80% 60% at 50% -10%, rgba(99,102,241,0.18) 0%, transparent 70%), radial-gradient(ellipse 60% 50% at 80% 60%, rgba(59,130,246,0.13) 0%, transparent 70%), radial-gradient(ellipse 50% 40% at 10% 80%, rgba(139,92,246,0.10) 0%, transparent 70%), #f8faff",
+              "radial-gradient(ellipse 80% 60% at 50% -10%, rgba(99,102,241,0.18) 0%, transparent 70%), radial-gradient(ellipse 60% 50% at 80% 60%, rgba(59,130,246,0.13) 0%, transparent 70%), radial-gradient(ellipse 50% 40% at 10% 80%, rgba(139,92,246,0.10) 0%, transparent 70%), var(--bg-primary)",
           }}
           className="absolute inset-0"
         />
@@ -71,7 +71,7 @@ export const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.7 }}
           className="text-5xl sm:text-6xl md:text-8xl font-extrabold tracking-tight mb-8 leading-[1.05] md:leading-[0.93]"
-          style={{ color: "#1e1b4b" }}
+          style={{ color: "var(--text-heading)" }}
         >
           The operating system{" "}
           <br className="hidden sm:block" />
@@ -93,7 +93,7 @@ export const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.7 }}
           className="text-base md:text-xl mb-10 md:mb-14 max-w-3xl mx-auto leading-relaxed font-medium px-4 md:px-0"
-          style={{ color: "#64748b" }}
+          style={{ color: "var(--text-body)" }}
         >
           Say goodbye to messy paperwork. GaragePro helps you manage job cards,
           track inventory, and automate billing — all in one beautiful dashboard.
@@ -155,20 +155,20 @@ export const Hero = () => {
             href="#features"
             className="w-full sm:w-auto px-8 md:px-10 py-4 md:py-5 rounded-2xl text-base md:text-lg font-bold text-center transition-all duration-300"
             style={{
-              background: "rgba(255,255,255,0.85)",
-              color: "#64748b",
-              border: "1.5px solid rgba(226,232,240,1)",
+              background: "var(--bg-tertiary)",
+              color: "var(--text-body)",
+              border: "1.5px solid var(--border-color)",
               boxShadow: "0 2px 16px rgba(0,0,0,0.02)",
               backdropFilter: "blur(8px)",
               textDecoration: "none",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(255,255,255,1)";
+              e.currentTarget.style.background = "var(--bg-secondary)";
               e.currentTarget.style.boxShadow = "0 6px 24px rgba(0,0,0,0.06)";
               e.currentTarget.style.transform = "translateY(-2px)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(255,255,255,0.85)";
+              e.currentTarget.style.background = "var(--bg-tertiary)";
               e.currentTarget.style.boxShadow = "0 2px 16px rgba(0,0,0,0.02)";
               e.currentTarget.style.transform = "translateY(0)";
             }}
