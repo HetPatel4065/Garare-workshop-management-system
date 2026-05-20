@@ -11,6 +11,8 @@ import {
   AlertCircle,
   Box,
   ArrowRight,
+  Shield,
+  Settings,
 } from "lucide-react";
 import { format } from "date-fns";
 import SearchBar from "../components/UI/SearchBar";
@@ -37,6 +39,37 @@ function getTypeStyles(type) {
   }
 }
 
+/* ─── Helper: icon + colour per source ─── */
+function getSourceStyles(source) {
+  switch (source) {
+    case "Admin":
+      return {
+        icon: Shield,
+        color: "text-rose-600 bg-rose-50 border-rose-100",
+        label: "From Admin",
+      };
+    case "Customer":
+      return {
+        icon: User,
+        color: "text-indigo-600 bg-indigo-50 border-indigo-100",
+        label: "From Customer",
+      };
+    case "Garage":
+      return {
+        icon: Wrench,
+        color: "text-emerald-600 bg-emerald-50 border-emerald-100",
+        label: "From Garage",
+      };
+    case "System":
+    default:
+      return {
+        icon: Settings,
+        color: "text-slate-600 bg-slate-50 border-slate-200",
+        label: "From System",
+      };
+  }
+}
+
 /* ─── MetaField — mirrors CustomerCard's MetaField ─── */
 function MetaField({ label, primary, secondary, icon: Icon }) {
   return (
@@ -59,9 +92,12 @@ function MetaField({ label, primary, secondary, icon: Icon }) {
 
 /* ─── NotificationCard — mirrors CustomerCard visually ─── */
 function NotificationCard({ notification, onMarkRead, onDelete }) {
-  const { title, message, type, read, createdAt, link } = notification;
+  const { title, message, type, read, createdAt, link, source, subtitle } = notification;
   const { icon: Icon, color, bg, border, badge } = getTypeStyles(type);
   const { label } = getTypeStyles(type);
+
+  const sourceStyles = getSourceStyles(source || "System");
+  const SourceIcon = sourceStyles.icon;
 
   const formattedDate = createdAt
     ? format(new Date(createdAt), "d MMM yyyy")
@@ -76,21 +112,34 @@ function NotificationCard({ notification, onMarkRead, onDelete }) {
         read ? "border-slate-100 opacity-80" : "border-slate-100"
       }`}
     >
-      {/* Top row: title + id badge + type badge */}
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <h3 className="text-lg font-bold text-gray-900 tracking-tight">
-            {title}
-          </h3>
-          <span
-            className={`px-2 py-0.5 border text-[10px] font-black tracking-widest rounded-lg uppercase ${badge}`}
-          >
-            {label}
-          </span>
-          {!read && (
-            <span className="px-2 py-0.5 border text-[10px] font-black tracking-widest rounded-lg uppercase text-blue-700 bg-blue-100 border-blue-100">
-              Unread
+      {/* Top row: title + type badge + source badge */}
+      <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-wrap items-center gap-2 mb-1">
+            <h3 className="text-lg font-bold text-gray-900 tracking-tight">
+              {title}
+            </h3>
+            <span
+              className={`px-2 py-0.5 border text-[10px] font-black tracking-widest rounded-lg uppercase ${badge}`}
+            >
+              {label}
             </span>
+            <span
+              className={`px-2 py-0.5 border text-[10px] font-black tracking-widest rounded-lg uppercase flex items-center gap-1 ${sourceStyles.color}`}
+            >
+              <SourceIcon size={10} />
+              {source || "System"}
+            </span>
+            {!read && (
+              <span className="px-2 py-0.5 border text-[10px] font-black tracking-widest rounded-lg uppercase text-blue-700 bg-blue-100 border-blue-100">
+                Unread
+              </span>
+            )}
+          </div>
+          {subtitle && (
+            <p className="text-xs font-semibold text-slate-500 mb-2">
+              {subtitle}
+            </p>
           )}
         </div>
       </div>
@@ -100,7 +149,7 @@ function NotificationCard({ notification, onMarkRead, onDelete }) {
         <MetaField label="Type" icon={Icon} primary={label} />
         <MetaField label="Date" primary={formattedDate} />
         <MetaField label="Time" primary={formattedTime} />
-        <MetaField label="Status" primary={read ? "Read" : "Unread"} />
+        <MetaField label="Source" icon={SourceIcon} primary={sourceStyles.label} />
       </div>
 
       {/* Message body */}
@@ -178,6 +227,10 @@ export default function Notifications() {
       return (
         searchMatch && ["error", "warning", "unpaid_invoice"].includes(n.type)
       );
+    if (filter.startsWith("source_")) {
+      const srcVal = filter.replace("source_", "");
+      return searchMatch && (n.source || "System") === srcVal;
+    }
     return searchMatch && n.type === filter;
   });
 
@@ -188,9 +241,12 @@ export default function Notifications() {
       if (!n.read) acc.Unread += 1;
       if (["error", "warning", "unpaid_invoice"].includes(n.type))
         acc.Important += 1;
+
+      const src = n.source || "System";
+      acc.sources[src] = (acc.sources[src] || 0) + 1;
       return acc;
     },
-    { All: 0, Unread: 0, Important: 0 },
+    { All: 0, Unread: 0, Important: 0, sources: { Admin: 0, Customer: 0, Garage: 0, System: 0 } },
   );
 
   return (
@@ -264,6 +320,11 @@ export default function Notifications() {
             <option value="Important">
               Important ({typeCounts.Important})
             </option>
+            <option disabled className="text-slate-400 font-bold border-t">── Filter By Source ──</option>
+            <option value="source_Admin">From Admin ({typeCounts.sources.Admin || 0})</option>
+            <option value="source_Customer">From Customer ({typeCounts.sources.Customer || 0})</option>
+            <option value="source_Garage">From Garage ({typeCounts.sources.Garage || 0})</option>
+            <option value="source_System">From System ({typeCounts.sources.System || 0})</option>
           </select>
         </div>
       </div>

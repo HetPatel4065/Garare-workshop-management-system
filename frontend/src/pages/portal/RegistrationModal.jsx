@@ -152,7 +152,7 @@ const RegistrationModal = ({ isOpen, onClose, garage }) => {
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        className="relative bg-white w-full max-w-xl rounded-[2.5rem] shadow-2xl overflow-hidden"
+        className="relative bg-white w-full max-w-xl rounded-[2.5rem] shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
       >
         {/* Modal Header */}
         <div className="p-8 pb-0 flex justify-between items-start">

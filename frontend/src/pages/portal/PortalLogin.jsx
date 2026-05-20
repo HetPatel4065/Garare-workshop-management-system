@@ -7,6 +7,7 @@ import {
   Phone,
   Mail,
   ArrowLeft,
+  Clock,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import axios from "axios";
@@ -240,7 +241,7 @@ const PortalLogin = ({ isOpen, onClose, prefilledEmail }) => {
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        className="relative bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden"
+        className="relative bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto"
       >
         <div className="p-8 pb-0">
           <span className="text-blue-600 font-bold text-sm uppercase tracking-widest mb-2 block">

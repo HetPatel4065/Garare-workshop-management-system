@@ -102,8 +102,8 @@ You are advised to review this Privacy Policy periodically for any adjustments. 
     content: `If you have any questions, clarifications, or complaints regarding this Privacy Policy, please feel free to reach out to our dedicated support desk:
 
 • Support Email: support@garageapp.com
-• Phone Assistance: +91 98765 43210 (Mon-Sat, 9 AM - 7 PM)
-• Head Office: GaragePro Ecosystem Ltd., Sector 62, Noida, Uttar Pradesh - 201301`
+• Phone Assistance: +91 99789 72413 (Mon-Sat, 9 AM - 7 PM)
+• Head Office: GaragePro Ecosystem Ltd., Ahmedabad - 380059`
   }
 ];
 

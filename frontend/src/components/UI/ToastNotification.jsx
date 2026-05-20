@@ -33,7 +33,7 @@ const toastVariants = {
   exit: {
     opacity: 0,
     scale: 0.85,
-    y: -20, // Slide upward to disappear
+    y: -25, // Slide upward to disappear
     transition: { duration: 0.15, ease: "easeOut" },
   },
 };
@@ -42,31 +42,31 @@ const TYPE_CONFIG = {
   success: {
     color: "text-emerald-600",
     bar: "bg-emerald-500",
-    bg: "bg-emerald-200",
+    bg: "bg-emerald-200 dark:bg-emerald-950/50",
     icon: <CheckCircle size={18} strokeWidth={2.5} />,
   },
   error: {
     color: "text-rose-600",
     bar: "bg-rose-500",
-    bg: "bg-rose-200",
+    bg: "bg-rose-200 dark:bg-rose-950/50",
     icon: <AlertCircle size={18} strokeWidth={2.5} />,
   },
   delete: {
     color: "text-rose-600",
     bar: "bg-rose-600",
-    bg: "bg-rose-200",
+    bg: "bg-rose-200 dark:bg-rose-950/50",
     icon: <Trash2 size={18} strokeWidth={2.5} />,
   },
   confirm: {
     color: "text-indigo-600",
     bar: "bg-indigo-600",
-    bg: "bg-indigo-200",
+    bg: "bg-indigo-200 dark:bg-indigo-950/50",
     icon: <HelpCircle size={18} strokeWidth={2.5} />,
   },
   info: {
     color: "text-blue-600",
     bar: "bg-blue-500",
-    bg: "bg-blue-200",
+    bg: "bg-blue-200 dark:bg-blue-700/50",
     icon: <Info size={18} strokeWidth={2.5} />,
   },
 };

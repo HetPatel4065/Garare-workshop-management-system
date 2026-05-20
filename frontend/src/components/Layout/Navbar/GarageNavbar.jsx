@@ -349,6 +349,7 @@ export default function TopNavbar({ userName = "User", onToggleSidebar }) {
   const { logout, user, token } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { unreadCount } = useNotifications();
 
   const queryFromUrl = useMemo(
     () => new URLSearchParams(location.search).get("q") || "",
@@ -596,6 +597,17 @@ export default function TopNavbar({ userName = "User", onToggleSidebar }) {
             </button>
 
             <ThemeToggle />
+
+            <button
+              onClick={() => navigate("/notifications")}
+              className="relative p-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-300 group cursor-pointer animate-fade-in"
+              title="Notifications"
+            >
+              <Bell size={20} />
+              {unreadCount > 0 && (
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-gray-900 shadow-sm animate-pulse" />
+              )}
+            </button>
 
             <div className="w-px h-6 bg-white/10 mx-1 hidden sm:block" />
             <div className="relative">

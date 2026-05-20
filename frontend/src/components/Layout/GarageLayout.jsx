@@ -8,7 +8,7 @@ import axios from "axios";
 import ServiceReminderModal from "../UI/ServiceReminderModal";
 
 export default function GarageLayout({ children }) {
-  const { user, token } = useAuth();
+  const { user, token, selectedGarage, exitGaragePreview } = useAuth();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(() => {
     if (typeof window !== "undefined") {
@@ -124,6 +124,24 @@ export default function GarageLayout({ children }) {
           showNotifications={showNotifications}
           setShowNotifications={setShowNotifications}
         />
+
+        {/* Impersonation Banner */}
+        {user?.role === "admin" && selectedGarage && (
+          <div className="bg-gradient-to-r from-amber-600 via-orange-600 to-red-600 text-white px-4 py-2.5 flex items-center justify-between shadow-md text-xs sm:text-sm font-semibold tracking-wide border-b border-orange-500/30">
+            <div className="flex items-center gap-2">
+              <div className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+              <span>
+                Impersonating: <strong className="font-bold text-amber-100">{selectedGarage.garageName}</strong> &bull; Owner: {selectedGarage.name}
+              </span>
+            </div>
+            <button
+              onClick={exitGaragePreview}
+              className="bg-white/15 hover:bg-white/25 active:scale-95 text-white border border-white/20 px-3 py-1 rounded-md text-xs font-bold transition-all cursor-pointer shadow-inner uppercase tracking-wider"
+            >
+              Exit Preview
+            </button>
+          </div>
+        )}
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto bg-slate-50 dark:bg-zinc-950 transition-colors duration-300 relative">

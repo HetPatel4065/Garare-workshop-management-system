@@ -92,7 +92,7 @@ export const Features = () => {
   return (
     <section
       id="features"
-      className="py-24 md:py-32 px-6 relative overflow-hidden"
+      className="px-6 relative overflow-hidden"
       style={{
         background: "var(--bg-primary)",
       }}

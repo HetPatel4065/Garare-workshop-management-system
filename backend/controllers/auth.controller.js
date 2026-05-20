@@ -3,6 +3,7 @@ import Owner from "../models/Owner.js";
 import Advisor from "../models/Advisor.js";
 import Mechanic from "../models/Mechanic.js";
 import GarageSettings from "../models/GarageSettings.js";
+import GarageLead from "../models/GarageLead.js";
 import { createNotification } from "../utils/notificationHelper.js";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
@@ -231,22 +232,19 @@ export const login = async (req, res) => {
           .json({ error: "Invalid Garage ID for this owner account" });
       }
     } else if (user.role === "admin") {
-      // Admin can access any garage by providing the owner's 10-digit Garage ID
-      if (!garageId) {
-        return res.status(400).json({
-          error: "10-digit Garage ID is required for admin login",
-        });
-      }
-      if (String(garageId).length !== 10 || !/^\d+$/.test(String(garageId))) {
-        return res.status(400).json({
-          error: "Invalid Garage ID format. Must be 10 digits.",
-        });
+      // Admin login doesn't strictly require a Garage ID anymore. If provided, we validate it.
+      if (garageId) {
+        if (String(garageId).length !== 10 || !/^\d+$/.test(String(garageId))) {
+          return res.status(400).json({
+            error: "Invalid Garage ID format. Must be 10 digits.",
+          });
+        }
       }
     }
 
     // Resolve admin selected garage context (effectiveOwnerId)
     let effectiveOwnerIdForToken = undefined;
-    if (user.role === "admin") {
+    if (user.role === "admin" && garageId) {
       const ownerMatch = await Owner.findOne({ garageId: String(garageId) }).select("_id");
       if (!ownerMatch) {
         console.warn("Admin Login Failed: Target Garage ID not found", { email, garageId });
@@ -497,6 +495,132 @@ export const removeAnyUser = async (req, res) => {
   } catch (error) {
     console.error("ADMIN REMOVE ERROR:", error);
     res.status(500).json({ error: "Failed to remove account" });
+  }
+};
+
+// 📝 GET LEAD DETAILS BY TOKEN
+export const getLeadDetailsByToken = async (req, res) => {
+  try {
+    const { token } = req.query;
+
+    if (!token) {
+      return res.status(400).json({ error: "Registration token is required" });
+    }
+
+    const lead = await GarageLead.findOne({
+      signupToken: token,
+      signupTokenExpires: { $gt: new Date() },
+    });
+
+    if (!lead) {
+      return res.status(400).json({ error: "Invalid or expired onboarding registration token" });
+    }
+
+    res.status(200).json({
+      success: true,
+      lead: {
+        garageName: lead.garageName,
+        ownerName: lead.ownerName,
+        email: lead.email,
+        mobileNumber: lead.mobileNumber,
+        city: lead.city,
+      },
+    });
+  } catch (error) {
+    console.error("GET LEAD BY TOKEN ERROR:", error);
+    res.status(500).json({ error: "Failed to retrieve onboarding details" });
+  }
+};
+
+// 📝 COMPLETE OWNER ONBOARDING
+export const completeOwnerOnboarding = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+      return res.status(400).json({ error: "Token and password are required" });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ error: "Password must be at least 6 characters" });
+    }
+
+    const lead = await GarageLead.findOne({
+      signupToken: token,
+      signupTokenExpires: { $gt: new Date() },
+    });
+
+    if (!lead) {
+      return res.status(400).json({ error: "Invalid or expired onboarding registration token" });
+    }
+
+    // Check if owner email already exists
+    const alreadyExists =
+      (await User.findOne({ email: lead.email })) ||
+      (await Owner.findOne({ email: lead.email })) ||
+      (await Advisor.findOne({ email: lead.email })) ||
+      (await Mechanic.findOne({ email: lead.email }));
+
+    if (alreadyExists) {
+      return res.status(400).json({ error: "This email is already registered in the system" });
+    }
+
+    // Generate unique 10-digit Garage ID
+    let newGarageId;
+    let isUnique = false;
+    while (!isUnique) {
+      newGarageId = Math.floor(
+        1000000000 + Math.random() * 9000000000
+      ).toString();
+      const existing = await Owner.findOne({ garageId: newGarageId });
+      if (!existing) isUnique = true;
+    }
+
+    // Create the Owner
+    const owner = await Owner.create({
+      name: lead.ownerName,
+      email: lead.email,
+      password,
+      role: "owner",
+      garageId: newGarageId,
+      garageName: lead.garageName,
+      mobileNumber: lead.mobileNumber,
+      address: lead.city, // Map city as initial address
+      verificationStatus: "Verified", // Automatically verify onboarding leads
+    });
+
+    // Create Default Settings
+    await GarageSettings.create({
+      ownerId: owner._id,
+      garageName: owner.garageName,
+      contactNumber: owner.mobileNumber,
+      businessAddress: owner.address,
+      notifications: {
+        emailReports: true,
+        serviceReminders: true,
+        lowStock: true,
+        reminderSchedule: [-7, -3, 0, 3],
+      },
+    });
+
+    // Invalidate onboarding token
+    lead.signupToken = undefined;
+    lead.signupTokenExpires = undefined;
+    lead.status = "approved"; // Ensure status is approved
+    await lead.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Garage Owner onboarding completed successfully!",
+      owner: {
+        id: owner._id,
+        garageId: owner.garageId,
+        email: owner.email,
+      },
+    });
+  } catch (error) {
+    console.error("COMPLETE ONBOARDING ERROR:", error);
+    res.status(500).json({ error: "Failed to complete onboarding: " + error.message });
   }
 };
 

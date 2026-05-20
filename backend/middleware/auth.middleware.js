@@ -106,12 +106,17 @@ const auth = async (req, res, next) => {
     let effectiveOwnerId =
       userObj.role === "owner" ? userId : user.ownerId || userObj.ownerId;
 
-    // Admin can carry an explicit garage context in the token
-    if (userObj.role === "admin" && decoded.effectiveOwnerId) {
-      effectiveOwnerId = decoded.effectiveOwnerId;
+    // Admin can carry an explicit garage context in the token or via request header
+    if (userObj.role === "admin") {
+      const headerOwnerId = req.header("x-effective-owner-id");
+      if (headerOwnerId && headerOwnerId !== "null" && headerOwnerId !== "undefined") {
+        effectiveOwnerId = headerOwnerId;
+      } else if (decoded.effectiveOwnerId) {
+        effectiveOwnerId = decoded.effectiveOwnerId;
+      }
     }
 
-    if (!effectiveOwnerId && userObj.role !== "owner") {
+    if (!effectiveOwnerId && userObj.role !== "owner" && userObj.role !== "admin") {
       return res
         .status(403)
         .json({ error: "Staff account is not correctly linked to a garage" });

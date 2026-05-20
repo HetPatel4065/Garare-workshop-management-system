@@ -27,6 +27,9 @@ import backupRoutes from "./routes/backup.routes.js";
 import portalRoutes from "./routes/portal.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
 import requestedCustomerRoutes from "./routes/requestedCustomer.routes.js";
+import garageLeadRoutes from "./routes/garageLead.routes.js";
+import vehicleSaleRoutes from "./routes/vehicleSale.routes.js";
+import adminRoutes from "./routes/admin.routes.js";
 import initializeAdmin from "./utils/adminLogin.js";
 import { initDailyReportCron, initServiceReminderCron, initInspectionReminderCron } from "./utils/cron.js";
 import http from "http";
@@ -72,6 +75,9 @@ app.use("/api/backup", backupRoutes);
 app.use("/api/portal", portalRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/requested-customers", requestedCustomerRoutes);
+app.use("/api/garage-leads", garageLeadRoutes);
+app.use("/api/vehicle-sales", vehicleSaleRoutes);
+app.use("/api/admin", adminRoutes);
 
 // 5. Health Check (UX Win: For monitoring server uptime)
 app.get("/health", (req, res) => {

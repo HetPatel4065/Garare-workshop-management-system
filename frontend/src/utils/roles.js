@@ -99,7 +99,8 @@ export const ROLE_ALLOWED_ROUTES = {
   admin:    [
     "/dashboard", "/customers", "/vehicles", "/job-cards", "/services",
     "/inventory", "/billing", "/staff-members", "/requested-customers",
-    "/reminders", "/settings", "/notifications", "/search", "/profile", "/help",
+    "/partnership-leads", "/reminders", "/settings", "/notifications", 
+    "/search", "/profile", "/help",
   ],
   owner:    [
     "/dashboard", "/customers", "/vehicles", "/job-cards", "/services",

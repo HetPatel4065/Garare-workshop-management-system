@@ -10,15 +10,23 @@ const notificationSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  subtitle: {
+    type: String,
+  },
   message: {
     type: String,
     required: true,
   },
-    type: {
-      type: String,
-      enum: ["info", "success", "warning", "error", "new_customer", "service_reminder", "unpaid_invoice", "low_stock"],
-      default: "info",
-    },
+  type: {
+    type: String,
+    enum: ["info", "success", "warning", "error", "new_customer", "service_reminder", "unpaid_invoice", "low_stock"],
+    default: "info",
+  },
+  source: {
+    type: String,
+    enum: ["System", "Admin", "Garage", "Customer"],
+    default: "System",
+  },
   read: {
     type: Boolean,
     default: false,

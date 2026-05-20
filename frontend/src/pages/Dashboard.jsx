@@ -34,6 +34,7 @@ import RecentServices from "../components/Dashboard/RecentServices";
 import PendingApprovals from "../components/Dashboard/PendingApprovals";
 import DashboardSkeleton from "../components/Dashboard/DashboardSkeleton";
 import { useAuth } from "../context/AuthContext";
+import AdminDirectory from "../components/Dashboard/AdminDirectory";
 
 const STATUS_COLORS = {
   Completed: "#10b981",
@@ -47,8 +48,9 @@ const DEFAULT_COLOR = "#8b5cf6";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { user, token } = useAuth();
-  const role = user?.role || "user";
+  const { user, token, selectedGarage } = useAuth();
+  const rawRole = user?.role || "user";
+  const role = rawRole === "admin" && selectedGarage ? "owner" : rawRole;
 
   const [data, setData] = useState({
     stats: {
@@ -92,6 +94,10 @@ export default function Dashboard() {
   }, [loading]);
 
   useEffect(() => {
+    if (rawRole === "admin" && !selectedGarage) {
+      setLoading(false);
+      return;
+    }
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
@@ -175,6 +181,10 @@ export default function Dashboard() {
     // Focus period total on Invoiced Amount to show total business volume
     return filteredRevenue.reduce((acc, curr) => acc + (curr.invoiced || 0), 0);
   }, [filteredRevenue]);
+
+  if (rawRole === "admin" && !selectedGarage) {
+    return <AdminDirectory />;
+  }
 
   if (loading || !showCharts) return <DashboardSkeleton />;
 

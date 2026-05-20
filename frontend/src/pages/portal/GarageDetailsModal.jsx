@@ -97,7 +97,7 @@ const GarageDetailsModal = ({ isOpen, onClose, garage, onRegister }) => {
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        className="relative bg-white dark:bg-slate-900 w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row border border-slate-100 dark:border-slate-800"
+        className="relative bg-white dark:bg-slate-900 w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col md:flex-row border border-slate-100 dark:border-slate-800 max-h-[90vh] overflow-y-auto"
       >
         {/* ─── Left Panel: Visuals & Header ─────────────────────── */}
         <div className="w-full md:w-5/12 bg-slate-50 dark:bg-slate-950/40 p-8 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-800 shrink-0">

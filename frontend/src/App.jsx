@@ -12,6 +12,7 @@ import AdminLogin from "./pages/AdminLogin";
 import CustomerLogin from "./pages/CustomerLogin";
 import Signup from "./pages/Signup";
 import OwnerSignup from "./pages/OwnerSignup";
+import OwnerRegister from "./pages/OwnerRegister";
 import StaffSignup from "./pages/StaffSignup";
 import Unauthorized from "./pages/Unauthorized";
 import ProtectedRoute from "./context/ProtectedRoutes";
@@ -34,6 +35,10 @@ const HelpCenter = lazy(() => import("./pages/HelpCenter"));
 const SearchPage = lazy(() => import("./pages/SearchPage"));
 const Notifications = lazy(() => import("./pages/Notifications"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const PartnershipLeads = lazy(() => import("./pages/PartnershipLeads"));
+const MarketplaceListings = lazy(() => import("./pages/MarketplaceListings"));
+const PortalMarketplace = lazy(() => import("./pages/portal/PortalMarketplace"));
+const PortalVehicleDetails = lazy(() => import("./pages/portal/PortalVehicleDetails"));
 
 import ToastContainer from "./components/UI/ToastContainer";
 import GarageLayout from "./components/Layout/GarageLayout";
@@ -182,6 +187,16 @@ function App() {
             }
           />
           <Route
+            path="/owner/register"
+            element={
+              <PublicOnlyRoute>
+                <PageTransition>
+                  <OwnerRegister />
+                </PageTransition>
+              </PublicOnlyRoute>
+            }
+          />
+          <Route
             path="/staff/signup"
             element={
               <PublicOnlyRoute>
@@ -241,6 +256,30 @@ function App() {
               portalToken ? (
                 <PageTransition>
                   <PortalDashboard />
+                </PageTransition>
+              ) : (
+                <Navigate to="/portal" replace />
+              )
+            }
+          />
+          <Route
+            path="/portal/marketplace"
+            element={
+              portalToken ? (
+                <PageTransition>
+                  <PortalMarketplace />
+                </PageTransition>
+              ) : (
+                <Navigate to="/portal" replace />
+              )
+            }
+          />
+          <Route
+            path="/portal/marketplace/:id"
+            element={
+              portalToken ? (
+                <PageTransition>
+                  <PortalVehicleDetails />
                 </PageTransition>
               ) : (
                 <Navigate to="/portal" replace />
@@ -356,6 +395,26 @@ function App() {
                 <ProtectedRoute allowedRoles={["owner", "admin"]}>
                   <PageTransition>
                     <RequestedCustomers />
+                  </PageTransition>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/partnership-leads"
+              element={
+                <ProtectedRoute allowedRoles={["admin"]}>
+                  <PageTransition>
+                    <PartnershipLeads />
+                  </PageTransition>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/sell-vehicles"
+              element={
+                <ProtectedRoute allowedRoles={["owner", "admin"]}>
+                  <PageTransition>
+                    <MarketplaceListings />
                   </PageTransition>
                 </ProtectedRoute>
               }

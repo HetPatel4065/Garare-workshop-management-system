@@ -44,7 +44,7 @@ export const FAQ = () => {
   ];
 
   return (
-    <section id="faq" className="py-24 md:py-32 px-6 max-w-3xl mx-auto">
+    <section id="faq" className="px-6 max-w-3xl mx-auto">
       <div className="text-center mb-12 md:mb-16">
         <motion.div
           initial={{ opacity: 0, y: 10 }}

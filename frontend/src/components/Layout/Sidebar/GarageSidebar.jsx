@@ -21,6 +21,7 @@ import {
   ShieldCheck,
   Store,
   HardHat,
+  Tag,
 } from "lucide-react";
 import { FaCar } from "react-icons/fa";
 import { useAuth } from "../../../context/AuthContext";
@@ -51,6 +52,12 @@ const NAV_SECTIONS = [
         roles: ["admin", "owner"],
       },
       {
+        name: "Partnership Leads",
+        path: "/partnership-leads",
+        icon: Store,
+        roles: ["admin"],
+      },
+      {
         name: "Vehicles",
         path: "/vehicles",
         icon: FaCar,
@@ -78,6 +85,12 @@ const NAV_SECTIONS = [
         name: "Billing",
         path: "/billing",
         icon: ReceiptIndianRupeeIcon,
+        roles: ["admin", "owner"],
+      },
+      {
+        name: "Sell Vehicles",
+        path: "/sell-vehicles",
+        icon: Tag,
         roles: ["admin", "owner"],
       },
     ],
@@ -127,7 +140,7 @@ const NAV_SECTIONS = [
 export default function GarageSidebar({ isOpen, onClose, showNotifications }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, selectedGarage } = useAuth();
   const role = user?.role?.toLowerCase() || "mechanic";
   const { unreadCount } = useNotifications();
 
@@ -200,32 +213,45 @@ export default function GarageSidebar({ isOpen, onClose, showNotifications }) {
   const toggleSection = (idx) =>
     setOpenSections((prev) => prev.map((v, i) => (i === idx ? !v : v)));
 
-  const garageName = user?.businessName || user?.garageName || "Garage Name";
-  const address = user?.address || user?.garageAddress || "";
+  const garageName =
+    role === "admin"
+      ? selectedGarage
+        ? selectedGarage.garageName
+        : "Admin Dashboard"
+      : user?.businessName || user?.garageName || "Garage Name";
+      
+  const address =
+    role === "admin" && selectedGarage
+      ? selectedGarage.address
+      : user?.address || user?.garageAddress || "";
 
-  const LogoEl = ({ size = "w-9 h-9" }) => (
-    <div
-      className={`${size} rounded-xl overflow-hidden border border-white/10 bg-gray-800 flex items-center justify-center shrink-0 shadow-lg`}
-    >
-      {user?.logo ? (
-        <img
-          src={
-            user.logo.startsWith("http")
-              ? user.logo
-              : `${import.meta.env.VITE_BASE_URL}/${user.logo}`
-          }
-          alt="logo"
-          className="w-full h-full object-contain"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = "";
-          }}
-        />
-      ) : (
-        <Wrench size={18} className="text-blue-400" />
-      )}
-    </div>
-  );
+  const LogoEl = ({ size = "w-9 h-9" }) => {
+    const targetUser =
+      role === "admin" && selectedGarage ? selectedGarage : user;
+    return (
+      <div
+        className={`${size} rounded-xl overflow-hidden border border-white/10 bg-gray-800 flex items-center justify-center shrink-0 shadow-lg`}
+      >
+        {targetUser?.logo ? (
+          <img
+            src={
+              targetUser.logo.startsWith("http")
+                ? targetUser.logo
+                : `${import.meta.env.VITE_BASE_URL}/${targetUser.logo}`
+            }
+            alt="logo"
+            className="w-full h-full object-contain"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "";
+            }}
+          />
+        ) : (
+          <Wrench size={18} className="text-blue-400" />
+        )}
+      </div>
+    );
+  };
 
   // Optimized variants: Only touch 'x' to avoid layout recalculations
   const sidebarVariants = {
@@ -324,9 +350,17 @@ export default function GarageSidebar({ isOpen, onClose, showNotifications }) {
           className="flex-1 overflow-y-auto px-3 py-4 scrollbar-hide"
         >
           {NAV_SECTIONS.map((section, sIdx) => {
-            const visibleItems = section.items.filter((item) =>
-              item.roles.includes(role),
-            );
+            const visibleItems = section.items.filter((item) => {
+              if (!item.roles.includes(role)) return false;
+              // If admin is NOT in preview/impersonation mode, restrict to only dashboard and partnership-leads
+              if (role === "admin" && !selectedGarage) {
+                return (
+                  item.path === "/dashboard" ||
+                  item.path === "/partnership-leads"
+                );
+              }
+              return true;
+            });
             if (!visibleItems.length) return null;
             const isOpenSection = openSections[sIdx];
 

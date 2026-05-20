@@ -9,7 +9,9 @@ import {
   getStaff,
   removeStaff,
   updateStaff,
-  removeAnyUser
+  removeAnyUser,
+  getLeadDetailsByToken,
+  completeOwnerOnboarding
 } from "../controllers/auth.controller.js";
 import { auth, authorize } from "../middleware/auth.middleware.js";
 import multer from 'multer';
@@ -30,6 +32,9 @@ router.get("/me", auth, getMe);
 router.get("/staff", auth, authorize("view_staff"), getStaff);
 router.put("/staff/:staffId", auth, authorize("manage_staff"), updateStaff);
 router.delete("/staff/:staffId", auth, authorize("manage_staff"), removeStaff);
+router.get("/onboarding-details", getLeadDetailsByToken);
+router.post("/complete-onboarding", completeOwnerOnboarding);
+
 router.delete("/remove-user/:id", auth, removeAnyUser); // Admin Only
 router.post("/logout", auth, logout);
 

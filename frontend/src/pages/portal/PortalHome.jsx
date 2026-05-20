@@ -179,7 +179,7 @@ export default function PortalHome() {
       <main>
         {/* ── Hero ── */}
         <section className="relative overflow-hidden">
-          <div className="relative max-w-7xl mx-auto px-6 pt-16 pb-14 text-center">
+          <div className="relative max-w-7xl mx-auto px-6 pt-24 sm:pt-28 pb-14 text-center">
             {/* Badge */}
             <motion.div
               initial={{ opacity: 0, y: -10 }}
@@ -191,7 +191,7 @@ export default function PortalHome() {
             </motion.div>
 
             {/* Headline */}
-            <motion.h1 className="text-[3rem] md:text-[4rem] font-black text-slate-900 tracking-tight leading-[1.06] mb-5">
+            <motion.h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[4rem] font-black text-slate-900 tracking-tight leading-[1.06] mb-5">
               Your vehicle deserves
               <br />
               <span className="text-blue-600">expert care.</span>

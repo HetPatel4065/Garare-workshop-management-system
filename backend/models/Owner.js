@@ -80,6 +80,11 @@ const ownerSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    verificationStatus: {
+      type: String,
+      enum: ["Pending", "Verified", "Rejected"],
+      default: "Pending",
+    },
   },
   { timestamps: true }
 );

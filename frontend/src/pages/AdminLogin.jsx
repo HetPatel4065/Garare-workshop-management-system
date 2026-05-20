@@ -7,7 +7,6 @@ import { motion } from "framer-motion";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
-  const [garageId, setGarageId] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -19,13 +18,9 @@ export default function AdminLogin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    if (!garageId) {
-      setError("Garage ID is required for admin access.");
-      return;
-    }
     setLoading(true);
     try {
-      await login(email, password, garageId);
+      await login(email, password, undefined);
     } catch (err) {
       setError(err.message || "Admin access denied. Check your credentials.");
     } finally {
@@ -123,32 +118,6 @@ export default function AdminLogin() {
                   placeholder="admin@garagepro.com"
                   className={inputCls}
                 />
-              </div>
-
-              {/* Garage ID — required for admin */}
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                  Garage ID
-                  <span className="text-red-500 ml-0.5">*</span>
-                  <span className="text-slate-400 ml-1 text-xs font-normal">
-                    (10-digit)
-                  </span>
-                </label>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  required
-                  maxLength={10}
-                  value={garageId}
-                  onChange={(e) =>
-                    setGarageId(e.target.value.replace(/\D/g, "").slice(0, 10))
-                  }
-                  placeholder="1234567890"
-                  className={`${inputCls} font-mono tracking-widest`}
-                />
-                <p className="mt-1.5 text-[11px] text-slate-400 ml-0.5">
-                  Enter the 10-digit ID of the garage you want to manage.
-                </p>
               </div>
 
               {/* Password */}

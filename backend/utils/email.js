@@ -199,3 +199,58 @@ export const sendRejectionEmail = async (email, name, garageName, reason) => {
     return false;
   }
 };
+
+export const sendGarageOnboardingEmail = async (email, ownerName, garageName, signupLink) => {
+  const mailOptions = {
+    from: `"GaragePro Onboarding" <${process.env.SMTP_USER}>`,
+    to: email,
+    subject: "Approved! Complete Your Garage Registration",
+    html: `
+      <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e5e7eb; padding: 30px; border-radius: 16px; background-color: #ffffff; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <div style="background-color: #10b981; display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 12px; margin-bottom: 12px;">
+            <span style="color: white; font-size: 24px; font-weight: 800;">G</span>
+          </div>
+          <h2 style="color: #111827; margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px;">GaragePro</h2>
+          <p style="color: #6b7280; font-size: 13px; margin: 4px 0 0 0; text-transform: uppercase; font-weight: 700; letter-spacing: 1px;">Workshop Operating System</p>
+        </div>
+        
+        <h3 style="color: #111827; font-size: 16px; font-weight: 700; margin-top: 0; margin-bottom: 12px;">Congratulations ${ownerName}!</h3>
+        <p style="color: #4b5563; font-size: 14px; line-height: 1.6; margin-bottom: 16px;">
+          We are pleased to inform you that your partnership request for <strong>${garageName}</strong> has been reviewed and <strong>approved</strong> by the platform administration!
+        </p>
+        <p style="color: #4b5563; font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
+          To complete your registration, claim your 10-digit Garage ID, and set up your secure owner login credentials, please click the secure link below:
+        </p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${signupLink}" style="background-color: #10b981; color: white; padding: 14px 28px; text-decoration: none; border-radius: 10px; font-weight: bold; display: inline-block; font-size: 14px; box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2); transition: background-color 0.2s;">
+            Complete Onboarding Now
+          </a>
+        </div>
+        
+        <p style="color: #9ca3af; font-size: 12px; line-height: 1.5; margin-bottom: 16px; text-align: center;">
+          If the button above does not work, copy and paste this link into your browser:<br/>
+          <a href="${signupLink}" style="color: #10b981; word-break: break-all; text-decoration: underline;">${signupLink}</a>
+        </p>
+        
+        <p style="color: #4b5563; font-size: 13px; line-height: 1.6; margin-top: 24px; text-align: center; font-style: italic;">
+          * This secure registration token will expire in 7 days.
+        </p>
+        
+        <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 30px 0;" />
+        <p style="font-size: 11px; color: #9ca3af; text-align: center; margin: 0;">
+          &copy; ${new Date().getFullYear()} GaragePro Platform. All rights reserved.
+        </p>
+      </div>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    return true;
+  } catch (error) {
+    console.error("Error sending garage onboarding email:", error);
+    return false;
+  }
+};

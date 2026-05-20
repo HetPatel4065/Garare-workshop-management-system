@@ -11,8 +11,10 @@ import Owner from "../models/Owner.js";
 export const createNotification = async ({
   ownerId,
   title,
+  subtitle = null,
   message,
   type = "info",
+  source = "System",
   link = null,
   forceEmail = false,
 }) => {
@@ -21,8 +23,10 @@ export const createNotification = async ({
     const notification = await Notification.create({
       ownerId,
       title,
+      subtitle,
       message,
       type,
+      source,
       link,
     });
 

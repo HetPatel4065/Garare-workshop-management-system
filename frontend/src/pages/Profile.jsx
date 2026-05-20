@@ -247,7 +247,7 @@ export default function Profile({ isAdvisor }) {
           {/* Garage ID Badge — owner only */}
           {garageId && (
             <div className="mt-4 flex flex-wrap items-center gap-2 w-fit">
-              <div className="flex items-center gap-2 bg-white border border-slate-200 px-3 py-2 rounded-2xl shadow-sm">
+              <div className="flex items-center gap-2 bg-white border border-slate-200 px-3 py-2 rounded-xl shadow-sm">
                 <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
                   Garage ID
                 </span>
@@ -259,9 +259,9 @@ export default function Profile({ isAdvisor }) {
                 type="button"
                 onClick={() => {
                   navigator.clipboard.writeText(garageId);
-                  addToast("Garage ID copied!", "info");
+                  addToast("Garage ID copied successfully!", "info");
                 }}
-                className="p-2.5 flex items-center justify-center bg-white border border-slate-200 rounded-xl shadow-sm text-slate-500 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-all duration-300 active:scale-90"
+                className="p-2.5 flex items-center justify-center bg-white border border-slate-200 rounded-xl shadow-sm text-slate-500 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-all duration-300 active:scale-100"
                 title="Copy Garage ID"
               >
                 <Copy size={15} strokeWidth={2.5} />

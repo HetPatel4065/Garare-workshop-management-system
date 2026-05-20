@@ -8,6 +8,52 @@ import React, {
 import { useNavigate } from "react-router-dom";
 import { useLoading } from "./LoadingContext";
 import { getDashboardRoute } from "../utils/roles";
+import axios from "axios";
+
+// Setup axios interceptor for admin impersonation
+axios.interceptors.request.use(
+  (config) => {
+    const g = sessionStorage.getItem("admin_selected_garage");
+    if (g) {
+      try {
+        const garage = JSON.parse(g);
+        if (garage && garage._id) {
+          config.headers["x-effective-owner-id"] = garage._id;
+        }
+      } catch (e) {
+        console.error("Error parsing admin_selected_garage in axios:", e);
+      }
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Setup window.fetch override for admin impersonation
+const originalFetch = window.fetch;
+window.fetch = async function (url, options = {}) {
+  const g = sessionStorage.getItem("admin_selected_garage");
+  if (g) {
+    try {
+      const garage = JSON.parse(g);
+      if (garage && garage._id) {
+        if (!options.headers) {
+          options.headers = {};
+        }
+        if (options.headers instanceof Headers) {
+          options.headers.set("x-effective-owner-id", garage._id);
+        } else {
+          options.headers["x-effective-owner-id"] = garage._id;
+        }
+      }
+    } catch (e) {
+      console.error("Error parsing admin_selected_garage in fetch:", e);
+    }
+  }
+  return originalFetch.apply(this, [url, options]);
+};
 
 const AuthContext = createContext();
 
@@ -24,6 +70,17 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
+  const [selectedGarage, setSelectedGarage] = useState(() => {
+    const g = sessionStorage.getItem("admin_selected_garage");
+    if (g) {
+      try {
+        return JSON.parse(g);
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  });
 
   const { startLoading, stopLoading } = useLoading();
   const navigate = useNavigate();
@@ -33,8 +90,10 @@ export const AuthProvider = ({ children }) => {
     clearStoredToken();
     sessionStorage.removeItem("portal_token");
     sessionStorage.removeItem("service_reminder_shown");
+    sessionStorage.removeItem("admin_selected_garage");
     setToken(null);
     setUser(null);
+    setSelectedGarage(null);
     setIsVerified(false);
   }, []);
 
@@ -173,6 +232,16 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token, logout]);
 
+  const selectGarage = useCallback((garage) => {
+    sessionStorage.setItem("admin_selected_garage", JSON.stringify(garage));
+    setSelectedGarage(garage);
+  }, []);
+
+  const exitGaragePreview = useCallback(() => {
+    sessionStorage.removeItem("admin_selected_garage");
+    setSelectedGarage(null);
+  }, []);
+
   // ─── Expose API ────────────────────────────────────────────────────────────
   return (
     <AuthContext.Provider
@@ -181,11 +250,14 @@ export const AuthProvider = ({ children }) => {
         token,
         loading,
         isVerified,
+        selectedGarage,
         login,
         register,
         logout,
         clearAuth,
         refreshUser,
+        selectGarage,
+        exitGaragePreview,
       }}
     >
       {children}

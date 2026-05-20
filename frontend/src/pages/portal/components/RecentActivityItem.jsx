@@ -15,25 +15,25 @@ const RecentActivityItem = ({ item, getStatusColor }) => {
     : item.jobCardId;
 
   return (
-    <div className="flex items-center justify-between p-4 rounded-2xl border border-slate-100 hover:border-blue-100 hover:bg-blue-50/50 transition-colors">
-      <div className="flex items-center gap-4">
+    <div className="flex items-center justify-between gap-2 p-3 sm:p-4 rounded-2xl border border-slate-100 dark:border-zinc-800 hover:border-blue-100 dark:hover:border-blue-900 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 transition-all duration-300">
+      <div className="flex items-center gap-3 sm:gap-4 min-w-0">
         <div
-          className={`w-12 h-12 rounded-xl flex items-center justify-center ${isService ? "bg-indigo-50 text-indigo-500" : "bg-blue-50 text-blue-500"}`}
+          className={`w-10 sm:w-12 h-10 sm:h-12 rounded-xl flex items-center justify-center shrink-0 ${isService ? "bg-indigo-50 dark:bg-indigo-950/30 text-indigo-500 dark:text-indigo-400" : "bg-blue-50 dark:bg-blue-950/30 text-blue-500 dark:text-blue-400"}`}
         >
           {isService ? (
-            <CheckCircle2 className="w-6 h-6" />
+            <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />
           ) : (
-            <Wrench className="w-6 h-6" />
+            <Wrench className="w-5 h-5 sm:w-6 sm:h-6" />
           )}
         </div>
         <div>
-          <p className="font-bold capitalize text-slate-900 truncate max-w-62.5">
+          <p className="font-bold capitalize text-slate-900 dark:text-white truncate max-w-[120px] sm:max-w-[200px] md:max-w-[300px] lg:max-w-[400px]">
             {name}
           </p>
           <div className="flex items-center gap-2 mt-0.5">
-            <p className="text-xs font-bold text-slate-400">{item.serviceId}</p>
-            <span className="w-1 h-1 bg-slate-200 rounded-full" />
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-tight">
+            <p className="text-xs font-bold text-slate-400 dark:text-zinc-500">{item.serviceId}</p>
+            <span className="w-1 h-1 bg-slate-200 dark:bg-zinc-800 rounded-full" />
+            <p className="text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-tight">
               {item.licensePlate}
             </p>
           </div>
@@ -47,7 +47,7 @@ const RecentActivityItem = ({ item, getStatusColor }) => {
         >
           {item.status}
         </span>
-        <p className="text-[10px] font-bold text-slate-400 mt-2">
+        <p className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 mt-2">
           {new Date(item.createdAt).toLocaleDateString("en-IN", {
             day: "2-digit",
             month: "short",

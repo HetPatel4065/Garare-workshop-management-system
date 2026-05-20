@@ -18,36 +18,36 @@ export default function StatsCard({
   sparklineData = [],
   children,
 }) {
-  // Configured specifically for your dark dashboard aesthetics
+  // Enhanced color map to support both light and dark aesthetics gracefully
   const colorMap = {
     blue: {
-      bg: "bg-blue-500/10",
-      text: "text-blue-400",
+      bg: "bg-blue-500/10 dark:bg-blue-500/10",
+      text: "text-blue-600 dark:text-blue-400",
       chart: "#3b82f6",
     },
     emerald: {
-      bg: "bg-emerald-500/10",
-      text: "text-emerald-400",
+      bg: "bg-emerald-500/10 dark:bg-emerald-500/10",
+      text: "text-emerald-600 dark:text-emerald-400",
       chart: "#22c55e",
     },
     yellow: {
-      bg: "bg-amber-500/10",
-      text: "text-amber-400",
+      bg: "bg-amber-500/10 dark:bg-amber-500/10",
+      text: "text-amber-600 dark:text-amber-400",
       chart: "#f59e0b",
     },
     red: {
-      bg: "bg-red-500/10",
-      text: "text-red-400",
+      bg: "bg-red-500/10 dark:bg-red-500/10",
+      text: "text-red-600 dark:text-red-400",
       chart: "#ef4444",
     },
     purple: {
-      bg: "bg-purple-500/10",
-      text: "text-purple-400",
+      bg: "bg-purple-500/10 dark:bg-purple-500/10",
+      text: "text-purple-600 dark:text-purple-400",
       chart: "#a855f7",
     },
     indigo: {
-      bg: "bg-indigo-500/10",
-      text: "text-indigo-400",
+      bg: "bg-indigo-500/10 dark:bg-indigo-500/10",
+      text: "text-indigo-600 dark:text-indigo-400",
       chart: "#6366f1",
     },
   };
@@ -56,7 +56,7 @@ export default function StatsCard({
   const isPositiveTrend = trend && !trend.startsWith("-");
 
   return (
-    <div className="group relative bg-[#16161a] rounded-2xl p-6 shadow-xl border border-zinc-800/40 flex flex-col min-w-0 h-full overflow-hidden transition-all duration-300 hover:border-zinc-700/60 hover:-translate-y-0.5">
+    <div className="group relative bg-white dark:bg-[#16161a] rounded-2xl p-6 shadow-md dark:shadow-xl border border-zinc-200 dark:border-zinc-800/40 flex flex-col min-w-0 h-full overflow-hidden transition-all duration-300 hover:border-zinc-300 dark:hover:border-zinc-700/60 hover:-translate-y-0.5">
       {/* Top Section: Icon & Optional Trend */}
       <div className="flex justify-between items-start mb-5 z-10">
         <div
@@ -69,8 +69,8 @@ export default function StatsCard({
           <span
             className={`text-xs font-semibold px-2.5 py-1 rounded-md tracking-wide ${
               isPositiveTrend
-                ? "bg-emerald-500/10 text-emerald-400"
-                : "bg-red-500/10 text-red-400"
+                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                : "bg-red-500/10 text-red-600 dark:text-red-400"
             }`}
           >
             {trend}
@@ -80,11 +80,11 @@ export default function StatsCard({
 
       {/* Primary Value Section */}
       <div className="space-y-1 relative z-10 flex-1 min-w-0">
-        <p className="text-zinc-500 text-[10px] font-bold tracking-widest uppercase">
+        <p className="text-zinc-400 dark:text-zinc-500 text-[10px] font-bold tracking-widest uppercase">
           {title}
         </p>
         <div className="flex items-baseline gap-2 flex-wrap">
-          <p className="text-2xl sm:text-3xl font-black text-zinc-100 tracking-tight">
+          <p className="text-2xl sm:text-3xl font-black text-zinc-800 dark:text-zinc-100 tracking-tight">
             {value}
           </p>
         </div>
@@ -95,7 +95,7 @@ export default function StatsCard({
 
       {/* Sparkline Overlay */}
       {sparklineData && sparklineData.length > 0 && (
-        <div className="absolute bottom-0 left-0 right-0 h-12 w-full opacity-20 group-hover:opacity-40 transition-all duration-500 pointer-events-none">
+        <div className="absolute bottom-0 left-0 right-0 h-12 w-full opacity-10 dark:opacity-20 group-hover:opacity-30 dark:group-hover:opacity-40 transition-all duration-500 pointer-events-none">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
               data={sparklineData}

@@ -80,7 +80,7 @@ function RecentServices({ services = [] }) {
                   <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-50 border border-slate-100 rounded-lg">
                     <div className="w-2 h-2 rounded-full bg-slate-400" />
                     <span className="text-[9.5px] font-bold text-slate-500 uppercase tracking-tighter">
-                      Mec: {s.mechanicId.name}
+                      Mechanic: {s.mechanicId.name}
                     </span>
                   </div>
                 )}
@@ -88,7 +88,7 @@ function RecentServices({ services = [] }) {
                   <div className="flex items-center gap-1.5 px-2 py-1 bg-indigo-50 border border-indigo-100 rounded-lg">
                     <UserCheck size={12} className="text-indigo-400" />
                     <span className="text-[9.5px] font-bold text-indigo-500 uppercase tracking-tighter">
-                      Adv: {s.advisorId.name}
+                      Advisor: {s.advisorId.name}
                     </span>
                   </div>
                 )}

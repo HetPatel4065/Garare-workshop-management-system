@@ -11,6 +11,7 @@ import {
   IndianRupee,
   ChevronDown,
   ChevronUp,
+  StickyNote,
 } from "lucide-react";
 import { FaCar } from "react-icons/fa";
 
@@ -20,19 +21,19 @@ const ServiceHistoryItem = ({ svc, isOpen, toggleExpand }) => {
   const hasSvcs = (svc.selectedServices || []).length > 0;
 
   return (
-    <div className="border border-slate-100 rounded-2xl overflow-hidden">
+    <div className="border border-slate-150 dark:border-zinc-800 rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 transition-colors duration-300">
       {/* ── Summary row ── */}
       <button
         onClick={() => toggleExpand(svc._id)}
-        className="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 transition-colors text-left gap-4"
+        className="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-zinc-850/30 transition-colors text-left gap-4"
       >
         {/* Left: icon + name + vehicle */}
         <div className="flex items-center gap-4 min-w-0">
-          <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center shrink-0">
-            <CheckCircle2 className="w-5 h-5 text-indigo-500" />
+          <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-950/30 rounded-xl flex items-center justify-center shrink-0">
+            <CheckCircle2 className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
           </div>
           <div className="min-w-0">
-            <p className="font-bold text-lg capitalize text-slate-900 truncate w-full">
+            <p className="font-bold text-lg capitalize text-slate-900 dark:text-white truncate w-full">
               {(Array.isArray(svc.serviceName)
                 ? svc.serviceName
                 : (svc.serviceName || "General Maintenance")
@@ -46,17 +47,17 @@ const ServiceHistoryItem = ({ svc, isOpen, toggleExpand }) => {
             </p>
             <div className="flex items-center gap-3 flex-wrap mt-0.5">
               {svc.serviceId && (
-                <span className="text-xs font-bold text-slate-500">
+                <span className="text-xs font-bold text-slate-500 dark:text-zinc-450">
                   {svc.serviceId}
                 </span>
               )}
               {svc.licensePlate && (
-                <span className="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-lg">
+                <span className="text-xs font-bold text-slate-500 dark:text-zinc-400 bg-slate-100 dark:bg-zinc-950 px-2 py-0.5 rounded-lg">
                   {svc.licensePlate}
                 </span>
               )}
               {svc.jobCardId && (
-                <span className="text-xs font-bold text-blue-500">
+                <span className="text-xs font-bold text-blue-500 dark:text-blue-400">
                   {svc.jobCardId}
                 </span>
               )}
@@ -70,18 +71,18 @@ const ServiceHistoryItem = ({ svc, isOpen, toggleExpand }) => {
             <span
               className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${
                 svc.status === "Completed"
-                  ? "bg-emerald-50 text-emerald-600 border-emerald-100"
-                  : "bg-blue-50 text-blue-600 border-blue-100"
+                  ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/40"
+                  : "bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 border-blue-100 dark:border-blue-900/40"
               }`}
             >
               {svc.status}
             </span>
           </div>
-          <div className="w-8 h-8 flex items-center justify-center rounded-xl bg-slate-100">
+          <div className="w-8 h-8 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-zinc-950">
             {isOpen ? (
-              <ChevronUp className="w-4 h-4 text-slate-500" />
+              <ChevronUp className="w-4 h-4 text-slate-500 dark:text-zinc-550" />
             ) : (
-              <ChevronDown className="w-4 h-4 text-slate-500" />
+              <ChevronDown className="w-4 h-4 text-slate-500 dark:text-zinc-550" />
             )}
           </div>
         </div>
@@ -98,14 +99,14 @@ const ServiceHistoryItem = ({ svc, isOpen, toggleExpand }) => {
             transition={{ duration: 0.25, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <div className="px-5 pb-5 pt-2 bg-slate-50/70 border-t border-slate-100 space-y-5">
+            <div className="px-5 pb-5 pt-2 bg-slate-50/70 dark:bg-zinc-950/20 border-t border-slate-100 dark:border-zinc-800 space-y-5">
               {/* Meta row */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
                 <div className="flex flex-col gap-1">
-                  <span className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">
+                  <span className="text-xs font-black text-slate-400 dark:text-zinc-500 uppercase tracking-widest flex items-center gap-1">
                     <Calendar className="w-3 h-3" /> Date
                   </span>
-                  <span className="text-sm font-bold text-slate-800">
+                  <span className="text-sm font-bold text-slate-800 dark:text-zinc-200">
                     {new Date(svc.createdAt).toLocaleDateString("en-IN", {
                       day: "2-digit",
                       month: "short",
@@ -115,10 +116,10 @@ const ServiceHistoryItem = ({ svc, isOpen, toggleExpand }) => {
                 </div>
                 {svc.priority && (
                   <div className="flex flex-col gap-1">
-                    <span className="text-xs font-black text-slate-400 uppercase tracking-widest">
+                    <span className="text-xs font-black text-slate-400 dark:text-zinc-500 uppercase tracking-widest">
                       Priority
                     </span>
-                    <span className="text-sm font-bold text-slate-800">
+                    <span className="text-sm font-bold text-slate-800 dark:text-zinc-200">
                       {svc.priority}
                     </span>
                   </div>
@@ -126,20 +127,20 @@ const ServiceHistoryItem = ({ svc, isOpen, toggleExpand }) => {
                 {/* Staff — visible on mobile inside expanded panel */}
                 {svc.mechanicName && (
                   <div className="flex flex-col gap-1">
-                    <span className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">
+                    <span className="text-xs font-black text-slate-400 dark:text-zinc-500 uppercase tracking-widest flex items-center gap-1">
                       <Wrench className="w-3 h-3" /> Mechanic
                     </span>
-                    <span className="text-sm font-bold text-slate-800">
+                    <span className="text-sm font-bold text-slate-800 dark:text-zinc-200">
                       {svc.mechanicName}
                     </span>
                   </div>
                 )}
                 {svc.advisorName && (
                   <div className="flex flex-col gap-1">
-                    <span className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">
+                    <span className="text-xs font-black text-slate-400 dark:text-zinc-500 uppercase tracking-widest flex items-center gap-1">
                       <User className="w-3 h-3" /> Advisor
                     </span>
-                    <span className="text-sm font-bold text-slate-800">
+                    <span className="text-sm font-bold text-slate-800 dark:text-zinc-200">
                       {svc.advisorName}
                     </span>
                   </div>
@@ -149,10 +150,10 @@ const ServiceHistoryItem = ({ svc, isOpen, toggleExpand }) => {
               {/* Vehicle snapshot */}
               {svc.vehicle && (svc.vehicle.make || svc.vehicle.model) && (
                 <div>
-                  <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <h4 className="text-xs font-black text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-2 flex items-center gap-2">
                     <FaCar className="w-3 h-3" /> Vehicle
                   </h4>
-                  <p className="text-sm font-bold text-slate-800 bg-white border border-slate-100 rounded-xl px-4 py-2">
+                  <p className="text-sm font-bold text-slate-800 dark:text-zinc-250 bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800 rounded-xl px-4 py-2">
                     {`${[
                       svc.vehicle.year ? `${svc.vehicle.year} -` : null,
                       svc.vehicle.make,
@@ -162,7 +163,7 @@ const ServiceHistoryItem = ({ svc, isOpen, toggleExpand }) => {
                       .join(" ")}`}
 
                     {svc.vehicle.fuelType && (
-                      <span className="ml-2 font-semibold text-slate-400">
+                      <span className="ml-2 font-semibold text-slate-400 dark:text-zinc-500">
                         ({svc.vehicle.fuelType})
                       </span>
                     )}
@@ -173,32 +174,31 @@ const ServiceHistoryItem = ({ svc, isOpen, toggleExpand }) => {
               {/* Selected services */}
               {hasSvcs && (
                 <div>
-                  <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <h4 className="text-xs font-black text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-2 flex items-center gap-2">
                     <IndianRupee className="w-3 h-3" /> Services Done
                   </h4>
-                  <div className="overflow-x-auto rounded-xl border border-slate-100">
+                  <div className="overflow-x-auto rounded-xl border border-slate-100 dark:border-zinc-800">
                     <table className="w-full text-sm text-left">
                       <thead>
-                        <tr className="bg-white border-b border-slate-100">
-                          <th className="px-4 py-2 font-black text-slate-500 text-xs uppercase tracking-wider">
+                        <tr className="bg-white dark:bg-zinc-900 border-b border-slate-100 dark:border-zinc-800">
+                          <th className="px-4 py-2 font-black text-slate-500 dark:text-zinc-550 text-xs uppercase tracking-wider">
                             Description
                           </th>
-                          <th className="px-4 py-2 font-black text-slate-500 text-xs uppercase tracking-wider text-right">
+                          <th className="px-4 py-2 font-black text-slate-500 dark:text-zinc-550 text-xs uppercase tracking-wider text-right">
                             Amount
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-50">
+                      <tbody className="divide-y divide-slate-50 dark:divide-zinc-800">
                         {svc.selectedServices.map((sv, i) => (
                           <tr
                             key={i}
-                            className="bg-white hover:bg-slate-50 transition-colors"
+                            className="bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-zinc-850/50 transition-colors"
                           >
-                            <td className="px-4 capitalize py-2 font-bold text-slate-800">
+                            <td className="px-4 capitalize py-2 font-bold text-slate-800 dark:text-zinc-250">
                               {sv.name}
                             </td>
-                            <td className="px-4 py-2 font-black text-slate-800 text-right">
-                              {/* Use sv.price or sv.amount based on your data structure */}
+                            <td className="px-4 py-2 font-black text-slate-800 dark:text-zinc-200 text-right">
                               ₹{Number(sv.price || 0).toLocaleString("en-IN")}
                             </td>
                           </tr>
@@ -212,43 +212,43 @@ const ServiceHistoryItem = ({ svc, isOpen, toggleExpand }) => {
               {/* Parts used */}
               {hasParts && (
                 <div>
-                  <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <h4 className="text-xs font-black text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-2 flex items-center gap-2">
                     <Package className="w-3 h-3" /> Parts Used
                   </h4>
-                  <div className="overflow-x-auto rounded-xl border border-slate-100">
+                  <div className="overflow-x-auto rounded-xl border border-slate-100 dark:border-zinc-800">
                     <table className="w-full text-sm text-left">
                       <thead>
-                        <tr className="bg-white border-b border-slate-100">
-                          <th className="px-4 py-2 font-black text-slate-500 text-xs uppercase tracking-wider">
+                        <tr className="bg-white dark:bg-zinc-900 border-b border-slate-100 dark:border-zinc-800">
+                          <th className="px-4 py-2 font-black text-slate-500 dark:text-zinc-550 text-xs uppercase tracking-wider">
                             Part
                           </th>
-                          <th className="px-4 py-2 font-black text-slate-500 text-xs uppercase tracking-wider text-center">
+                          <th className="px-4 py-2 font-black text-slate-500 dark:text-zinc-550 text-xs uppercase tracking-wider text-center">
                             Qty
                           </th>
-                          <th className="px-4 py-2 font-black text-slate-500 text-xs uppercase tracking-wider text-right">
+                          <th className="px-4 py-2 font-black text-slate-500 dark:text-zinc-550 text-xs uppercase tracking-wider text-right">
                             Unit
                           </th>
-                          <th className="px-4 py-2 font-black text-slate-500 text-xs uppercase tracking-wider text-right">
+                          <th className="px-4 py-2 font-black text-slate-500 dark:text-zinc-550 text-xs uppercase tracking-wider text-right">
                             Total
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-50">
+                      <tbody className="divide-y divide-slate-50 dark:divide-zinc-800">
                         {svc.parts.map((p, i) => (
                           <tr
                             key={i}
-                            className="bg-white hover:bg-slate-50 transition-colors"
+                            className="bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-zinc-850/50 transition-colors"
                           >
-                            <td className="px-4 py-2 capitalize font-bold text-slate-800">
+                            <td className="px-4 py-2 capitalize font-bold text-slate-800 dark:text-zinc-250">
                               {p.name}
                             </td>
-                            <td className="px-4 py-2 font-bold text-slate-600 text-center">
+                            <td className="px-4 py-2 font-bold text-slate-600 dark:text-zinc-400 text-center">
                               {p.quantity}
                             </td>
-                            <td className="px-4 py-2 font-bold text-slate-600 text-right">
+                            <td className="px-4 py-2 font-bold text-slate-600 dark:text-zinc-400 text-right">
                               ₹{Number(p.unitPrice).toLocaleString("en-IN")}
                             </td>
-                            <td className="px-4 py-2 font-black text-slate-800 text-right">
+                            <td className="px-4 py-2 font-black text-slate-800 dark:text-zinc-200 text-right">
                               ₹{Number(p.total).toLocaleString("en-IN")}
                             </td>
                           </tr>
@@ -262,31 +262,31 @@ const ServiceHistoryItem = ({ svc, isOpen, toggleExpand }) => {
               {/* Labour */}
               {hasLabor && (
                 <div>
-                  <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <h4 className="text-xs font-black text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-2 flex items-center gap-2">
                     <IndianRupee className="w-3 h-3" /> Labour Charges
                   </h4>
-                  <div className="overflow-x-auto rounded-xl border border-slate-100">
+                  <div className="overflow-x-auto rounded-xl border border-slate-100 dark:border-zinc-800">
                     <table className="w-full text-sm text-left">
                       <thead>
-                        <tr className="bg-white border-b border-slate-100">
-                          <th className="px-4 py-2 font-black text-slate-500 text-xs uppercase tracking-wider">
+                        <tr className="bg-white dark:bg-zinc-900 border-b border-slate-100 dark:border-zinc-800">
+                          <th className="px-4 py-2 font-black text-slate-500 dark:text-zinc-550 text-xs uppercase tracking-wider">
                             Description
                           </th>
-                          <th className="px-4 py-2 font-black text-slate-500 text-xs uppercase tracking-wider text-right">
+                          <th className="px-4 py-2 font-black text-slate-500 dark:text-zinc-550 text-xs uppercase tracking-wider text-right">
                             Amount
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-50">
+                      <tbody className="divide-y divide-slate-50 dark:divide-zinc-800">
                         {svc.laborCharges.map((l, i) => (
                           <tr
                             key={i}
-                            className="bg-white hover:bg-slate-50 transition-colors"
+                            className="bg-white dark:bg-zinc-900 hover:bg-slate-50 dark:hover:bg-zinc-850/50 transition-colors"
                           >
-                            <td className="px-4 capitalize py-2 font-bold text-slate-800">
+                            <td className="px-4 capitalize py-2 font-bold text-slate-800 dark:text-zinc-250">
                               {l.description}
                             </td>
-                            <td className="px-4 py-2 font-black text-slate-800 text-right">
+                            <td className="px-4 py-2 font-black text-slate-800 dark:text-zinc-200 text-right">
                               ₹{Number(l.amount).toLocaleString("en-IN")}
                             </td>
                           </tr>
@@ -300,10 +300,10 @@ const ServiceHistoryItem = ({ svc, isOpen, toggleExpand }) => {
               {/* Notes */}
               {svc.notes && (
                 <div>
-                  <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <h4 className="text-xs font-black text-slate-400 dark:text-zinc-500 uppercase tracking-widest mb-2 flex items-center gap-2">
                     <StickyNote className="w-3 h-3" /> Notes / Remarks
                   </h4>
-                  <p className="text-sm text-slate-600 font-medium bg-white border border-slate-100 rounded-xl px-4 py-2 leading-relaxed">
+                  <p className="text-sm text-slate-600 dark:text-zinc-400 font-medium bg-white dark:bg-zinc-900 border border-slate-100 dark:border-zinc-800 rounded-xl px-4 py-2 leading-relaxed">
                     {svc.notes}
                   </p>
                 </div>
