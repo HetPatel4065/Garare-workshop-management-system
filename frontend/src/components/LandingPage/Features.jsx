@@ -169,7 +169,9 @@ export const Features = () => {
         }}
       />
 
-      <div className="max-w-7xl mx-auto 3xl:max-w-[1600px] 4xl:max-w-[2000px]">
+      <div
+        className="max-w-7xl mx-auto 3xl:max-w-[400] 4xl:max-w-[500]"
+      >
         {/* Section Header */}
         <div className="text-center mb-10 md:mb-20">
           <motion.div

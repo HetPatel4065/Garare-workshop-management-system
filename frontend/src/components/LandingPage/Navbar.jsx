@@ -341,7 +341,9 @@ export const Navbar = () => {
           : { background: "transparent" }
       }
     >
-      <div className="max-w-7xl mx-auto px-3 xs:px-4 md:px-6 3xl:max-w-[1600px] 4xl:max-w-[2000px] flex items-center justify-between">
+      <div
+        className="max-w-7xl mx-auto px-3 xs:px-4 md:px-6 3xl:max-w-[400] 4xl:max-w-[500] flex items-center justify-between"
+      >
         {/* ── Logo ── */}
         <Link
           to="/"

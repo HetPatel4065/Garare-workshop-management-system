@@ -190,7 +190,9 @@ export const Footer = () => {
         }}
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8 xs:gap-10 md:gap-12 3xl:max-w-[1600px] 4xl:max-w-[2000px]">
+      <div
+        className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-8 xs:gap-10 md:gap-12 3xl:max-w-[400] 4xl:max-w-[500]"
+      >
         {/* Branding & Info Column */}
         <div className="md:col-span-2">
           <div className="flex items-center gap-2.5 mb-6">
