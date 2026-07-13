@@ -98,20 +98,20 @@ const CAR_CATEGORY_MAP = {
   "cx-5": "SUV",
   "cx-8": "SUV",
 
-  // MPV
-  tavera: "MPV",
-  xylo: "MPV",
-  supro: "MPV",
-  eeco: "MPV",
-  omni: "MPV",
-  lodgy: "MPV",
-  triber: "MPV",
-  marazzo: "MPV",
-  xl6: "MPV",
-  carens: "MPV",
-  innova: "MPV",
-  "innova crysta": "MPV",
-  "innova hycross": "MPV",
+  // MUV
+  tavera: "MUV",
+  xylo: "MUV",
+  supro: "MUV",
+  eeco: "MUV",
+  omni: "MUV",
+  lodgy: "MUV",
+  triber: "MUV",
+  marazzo: "MUV",
+  xl6: "MUV",
+  carens: "MUV",
+  innova: "MUV",
+  "innova crysta": "MUV",
+  "innova hycross": "MUV",
 
   // Luxury
   "3 series": "Luxury",
@@ -126,7 +126,7 @@ const CAR_CATEGORY_MAP = {
   q5: "Luxury",
   xc40: "Luxury",
   xc60: "Luxury",
-  xc90:"Luxury",
+  xc90: "Luxury",
   x1: "Luxury",
   x3: "Luxury",
   x5: "Luxury",
@@ -141,13 +141,12 @@ const CAR_CATEGORY_MAP = {
   xe: "Luxury",
   "f-pace": "Luxury",
   "e-pace": "Luxury",
-  
 
   // Ultra Luxury
   "7 series": "Ultra Luxury",
   "s class": "Ultra Luxury",
   "s-class": "Ultra Luxury",
-  "a-class":"Ultra Luxury",
+  "a-class": "Ultra Luxury",
   a8: "Ultra Luxury",
   q7: "Ultra Luxury",
   q8: "Ultra Luxury",
@@ -157,7 +156,7 @@ const CAR_CATEGORY_MAP = {
   defender: "Ultra Luxury",
   "range rover velar": "Ultra Luxury",
   "landcruiser-300": "Ultra Luxury",
-  
+
   discovery: "Ultra Luxury",
   bentayga: "Ultra Luxury",
   continental: "Ultra Luxury",

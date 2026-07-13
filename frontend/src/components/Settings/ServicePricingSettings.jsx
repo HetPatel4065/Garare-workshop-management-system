@@ -8,7 +8,7 @@ const CAR_CATEGORIES = [
   "Sedan",
   "Compact SUV",
   "SUV",
-  "MPV",
+  "MUV",
   "Luxury",
   "Ultra Luxury",
 ];

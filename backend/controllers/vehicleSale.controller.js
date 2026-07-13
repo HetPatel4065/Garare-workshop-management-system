@@ -27,7 +27,7 @@ const BODY_TYPE_VALUES = [
   "Hatchback",
   "Sedan",
   "SUV",
-  "MPV",
+  "MUV",
   "Minivan",
   "Coupe",
 ];
@@ -758,7 +758,7 @@ export const deleteListing = async (req, res) => {
     }
 
     await VehicleSale.findByIdAndDelete(id);
-    
+
     await logActivity(
       req,
       "delete",
