@@ -44,8 +44,6 @@ export const getPricingForServices = async (req, res) => {
   }
 };
 
-console.log("getAllPricing called");
-
 export const getAllPricing = async (req, res) => {
   try {
     const all = await ServicePricing.find().sort({
