@@ -22,7 +22,7 @@ import {
 import ExportButton from "../components/common/ExportButton";
 import { useSocket } from "../context/SocketContext";
 
-// ─── Stat Card ───
+//  Stat Card 
 const StatCard = ({
   label,
   count,
@@ -470,8 +470,7 @@ export default function Customers() {
               />
               <button
                 onClick={handleAdd}
-                className="
-                flex items-center gap-2
+                className="flex items-center gap-2
                 px-5 py-3
                 bg-blue-600 dark:bg-blue-950/90 hover:bg-blue-700
                 text-white
@@ -479,8 +478,7 @@ export default function Customers() {
                 text-sm font-bold
                 transition-all duration-300
                 shadow-md hover:shadow-xl
-                h-10.5
-                "
+                h-10.5"
               >
                 <Plus size={17} />
                 Add Customer
@@ -521,7 +519,7 @@ export default function Customers() {
         />
       </div>
 
-      {/* ── Stat Cards ── */}
+      {/*  Stat Cards  */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         {statCards.map((card) => (
           <StatCard
@@ -537,7 +535,7 @@ export default function Customers() {
         ))}
       </div>
 
-      {/* ── Active Filter Chip ── */}
+      {/*  Active Filter Chip  */}
       {(statusFilter !== "All" || activeSearch) && (
         <div className="mb-6 flex flex-wrap items-center gap-2">
           <span className="text-[11px] font-bold text-slate-500">

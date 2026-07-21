@@ -19,11 +19,11 @@ import { FormInput, FormError, FormButton, FormRow, FormSection } from "../compo
 
 const GREETINGS = [
   // Friendly & Community-Focused
-  "We’re thrilled to have you! Let’s get you set up",
+  "We're thrilled to have you! Let's get you set up",
   "Ready to meet the rest of the team?",
   "Your seat at the table is waiting",
-  "Let’s make great things together",
-  "Welcome aboard! Let’s create your account",
+  "Let's make great things together",
+  "Welcome aboard! Let's create your account",
 
   // Short & Punchy
   "Let's get you onboarded",
@@ -112,7 +112,7 @@ export default function StaffSignup() {
         transition={{ duration: 0.4, ease: "easeOut" }}
         className="w-full max-w-xl"
       >
-        {/* ── Brand Header ── */}
+        {/*  Brand Header  */}
         <div className="text-center mb-6">
           <div
             className="group inline-flex items-center gap-3 mb-2 cursor-auto select-none"
@@ -144,7 +144,7 @@ export default function StaffSignup() {
           </p>
         </div>
 
-        {/* ── Card ── */}
+        {/*  Card  */}
         <div className="bg-white rounded-2xl border border-violet-100 overflow-hidden">
           <div className="h-1 w-full bg-linear-to-r from-violet-400 via-violet-500 to-purple-500" />
 
@@ -214,7 +214,7 @@ export default function StaffSignup() {
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter your full name "
+                  placeholder="Enter your full name"
                   label="Full Name"
                   leftIcon={<User className="w-4 h-4 text-violet-400" />}
                   inputClassName="border-violet-200 bg-violet-50/60 focus:ring-violet-400/30 focus:border-violet-400 focus:bg-white"

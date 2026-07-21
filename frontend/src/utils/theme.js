@@ -1,8 +1,4 @@
 /**
- * Theme utility functions for determining system preference and active state.
- */
-
-/**
  * Checks if the system/browser prefers dark mode.
  * @returns {boolean} True if the system/OS preference is dark mode.
  */

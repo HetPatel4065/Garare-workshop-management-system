@@ -30,7 +30,7 @@ const normalizeSocketUrl = (value) => {
     : `http://${cleaned}`;
 };
 
-// ─── Greeting pool ───────────────────────────────────────────────────────────
+//  Greeting pool 
 const GREETINGS = [
   "Welcome to your customer portal",
   "Welcome back to your dashboard",
@@ -51,7 +51,7 @@ const GREETINGS = [
   "Fast, passwordless portal access",
 ];
 
-// ─── Step indicator ───────────────────────────────────────────────────────────
+//  Step indicator 
 function StepDot({ active, done }) {
   return (
     <div
@@ -66,7 +66,7 @@ function StepDot({ active, done }) {
   );
 }
 
-// ─── Main Component ──────────────────────────────────────────────────────────
+//  Main Component 
 export default function CustomerLogin() {
   const navigate = useNavigate();
 
@@ -83,14 +83,14 @@ export default function CustomerLogin() {
     [],
   );
 
-  // ── OTP resend countdown ──────────────────────────────────────────────────
+  //  OTP resend countdown 
   useEffect(() => {
     if (countdown <= 0) return;
     const timer = setInterval(() => setCountdown((c) => c - 1), 1000);
     return () => clearInterval(timer);
   }, [countdown]);
 
-  // ── Real-time approval updates via socket ─────────────────────────────────
+  //  Real-time approval updates via socket 
   useEffect(() => {
     if (step !== 3 || !email) return;
     const socketUrl =
@@ -104,7 +104,7 @@ export default function CustomerLogin() {
     return () => socket.disconnect();
   }, [step, email]);
 
-  // ── Step 1: Send OTP ──────────────────────────────────────────────────────
+  //  Step 1: Send OTP 
   const handleSendOTP = async (e) => {
     e.preventDefault();
     setError("");
@@ -139,7 +139,7 @@ export default function CustomerLogin() {
     }
   };
 
-  // ── Step 2: Verify OTP ────────────────────────────────────────────────────
+  //  Step 2: Verify OTP 
   const handleVerifyOTP = async (e) => {
     e.preventDefault();
     if (!otp) {
@@ -200,7 +200,7 @@ export default function CustomerLogin() {
     }
   };
 
-  // ── Resend OTP ────────────────────────────────────────────────────────────
+  // Resend OTP 
   const handleResend = async () => {
     if (countdown > 0) return;
     setError("");
@@ -222,7 +222,7 @@ export default function CustomerLogin() {
   return (
     <div className="min-h-screen bg-[#070b13] flex flex-col items-center justify-center p-4 sm:p-6 selection:bg-blue-500/30">
       <div className="w-full max-w-xl">
-        {/* ── Brand & Typography Header ────────────────────────────────────────── */}
+        {/*  Brand & Typography Header */}
         <motion.div
           initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -266,14 +266,14 @@ export default function CustomerLogin() {
           </div>
         </motion.div>
 
-        {/* ── Main Card Container ─────────────────────────────────── */}
+        {/*  Main Card Container  */}
         <div className="bg-[#161920] rounded-2xl border border-slate-800 shadow-2xl overflow-hidden">
           {/* Accent Line Gradient */}
           <div className="h-1 w-full bg-linear-to-r from-blue-400 via-blue-500 to-blue-500" />
 
           <div className="p-6 sm:p-8">
             <AnimatePresence mode="wait">
-              {/* ── STEP 1: Email ── */}
+              {/*  STEP 1: Email  */}
               {step === 1 && (
                 <motion.form
                   key="step-1"
@@ -320,7 +320,7 @@ export default function CustomerLogin() {
                 </motion.form>
               )}
 
-              {/* ── STEP 2: OTP Verification ── */}
+              {/*  STEP 2: OTP Verification  */}
               {step === 2 && (
                 <motion.form
                   key="step-2"
@@ -411,7 +411,7 @@ export default function CustomerLogin() {
                 </motion.form>
               )}
 
-              {/* ── STEP 3: Registration Status View Screen ── */}
+              {/*  STEP 3: Registration Status View Screen  */}
               {step === 3 && registrationStatus && (
                 <motion.div
                   key="step-3"
@@ -534,7 +534,7 @@ export default function CustomerLogin() {
           </div>
         </div>
 
-        {/* ── Sub-Footer Core System Access ───────────────────────────────── */}
+        {/*  Sub-Footer Core System Access  */}
         <div className="flex items-center justify-center gap-3 mt-8 text-xs text-slate-600 font-medium">
           <Link to="/login" className="hover:text-slate-400 transition-colors">
             Staff / Owner Login

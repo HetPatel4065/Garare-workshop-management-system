@@ -243,7 +243,7 @@ export default function Settings() {
     confirm: false,
   });
 
-  // ── Sliding pill tab refs ──
+  //  Sliding pill tab refs 
   const tabRefs = useRef({});
   const [pillStyle, setPillStyle] = useState({ left: 0, width: 0 });
   const tabTrackRef = useRef(null);
@@ -267,7 +267,7 @@ export default function Settings() {
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, [activeTab, updatePill]);
-  // ──────────────────────────────────────────────────────────────────────────
+  // 
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -1038,7 +1038,7 @@ export default function Settings() {
         </div>
 
         <div className="flex flex-col gap-6">
-          {/* ── SMOOTH SLIDING PILL TAB BAR ─────────────────────────────── */}
+          {/*  SMOOTH SLIDING PILL TAB BAR  */}
           <div
             ref={tabTrackRef}
             className="relative flex flex-row items-center justify-start overflow-x-auto pb-2.5 scrollbar-hide"
@@ -1083,11 +1083,10 @@ export default function Settings() {
               })}
             </div>
           </div>
-          {/* ────────────────────────────────────────────────────────────── */}
 
           <div className="flex-1 bg-white rounded-2xl md:rounded-4xl border border-slate-100 overflow-hidden">
             <div className="p-6 md:p-10">
-              {/* ── BUSINESS TAB ── */}
+              {/*  BUSINESS TAB  */}
               {activeTab === "business" && isAdmin && (
                 <div className="space-y-12 animate-in fade-in slide-in-from-right-4">
                   {/* Owner Information */}
@@ -1255,7 +1254,7 @@ export default function Settings() {
                 </div>
               )}
 
-              {/* ── CATALOG TAB ── */}
+              {/*  CATALOG TAB  */}
               {activeTab === "catalog" && (
                 <div className="space-y-6">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
@@ -1411,7 +1410,7 @@ export default function Settings() {
                 <ServicePricingSettings token={token} />
               )}
 
-              {/* ── NOTIFICATIONS TAB ── */}
+              {/*  NOTIFICATIONS TAB  */}
               {activeTab === "notifications" && (
                 <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-3">
@@ -1464,7 +1463,7 @@ export default function Settings() {
                 </div>
               )}
 
-              {/* ── ADVANCED TAB ── */}
+              {/*  ADVANCED TAB  */}
               {activeTab === "advanced" && (
                 <div className="space-y-10 animate-in fade-in slide-in-from-right-4">
                   <section className="space-y-8">

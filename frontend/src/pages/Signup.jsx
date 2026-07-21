@@ -61,7 +61,7 @@ export default function Signup() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#0b0f19] flex items-center justify-center p-4 sm:p-6 lg:p-8 transition-colors duration-200">
       <div className="w-full max-w-2xl">
-        {/* ── Brand header ── */}
+        {/*  Brand header  */}
         <motion.div
           initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -88,7 +88,7 @@ export default function Signup() {
           </p>
         </motion.div>
 
-        {/* ── Role cards grid ── */}
+        {/*  Role cards grid  */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -153,7 +153,7 @@ export default function Signup() {
           })}
         </motion.div>
 
-        {/* ── Footer ── */}
+        {/*  Footer  */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import { Wrench } from "lucide-react";
+import { MailIcon, Wrench } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { FaCar } from "react-icons/fa";
 import {
@@ -109,7 +109,7 @@ export default function OwnerLogin() {
         transition={{ duration: 0.4, ease: "easeOut" }}
         className="w-full max-w-xl"
       >
-        {/* ── Brand Header ─────────────────────────────────────── */}
+        {/*  Brand Header  */}
         <div className="text-center mb-8">
           <div
             className="group inline-flex items-center gap-3 mb-3 cursor-auto select-none"
@@ -141,7 +141,7 @@ export default function OwnerLogin() {
           </p>
         </div>
 
-        {/* ── Card ─────────────────────────────────────────────── */}
+        {/*  Card  */}
         <div className="bg-white rounded-2xl border border-emerald-100 overflow-hidden">
           {/* Accent bar */}
           <div className="h-1 w-full bg-linear-to-r from-emerald-400 via-emerald-500 to-teal-500" />
@@ -167,7 +167,7 @@ export default function OwnerLogin() {
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="owner@yourgarage.com"
+                placeholder="johndoe@gmail.com"
                 label="Email Address"
                 inputClassName="border-emerald-200 bg-emerald-50/60 focus:ring-emerald-400/30 focus:border-emerald-400 focus:bg-white"
               />
@@ -268,7 +268,7 @@ export default function OwnerLogin() {
         </div>
       </motion.div>
 
-      {/* ── Forgot Password Modal ──────────────────────────────── */}
+      {/*  Forgot Password Modal  */}
       <AnimatePresence>
         {showForgotModal && (
           <div className="fixed inset-0 z-55 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
@@ -284,10 +284,12 @@ export default function OwnerLogin() {
 
               <div className="p-6">
                 {forgotMessage ? (
-                  /* ── Success state ── */
+                  /*  Success state  */
                   <div className="text-center py-2">
                     <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-emerald-50 mb-4">
-                      <span className="text-4xl">✉️</span>
+                      <span className="text-4xl">
+                        <MailIcon />
+                      </span>
                     </div>
                     <h3 className="text-lg font-bold text-slate-900 mb-2">
                       Check Your Inbox
@@ -304,7 +306,7 @@ export default function OwnerLogin() {
                     </button>
                   </div>
                 ) : (
-                  /* ── Form state ── */
+                  /*  Form state  */
                   <>
                     <div className="mb-5">
                       <h3 className="text-lg font-bold text-slate-900 mb-1">
@@ -376,7 +378,7 @@ export default function OwnerLogin() {
         )}
       </AnimatePresence>
 
-      {/* ── Suspension Modal ───────────────────────────────────── */}
+      {/*  Suspension Modal  */}
       <AnimatePresence>
         {showSuspendedModal && (
           <div className="fixed inset-0 z-55 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
@@ -390,7 +392,9 @@ export default function OwnerLogin() {
               <div className="h-1.5 w-full bg-red-500" />
               <div className="p-6 text-center">
                 <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-50 mb-4">
-                  <span className="text-red-500 text-3xl">⚠️</span>
+                  <span className="text-red-500 text-3xl">
+                    <AlertTriangleIcon />
+                  </span>
                 </div>
                 <h3 className="text-xl font-bold text-slate-900 mb-2">
                   Garage Suspended

@@ -1,5 +1,4 @@
-export const PORTAL_PREVIEW_CUSTOMER_KEY = "portal_preview_customer_id";
-
+z
 export const getStoredPreviewCustomerId = () =>
   sessionStorage.getItem(PORTAL_PREVIEW_CUSTOMER_KEY) || "";
 

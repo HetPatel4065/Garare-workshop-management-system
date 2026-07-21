@@ -195,7 +195,7 @@ export default function PrivacyPolicy() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 text-slate-800 dark:text-zinc-100 transition-colors duration-300">
-      {/* ── Header ────────────────────────────────────────────── */}
+      {/*  Header  */}
       <header className="sticky top-0 z-40 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b border-slate-200/80 dark:border-zinc-800/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -241,7 +241,7 @@ export default function PrivacyPolicy() {
         </div>
       </header>
 
-      {/* ── Hero Banner ────────────────────────────────────────── */}
+      {/*  Hero Banner  */}
       <section className="relative overflow-hidden py-16 bg-linear-to-b from-indigo-50/50 via-white to-transparent dark:from-indigo-950/20 dark:via-zinc-950 dark:to-transparent">
         {/* Glow Effects */}
         <div className="absolute top-0 right-1/4 w-96 h-96 rounded-full opacity-30 dark:opacity-10 pointer-events-none blur-3xl bg-indigo-400" />
@@ -291,7 +291,7 @@ export default function PrivacyPolicy() {
         </div>
       </section>
 
-      {/* ── Main Content Grid ─────────────────────────────────── */}
+      {/*  Main Content Grid  */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Table of Contents (Sticky sidebar) */}
@@ -469,7 +469,7 @@ export default function PrivacyPolicy() {
         </div>
       </section>
 
-      {/* ── Footer ────────────────────────────────────────────── */}
+      {/*  Footer  */}
       <footer className="bg-white dark:bg-zinc-900 border-t border-slate-200/80 dark:border-zinc-800/80 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs font-semibold text-slate-400 dark:text-zinc-500">
           <div className="flex items-center gap-2">

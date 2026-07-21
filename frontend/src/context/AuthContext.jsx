@@ -118,7 +118,7 @@ export const AuthProvider = ({ children }) => {
   const { startLoading, stopLoading } = useLoading();
   const navigate = useNavigate();
 
-  // ─── Core logout helper (no navigate — used internally) ────────────────────
+  // ─── Core logout helper (no navigate — used internally) ───
   const _clearSession = useCallback(() => {
     clearStoredToken();
     sessionStorage.removeItem("portal_token");
@@ -131,7 +131,7 @@ export const AuthProvider = ({ children }) => {
     setIsVerified(false);
   }, []);
 
-  // ─── Initialize: validate stored token on app boot ─────────────────────────
+  // ─── Initialize: validate stored token on app boot ───
   const initializeAuth = useCallback(async () => {
     const storedToken = getStoredToken();
 
@@ -204,7 +204,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // ─── Register ─
+  // ─── Register ───
   const register = async (formData) => {
     startLoading("Creating Account…");
     try {
@@ -240,7 +240,7 @@ export const AuthProvider = ({ children }) => {
     _clearSession();
   }, [_clearSession]);
 
-  // ─── Refresh user profile from backend ─────────────────────────────────────
+  // ─── Refresh user profile from backend ───
   const refreshUser = useCallback(async () => {
     const currentToken = token || getStoredToken();
     if (!currentToken) return;
@@ -263,7 +263,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token, logout]);
 
-  // ─── Garage preview (admin) ─────────────────────────────────────────────────
+  // ─── Garage preview (admin) ───
   const selectGarage = useCallback((garage) => {
     sessionStorage.setItem("admin_selected_garage", JSON.stringify(garage));
     setSelectedGarage(garage);
@@ -281,7 +281,7 @@ export const AuthProvider = ({ children }) => {
     seedSessionHistory(dashboardPath);
   }, [navigate, user, refreshUser]);
 
-  // ─── Expose API ────────────────────────────────────────────────────────────
+  // ─── Expose API ───
   return (
     <AuthContext.Provider
       value={{

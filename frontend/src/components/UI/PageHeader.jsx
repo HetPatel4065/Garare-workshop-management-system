@@ -1,4 +1,3 @@
-
 const PageHeader = ({ title, subtitle, category, action }) => {
   return (
     <div className="mb-6 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">

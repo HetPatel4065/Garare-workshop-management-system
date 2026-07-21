@@ -131,7 +131,7 @@ export default function OwnerRegister() {
       <div className="w-full max-w-xl bg-zinc-900/60 backdrop-blur-3xl rounded-3xl sm:rounded-[2.5rem] border border-zinc-800/80 shadow-[0_24px_80px_rgba(0,0,0,0.5)] overflow-hidden p-4 xs:p-8 sm:p-12 relative z-10">
         <AnimatePresence mode="wait">
           {error && !lead ? (
-            // ── Error State ──
+            //  Error State 
             <motion.div
               key="error-state"
               initial={{ opacity: 0, scale: 0.95 }}
@@ -156,7 +156,7 @@ export default function OwnerRegister() {
               </button>
             </motion.div>
           ) : success ? (
-            // ── Success State ──
+            //  Success State 
             <motion.div
               key="success-state"
               initial={{ opacity: 0, scale: 0.95 }}
@@ -181,7 +181,7 @@ export default function OwnerRegister() {
               </button>
             </motion.div>
           ) : (
-            // ── Form State ──
+            //  Form State 
             <motion.div
               key="form-state"
               initial={{ opacity: 0, y: 15 }}

@@ -64,7 +64,7 @@ export default function SearchBar({
               <X className="w-3.5 h-3.5" />
             </button>
           )}
-          
+
           <button
             onClick={handleSearchClick}
             className="px-3 py-1 bg-blue-600 dark:bg-blue-950/50 text-white text-[10px] font-bold rounded-lg hover:bg-blue-700 transition-colors uppercase tracking-wider"
@@ -76,7 +76,9 @@ export default function SearchBar({
 
       {activeSearch && (
         <div className="flex items-center gap-2 px-1">
-          <span className="text-[11px] font-bold text-slate-500">Active Search:</span>
+          <span className="text-[11px] font-bold text-slate-500">
+            Active Search:
+          </span>
           <button
             onClick={onClearActive}
             className="inline-flex items-center capitalize gap-1.5 px-3 py-1 bg-blue-50 border border-blue-200 rounded-full text-[11px] font-bold text-blue-700 hover:bg-blue-100 transition-colors"

@@ -156,7 +156,7 @@ function LeadCard({ lead, onView, onStatusUpdate, onDelete }) {
 
   return (
     <div className="bg-white dark:bg-zinc-900 rounded-3xl p-4 sm:p-5 mb-4 hover:shadow-[0_20px_50px_rgba(0,0,0,0.03)] transition-all duration-300 border border-slate-100 dark:border-zinc-800 shadow-sm relative overflow-hidden group cursor-auto">
-      {/* ── TOP ROW: Garage Name + ID + Status ── */}
+      {/*  TOP ROW: Garage Name + ID + Status  */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div className="flex flex-wrap items-center gap-2">
           <h3 className="text-lg font-bold text-gray-900 dark:text-zinc-150 tracking-tight">
@@ -169,7 +169,7 @@ function LeadCard({ lead, onView, onStatusUpdate, onDelete }) {
         </div>
       </div>
 
-      {/* ── META GRID ── */}
+      {/*  META GRID  */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-4 mb-4">
         <MetaField label="Owner" primary={lead.ownerName} />
 
@@ -223,7 +223,7 @@ function LeadCard({ lead, onView, onStatusUpdate, onDelete }) {
         </div>
       </div>
 
-      {/* ── Message Preview (if any) ── */}
+      {/*  Message Preview (if any)  */}
       {lead.message && (
         <div className="mt-2 mb-4 p-3 rounded-xl bg-slate-50 dark:bg-zinc-800/40 border border-slate-100/50 dark:border-zinc-800">
           <p className="text-[10px] font-black text-slate-400 dark:text-zinc-500 uppercase tracking-wider mb-1 flex items-center gap-1">
@@ -235,10 +235,10 @@ function LeadCard({ lead, onView, onStatusUpdate, onDelete }) {
         </div>
       )}
 
-      {/* ── DIVIDER ── */}
+      {/*  DIVIDER  */}
       <div className="border-t border-gray-100 dark:border-zinc-850 my-3" />
 
-      {/* ── BOTTOM ROW: Actions ── */}
+      {/*  BOTTOM ROW: Actions  */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-2">
         {/* View Details */}
         <button
@@ -449,7 +449,6 @@ export default function PartnershipLeads() {
         count: "text-amber-700 dark:text-amber-300",
       },
     },
-
     {
       label: "Approved",
       count: statusCounts.approved,
@@ -503,7 +502,7 @@ export default function PartnershipLeads() {
 
   return (
     <div className="p-4 sm:p-6 max-w-screen min-h-screen mx-auto bg-gray-100 dark:bg-zinc-950 transition-colors duration-300">
-      {/* ── Header ── */}
+      {/*  Header  */}
       <div className="mb-8 pb-5 border-b-3 border-slate-200/80 dark:border-slate-700">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>
@@ -548,7 +547,7 @@ export default function PartnershipLeads() {
         </div>
       </div>
 
-      {/* ── Stat Cards ── */}
+      {/*  Stat Cards  */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-6">
         {statCards.map((card) => (
           <StatCard
@@ -563,7 +562,7 @@ export default function PartnershipLeads() {
         ))}
       </div>
 
-      {/* ── Search Bar ── */}
+      {/*  Search Bar  */}
       <div className="mb-4">
         <SearchBar
           value={searchInput}
@@ -580,7 +579,7 @@ export default function PartnershipLeads() {
         />
       </div>
 
-      {/* ── Filter Chips ── */}
+      {/*  Filter Chips  */}
       {(statusFilter !== "All" || activeQuery) && (
         <div className="mb-4 flex flex-wrap items-center gap-2">
           <span className="text-[11px] font-bold text-slate-500 dark:text-zinc-550">
@@ -608,7 +607,7 @@ export default function PartnershipLeads() {
         </div>
       )}
 
-      {/* ── Count ── */}
+      {/*  Count  */}
       {!loading && filteredLeads.length > 0 && (
         <div className="mb-3 px-1">
           <p className="text-sm font-medium text-gray-500 dark:text-zinc-400">
@@ -620,7 +619,7 @@ export default function PartnershipLeads() {
         </div>
       )}
 
-      {/* ── Cards List ── */}
+      {/*  Cards List  */}
       <div>
         {loading ? (
           [...Array(4)].map((_, i) => <SkeletonCard key={i} />)
@@ -657,7 +656,7 @@ export default function PartnershipLeads() {
         )}
       </div>
 
-      {/* ── Pagination ── */}
+      {/*  Pagination  */}
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 mt-6">
           <button
@@ -680,7 +679,7 @@ export default function PartnershipLeads() {
         </div>
       )}
 
-      {/* ── Detailed Info Modal ── */}
+      {/*  Detailed Info Modal  */}
       <Modal
         isOpen={detailsModalOpen}
         onClose={() => setDetailsModalOpen(false)}
@@ -795,7 +794,7 @@ export default function PartnershipLeads() {
         )}
       </Modal>
 
-      {/* ── Confirm Delete Modal ── */}
+      {/*  Confirm Delete Modal  */}
       <ConfirmModal
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}

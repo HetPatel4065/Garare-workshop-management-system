@@ -1392,9 +1392,9 @@ export default function ServiceForm({
         </div>
       </div>
 
-      {/* ══ SCROLLABLE BODY ══════════════════════════════ */}
+      {/* ═══ SCROLLABLE BODY ═══ */}
       <div className="flex-1 overflow-y-auto scrollbar-hide px-3 sm:px-5 py-4 sm:py-5 space-y-5 sm:space-y-6 bg-white dark:bg-gray-950">
-        {/* ═══ TAB: SERVICE INFO ═══════════════════════ */}
+        {/* ═══ TAB: SERVICE INFO ═══ */}
         {activeTab === "info" && (
           <>
             {showConfig && (
@@ -1691,7 +1691,7 @@ export default function ServiceForm({
           </>
         )}
 
-        {/* ═══ TAB: TASKS & CATALOG ════════════════════ */}
+        {/* ═══ TAB: TASKS & CATALOG ═══ */}
         {activeTab === "tasks" && (
           <>
             <Section
@@ -2259,7 +2259,7 @@ export default function ServiceForm({
           </>
         )}
 
-        {/* ═══ TAB: PARTS ══════════════════════════════ */}
+        {/* ═══ TAB: PARTS ═══ */}
         {activeTab === "parts" && (
           <Section
             title="Parts & Materials"
@@ -2506,7 +2506,7 @@ export default function ServiceForm({
         </div>
       </div>
 
-      {/* ══ FIXED FOOTER ═════════════════════════════════ */}
+      {/* ════ FIXED FOOTER ════ */}
       <div className="shrink-0 px-6 py-4 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-950 flex items-center justify-end gap-4">
         <div className="flex items-center gap-3">
           <button

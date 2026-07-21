@@ -1,4 +1,3 @@
-// src/components/UI/SelectDropdown.jsx
 import React from "react";
 
 export default function SelectDropdown({

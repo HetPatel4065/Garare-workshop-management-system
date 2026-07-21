@@ -18,7 +18,7 @@ import { format } from "date-fns";
 import SearchBar from "../components/UI/SearchBar";
 import EmptyState from "../components/UI/EmptyState";
 
-/* ─── Helper: icon + colour per type ─── */
+/*  Helper: icon + colour per type  */
 function getTypeStyles(type) {
   switch (type) {
     case "unpaid_invoice":
@@ -96,7 +96,7 @@ function getTypeStyles(type) {
   }
 }
 
-/* ─── Helper: icon + colour per source ─── */
+/*  Helper: icon + colour per source  */
 function getSourceStyles(source) {
   switch (source) {
     case "Admin":
@@ -127,7 +127,7 @@ function getSourceStyles(source) {
   }
 }
 
-/* ─── MetaField — mirrors CustomerCard's MetaField ─── */
+/*  MetaField — mirrors CustomerCard's MetaField  */
 function MetaField({ label, primary, secondary, icon: Icon }) {
   return (
     <div className="flex flex-col min-w-0">
@@ -147,7 +147,7 @@ function MetaField({ label, primary, secondary, icon: Icon }) {
   );
 }
 
-/* ─── NotificationCard — mirrors CustomerCard visually ─── */
+/*  NotificationCard — mirrors CustomerCard visually  */
 function NotificationCard({ notification, onMarkRead, onDelete }) {
   const { title, message, type, read, createdAt, link, source, subtitle } =
     notification;
@@ -259,7 +259,7 @@ function NotificationCard({ notification, onMarkRead, onDelete }) {
   );
 }
 
-/* ─── Notifications Page ─── */
+/*  Notifications Page  */
 export default function Notifications() {
   const {
     notifications,
@@ -274,7 +274,7 @@ export default function Notifications() {
   const [activeSearch, setActiveSearch] = useState("");
   const [isTyping, setIsTyping] = useState(false);
 
-  /* ─── Filter logic mirrors Customers page ─── */
+  /*  Filter logic mirrors Customers page  */
   const filteredNotifications = notifications.filter((n) => {
     const query = (isTyping ? searchQuery : activeSearch).toLowerCase();
     const matchTitle = (n.title || "").toLowerCase().includes(query);
@@ -294,7 +294,7 @@ export default function Notifications() {
     return searchMatch && n.type === filter;
   });
 
-  /* ─── Type counts (mirrors statusCounts in Customers) ─── */
+  /*  Type counts (mirrors statusCounts in Customers)  */
   const typeCounts = notifications.reduce(
     (acc, n) => {
       acc.All += 1;
@@ -348,7 +348,7 @@ export default function Notifications() {
           </div>
         </div>
       </div>
-      {/* ── SEARCH + FILTER — mirrors Customers ── */}
+      {/*  SEARCH + FILTER — mirrors Customers  */}
       <div className="mb-6 flex flex-col lg:flex-row gap-4">
         <div className="relative flex-1">
           <SearchBar
@@ -401,7 +401,7 @@ export default function Notifications() {
           </select>
         </div>
       </div>
-      {/* ── TYPE CHIPS — mirrors Customers' status chips ── */}
+      {/*  TYPE CHIPS — mirrors Customers' status chips  */}
       <div className="flex flex-wrap gap-2 mb-6">
         {[
           ["All", "bg-indigo-100 text-indigo-700 border-indigo-300"],
@@ -416,14 +416,14 @@ export default function Notifications() {
           </span>
         ))}
       </div>
-      {/* ── TOTAL COUNT — mirrors Customers ── */}
+      {/*  TOTAL COUNT — mirrors Customers  */}
       <div className="mt-4 border-t border-gray-100 p-4">
         <p className="text-sm font-medium text-gray-600">
           Total Notifications:{" "}
           <span className="text-gray-900">{filteredNotifications.length}</span>
         </p>
       </div>
-      {/* ── NOTIFICATION LIST ── */}
+      {/*  NOTIFICATION LIST  */}
       {filteredNotifications.length > 0 ? (
         <div className="space-y-3">
           {filteredNotifications.map((n) => (

@@ -34,7 +34,7 @@ import { useNotifications } from "../../../context/NotificationContext";
 import ThemeToggle from "../../theme/ThemeToggle";
 import { ROLE_LABELS } from "../../../utils/roles";
 
-// ─── Navigation config ────────────────────────────────────────────────────────
+// ─── Navigation config ───
 
 const NAV_SECTIONS = [
   {
@@ -152,11 +152,11 @@ const NAV_SECTIONS = [
 
 const QUICK_LINK_PATHS = new Set(["/dashboard", "/partnership-leads"]);
 
-// ─── Context (avoids prop-drilling isCollapsedDesktop to every nav link) ──────
+// ─── Context (avoids prop-drilling isCollapsedDesktop to every nav link) ───
 
 const SidebarCtx = createContext(false);
 
-// ─── SidebarNavLink ───────────────────────────────────────────────────────────
+// ─── SidebarNavLink ───
 
 const SidebarNavLink = React.memo(function SidebarNavLink({
   to,

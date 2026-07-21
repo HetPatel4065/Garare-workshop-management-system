@@ -20,6 +20,10 @@ import {
   X,
 } from "lucide-react";
 import { FaCar } from "react-icons/fa";
+import JobCard from "../components/Services/JobCard";
+import ExportButton from "../components/common/ExportButton";
+import EmptyState from "../components/UI/EmptyState";
+import { useSocket } from "../context/SocketContext";
 
 const formatDate = (dateString) => {
   if (!dateString) return "N/A";
@@ -85,10 +89,6 @@ const getDateRange = (type) => {
   return { startDate: "", endDate: "" };
 };
 
-import JobCard from "../components/Services/JobCard";
-import ExportButton from "../components/common/ExportButton";
-import EmptyState from "../components/UI/EmptyState";
-import { useSocket } from "../context/SocketContext";
 
 const SERVICE_CATALOG = [
   {
@@ -254,7 +254,6 @@ const SERVICE_CATALOG = [
       "Fog Lamp Installation",
       "Alloy Wheel Installation",
       "GPS Installation",
-      "Mobile Holder Installation",
     ],
   },
   {
@@ -1246,7 +1245,7 @@ export default function JobCards() {
         </div>
       )}
 
-      {/* ── MODAL ── */}
+      {/*  MODAL  */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -1464,7 +1463,7 @@ export default function JobCards() {
                     )}
                   </div>
 
-                  {/* ── SERVICE CHECKLIST ── */}
+                  {/*  SERVICE CHECKLIST  */}
                   {!isReadOnly && (
                     <div className="mt-4 border border-gray-200 rounded-xl overflow-hidden">
                       {/* Checklist header */}
@@ -1528,9 +1527,7 @@ export default function JobCards() {
                               {/* Services grid */}
                               {isOpen && (
                                 <div
-                                  className="px-4 pb-3 pt-1 grid grid-cols-1 sm:grid-cols-2
-                       gap-y-1.5 gap-x-4
-                       bg-white dark:bg-gray-900"
+                                  className="px-4 pb-3 pt-1 grid grid-cols-1 sm:grid-cols-2 gap-y-1.5 gap-x-4 bg-white dark:bg-gray-900"
                                 >
                                   {cat.services.map((svc) => {
                                     const isChecked = checkedServices.includes(
@@ -1589,7 +1586,7 @@ export default function JobCards() {
                     token={token}
                   />
 
-                  {/* ── SERVICE INSTRUCTIONS TEXTAREA ── */}
+                  {/*  SERVICE INSTRUCTIONS TEXTAREA  */}
                   <div className="flex flex-col mt-4">
                     <label className="text-sm font-semibold text-gray-700 mb-3.5">
                       {isReadOnly

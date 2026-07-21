@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import { Wrench, HardHat, UserCog } from "lucide-react";
+import { Wrench, HardHat, UserCog, TriangleAlert } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { FaUsers } from "react-icons/fa";
 import {
@@ -133,7 +133,7 @@ export default function StaffLogin() {
         transition={{ duration: 0.4, ease: "easeOut" }}
         className="w-full max-w-xl"
       >
-        {/* ── Brand Header ─────────────────────────────────────── */}
+        {/*  Brand Header  */}
         <div className="text-center mb-8">
           <div
             className="group inline-flex items-center gap-3 mb-3 cursor-auto select-none"
@@ -161,11 +161,11 @@ export default function StaffLogin() {
             {greeting}
           </h1>
           <p className="mt-1.5 text-sm text-slate-500">
-            Advisors &amp; mechanics — enter your Garage ID to continue
+            Advisors &amp; mechanics  enter your Garage ID to continue
           </p>
         </div>
 
-        {/* ── Card ── */}
+        {/*  Card  */}
         <div className="bg-white rounded-2xl border border-violet-100 overflow-hidden">
           <div className="h-1 w-full bg-linear-to-r from-violet-400 via-violet-500 to-purple-500" />
 
@@ -194,12 +194,12 @@ export default function StaffLogin() {
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@yourgarage.com"
+                placeholder="johndoe123@gmail.com"
                 label="Work Email"
                 inputClassName="border-violet-200 bg-violet-50/60 focus:ring-violet-400/30 focus:border-violet-400 focus:bg-white"
               />
 
-              {/* Garage ID — required for all staff */}
+              {/* Garage ID  required for all staff */}
               <div>
                 <FormInput
                   id="staff-garage-id"
@@ -273,7 +273,7 @@ export default function StaffLogin() {
                 ))}
               </div>
 
-              {/* ———— Submit ———— */}
+              {/*  Submit  */}
               <FormButton
                 id="staff-login-btn"
                 type="submit"
@@ -324,7 +324,7 @@ export default function StaffLogin() {
         </div>
       </motion.div>
 
-      {/* ── Forgot Password Modal ── */}
+      {/*  Forgot Password Modal  */}
       <AnimatePresence>
         {showForgotModal && (
           <div className="fixed inset-0 z-55 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
@@ -340,7 +340,7 @@ export default function StaffLogin() {
 
               <div className="p-6">
                 {forgotMessage ? (
-                  /* ── Success state ── */
+                  /*  Success state  */
                   <div className="text-center py-2">
                     <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-violet-50 mb-4">
                       <span className="text-4xl">✉️</span>
@@ -360,7 +360,7 @@ export default function StaffLogin() {
                     </button>
                   </div>
                 ) : (
-                  /* ── Form state ── */
+                  /*  Form state  */
                   <>
                     <div className="mb-5">
                       <h3 className="text-lg font-bold text-slate-900 mb-1">
@@ -395,7 +395,7 @@ export default function StaffLogin() {
                           required
                           value={forgotEmail}
                           onChange={(e) => setForgotEmail(e.target.value)}
-                          placeholder="you@yourgarage.com"
+                          placeholder="johndoe123@gmail.com"
                           className="w-full h-11 px-4 rounded-xl border border-violet-200 bg-violet-50/60 focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20 focus:bg-white text-sm transition-all"
                         />
                       </div>
@@ -448,7 +448,7 @@ export default function StaffLogin() {
 
               <div className="p-6 text-center">
                 <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-50 mb-4">
-                  <span className="text-red-500 text-3xl">⚠️</span>
+                  <span className="text-red-500 text-3xl"><TriangleAlert /></span>
                 </div>
                 <h3 className="text-xl font-bold text-slate-900 mb-2">
                   Garage Suspended

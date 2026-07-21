@@ -7,7 +7,7 @@ export default function ProtectedRoute({ children, allowedRoles }) {
   const { user, loading, isVerified } = useAuth();
   const location = useLocation();
 
-  // ── 1. Still verifying token with backend ───────────────────────────────
+  // ─────── 1. Still verifying token with backend ───────
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-950 gap-4">
@@ -19,7 +19,7 @@ export default function ProtectedRoute({ children, allowedRoles }) {
     );
   }
 
-  // ── 2. Not authenticated at all — send to correct login page ────────────
+  // ─────── 2. Not authenticated at all — send to correct login page ───────
   if (!user || !isVerified) {
     // Preserve where the user wanted to go
     const role = null;
@@ -34,17 +34,17 @@ export default function ProtectedRoute({ children, allowedRoles }) {
 
   const role = user.role?.toLowerCase();
 
-  // ── 3. Customer tried to hit a garage route → portal ───────────────────
+  // ─────── 3. Customer tried to hit a garage route → portal ───────
   if (role === "customer") {
     return <Navigate to="/portal/dashboard" replace />;
   }
 
-  // ── 4. Non-garage role somehow (safety net) ─────────────────────────────
+  // ─────── 4. Non-garage role somehow (safety net) ───────
   if (!isGarageRole(role)) {
     return <Navigate to={getDashboardRoute(role)} replace />;
   }
 
-  // ── 5. Role is authenticated but not in the allowed list ───────────────
+  // ─────── 5. Role is authenticated but not in the allowed list ───────
   if (allowedRoles && !allowedRoles.includes(role)) {
     return (
       <Navigate
@@ -55,6 +55,6 @@ export default function ProtectedRoute({ children, allowedRoles }) {
     );
   }
 
-  // ── 6. All checks passed ────────────────────────────────────────────────
+  // ─────── 6. All checks passed ───────
   return children;
 }

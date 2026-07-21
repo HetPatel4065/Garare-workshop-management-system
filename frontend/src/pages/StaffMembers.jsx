@@ -341,7 +341,7 @@ export default function StaffMembers() {
     setRoleFilter(role);
   };
 
-  // ── EDIT ──
+  //  EDIT 
   const openEdit = (member) => {
     setEditTarget(member);
     setEditForm({
@@ -411,7 +411,7 @@ export default function StaffMembers() {
     );
 
     try {
-      // ── Owner / Co-owner: only admin can toggle, use dedicated endpoint ──
+      //  Owner / Co-owner: only admin can toggle, use dedicated endpoint 
       if (member.role === "owner") {
         if (user?.role !== "admin") {
           addToast("Only admins can activate or deactivate owners", "error");
@@ -460,7 +460,7 @@ export default function StaffMembers() {
         return;
       }
 
-      // ── Mechanic / Advisor: use existing staff endpoint ──
+      //  Mechanic / Advisor: use existing staff endpoint 
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/auth/staff/${member._id}`,
         {
@@ -492,7 +492,7 @@ export default function StaffMembers() {
   };
 
 
-  // ── DELETE ──
+  //  DELETE 
   const openDelete = (member) => {
     setDeleteTarget(member);
     setDeleteModalOpen(true);
@@ -525,7 +525,7 @@ export default function StaffMembers() {
     }
   };
 
-  // ── ADD ──
+  //  ADD 
   const openAdd = () => {
     setAddForm({
       name: "",
@@ -635,7 +635,7 @@ export default function StaffMembers() {
 
   return (
     <div className="max-w-screen min-h-screen mx-auto bg-gray-100 dark:bg-slate-900 p-4 sm:p-6 cursor-auto">
-      {/* ── HEADER ── */}
+      {/*  HEADER  */}
       <div className="mb-8 pb-5 border-b-3 border-slate-200/80 dark:border-slate-700">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>
@@ -669,7 +669,7 @@ export default function StaffMembers() {
         </div>
       </div>
 
-      {/* ── SEARCH BAR ── */}
+      {/*  SEARCH BAR  */}
       <div className="mb-6 flex flex-col lg:flex-row gap-4">
         <div className="relative flex-1">
           <SearchBar
@@ -702,7 +702,7 @@ export default function StaffMembers() {
         </div>
       </div>
 
-      {/* ── STAT CARDS ── */}
+      {/*  STAT CARDS  */}
       <div
         className={`grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6 ${user?.role === "admin" ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}
       >
@@ -722,7 +722,7 @@ export default function StaffMembers() {
         })}
       </div>
 
-      {/* ── COUNT BAR ── */}
+      {/*  COUNT BAR  */}
       <div className="border-t border-gray-100 dark:border-slate-700 py-3">
         <p className="text-sm font-medium text-gray-600 dark:text-slate-400">
           Total Staff Members:{" "}
@@ -732,7 +732,7 @@ export default function StaffMembers() {
         </p>
       </div>
 
-      {/* ── CONTENT ── */}
+      {/*  CONTENT  */}
       {loading ? (
         <div className="space-y-6">
           <div className="md:hidden space-y-4">
@@ -1038,7 +1038,7 @@ export default function StaffMembers() {
         </>
       )}
 
-      {/* ── FOOTER COUNT ── */}
+      {/*  FOOTER COUNT  */}
       {!loading && filteredStaff.length > 0 && (
         <div className="rounded-xl px-4 sm:px-6 mt-5 py-3 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
           <p className="text-xs font-semibold text-slate-400 dark:text-slate-500">
@@ -1093,7 +1093,7 @@ export default function StaffMembers() {
             <input
               value={addForm.email}
               onChange={handleInputChange(setAddForm, "email")}
-              placeholder="e.g. john@example.com"
+              placeholder="e.g. johndoe@egmail.com"
               type="email"
               className={inputCls}
             />
@@ -1161,7 +1161,7 @@ export default function StaffMembers() {
                 </select>
               )}
 
-              {/* ✅ Info shown when admin picks a garage for a co-owner */}
+              {/* Info shown when admin picks a garage for a co-owner */}
               {addForm.role === "owner" && addForm.targetGarageId && (
                 <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-3 flex gap-2 mt-2">
                   <AlertCircle

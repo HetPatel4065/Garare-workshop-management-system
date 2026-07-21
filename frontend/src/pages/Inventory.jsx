@@ -43,7 +43,7 @@ export default function Inventory() {
 
   const getToken = () => token;
 
-  // 🔄 Fetch inventory
+  // Fetch inventory
   const fetchInventory = async () => {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/inventory`, {

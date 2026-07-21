@@ -236,7 +236,7 @@ export default function GarageLayout({ children }) {
 
         {/* ── Page content ── */}
         <main className="flex-1 overflow-y-auto overflow-x-hidden bg-gray-100 dark:bg-zinc-950 transition-colors duration-300 relative min-w-0">
-          <div className="w-full h-full max-w-[2400px] mx-auto">
+          <div className="w-full h-full max-w-[600] mx-auto">
             <Suspense fallback={<PageLoadingFallback />}>
               <AnimatePresence mode="wait">
                 {outlet

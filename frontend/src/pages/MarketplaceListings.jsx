@@ -34,7 +34,7 @@ import {
   SEATS_OPTIONS,
   OWNERSHIP_OPTIONS,
   COLOR_OPTIONS,
-  TRANSMISSION_OPTIONS, // add this
+  TRANSMISSION_OPTIONS, 
 } from "../constants/vehicleMarketplaceOptions";
 import { buildPortalAuthHeaders } from "../utils/portalPreview";
 import Modal from "../components/UI/Modal";
@@ -286,7 +286,7 @@ export default function MarketplaceListings({
       });
       setSearchParams(params, { replace: true });
       fetchListings();
-    }, 500); // 500ms debounce
+    }, 500); // 500ms 
 
     return () => clearTimeout(timeoutId);
   }, [filters, viewMode]);

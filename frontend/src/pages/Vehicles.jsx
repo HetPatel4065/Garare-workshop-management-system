@@ -295,7 +295,7 @@ export default function Vehicles() {
       }
 
       if (isNew) {
-        // ── collect saved IDs ──
+        //  collect saved IDs
         const savedIds = [];
         for (const v of vehiclesToCreate) {
           const { serviceDate, nextServiceDate, ...vehiclePayload } = v;
@@ -318,7 +318,7 @@ export default function Vehicles() {
           savedIds.push(data._id); // ← collect ID
         }
 
-        // ── upload chassis photos ──
+        //  upload chassis photos
         for (let i = 0; i < savedIds.length; i++) {
           if (chassisPhotos[i]) {
             await fetch(
@@ -359,7 +359,7 @@ export default function Vehicles() {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Update failed");
 
-        // ── upload chassis photo on edit ──
+        //  upload chassis photo on edit
         if (chassisPhotos[0]) {
           await fetch(
             `${import.meta.env.VITE_API_URL}/vehicles/${selectedVehicle._id}/upload-chassis-photo`,
@@ -731,7 +731,7 @@ export default function Vehicles() {
                         </div>
                         <div>
                           <input
-                            placeholder="Phone (+91 xxxx...)"
+                            placeholder="Phone (+91 xxxx......)"
                             value={newCustomer.phone}
                             onChange={(e) =>
                               setNewCustomer({

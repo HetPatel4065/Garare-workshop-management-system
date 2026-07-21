@@ -5,7 +5,7 @@ import { Wrench, HardHat, ShieldCheck, ChevronRight, Info } from "lucide-react";
 import { FaCar } from "react-icons/fa";
 import { FaUser } from "react-icons/fa";
 
-// ─── Tooltip messages ──
+//  Tooltip messages 
 const TOOLTIP_MESSAGES = {
   admin:
     "No sign-up needed. Admin accounts are pre-provisioned by the system. Contact your system administrator for credentials.",
@@ -13,7 +13,7 @@ const TOOLTIP_MESSAGES = {
     "No sign-up needed. Use your registered email or phone number to log in directly.",
 };
 
-// ─── Role card definitions ──
+//  Role card definitions 
 const ROLE_CARDS = [
   {
     id: "owner",
@@ -96,7 +96,7 @@ const ROLE_CARDS = [
   },
 ];
 
-// ─── Animation variants ──
+//  Animation variants 
 const containerVariants = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.1 } },
@@ -111,7 +111,7 @@ const cardVariants = {
   },
 };
 
-// ─── RoleCard sub-component ───
+//  RoleCard sub-component 
 function RoleCard({ card, onNavigate }) {
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const tooltipRef = useRef(null);
@@ -120,7 +120,7 @@ function RoleCard({ card, onNavigate }) {
 
   return (
     <div className="relative">
-      {/* ── Card — div with role="button" so the info icon can be a true sibling ── */}
+      {/*  Card — div with role="button" so the info icon can be a true sibling  */}
       <div
         role="button"
         tabIndex={0}
@@ -172,7 +172,7 @@ function RoleCard({ card, onNavigate }) {
         </div>
       </div>
 
-      {/* ── Info button — sibling of the card, absolutely positioned over its top-right ── */}
+      {/*  Info button — sibling of the card, absolutely positioned over its top-right  */}
       {hasTooltip && (
         <div
           ref={tooltipRef}
@@ -221,14 +221,14 @@ function RoleCard({ card, onNavigate }) {
   );
 }
 
-// ─── Page component ───
+//  Page component 
 export default function Login() {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-[#0b0f19] flex items-center justify-center p-4 sm:p-6 lg:p-8 transition-colors duration-200">
       <div className="w-full max-w-2xl">
-        {/* ── Brand header ── */}
+        {/*  Brand header  */}
         <motion.div
           initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -254,7 +254,7 @@ export default function Login() {
           </p>
         </motion.div>
 
-        {/* ── Role cards grid ── */}
+        {/*  Role cards grid  */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -271,7 +271,7 @@ export default function Login() {
           ))}
         </motion.div>
 
-        {/* ── Footer ── */}
+        {/*  Footer  */}
         <footer className="mt-8 text-center space-y-2.5">
           <p className="text-xs text-slate-400 dark:text-slate-500">
             New to our system?{" "}

@@ -502,7 +502,7 @@ export const Navbar = () => {
 
         {/* ── Mobile Hamburger ── */}
         <button
-          className="md:hidden p-1.5 rounded-xl transition-colors flex-shrink-0"
+          className="md:hidden p-1.5 rounded-xl transition-colors shrink-0"
           style={{ color: "#6366f1" }}
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle navigation menu"

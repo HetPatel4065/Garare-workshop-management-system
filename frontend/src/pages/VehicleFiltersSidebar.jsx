@@ -86,6 +86,7 @@ const brandModels = {
     "Thar",
     "Thar ROXX", // 5-Door variant
     "XUV700", // Often badged as XUV 7XO line transitions
+    "XUV7XO", // Updated XUV700 facelift
     "Scorpio-N",
     "Scorpio Classic",
     "Bolero",

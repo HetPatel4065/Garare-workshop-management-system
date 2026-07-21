@@ -280,7 +280,7 @@ export default function HelpCenter() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 bg-gray-100 min-w-0">
       <div className="max-w-screen-6xl mx-auto">
-        {/* --- Hero Section with Search --- */}
+        {/*  Hero Section with Search  */}
         <div className="space-y-4 mb-10">
           <div className="mb-8 pb-5 border-b-3 border-slate-200/80 dark:border-slate-700">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
@@ -338,7 +338,7 @@ export default function HelpCenter() {
           )}
         </div>
 
-        {/* --- Categories Grid (clickable to filter) --- */}
+        {/*  Categories Grid (clickable to filter)  */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10 bg-gray-100 rounded-xl p-4">
           {categoriesToShow.map((cat) => {
             const isActive = activeCategory === cat.id;
@@ -379,7 +379,7 @@ export default function HelpCenter() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 bg-gray-100 p-4 rounded-xl">
-          {/* --- FAQ Accordion --- */}
+          {/*  FAQ Accordion  */}
           <div id="faq-section" className="lg:col-span-2 space-y-4">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
@@ -463,7 +463,7 @@ export default function HelpCenter() {
             )}
           </div>
 
-          {/* --- Support Sidebar --- */}
+          {/*  Support Sidebar  */}
           <div className="space-y-6">
             <div className="bg-blue-600 rounded-3xl p-6 text-white shadow-xl shadow-blue-200">
               <h3 className="font-extrabold text-xl mb-2">Still need help?</h3>
@@ -493,7 +493,7 @@ export default function HelpCenter() {
                 </a>
                 <button
                   onClick={() =>
-                    window.open("https://wa.me/919978972413", "_blank")
+                    window.open("https://wa.me/9978972413", "_blank")
                   }
                   className="w-full flex items-center justify-center gap-2 bg-white text-blue-600 py-3 rounded-xl font-black text-sm hover:bg-blue-50 transition-all"
                 >

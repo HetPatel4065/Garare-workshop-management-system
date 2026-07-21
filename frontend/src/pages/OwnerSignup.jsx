@@ -16,7 +16,13 @@ import {
   Mail,
 } from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
-import { FormInput, FormTextarea, FormError, FormButton, FormRow } from "../components/layout/Form/forms";
+import {
+  FormInput,
+  FormTextarea,
+  FormError,
+  FormButton,
+  FormRow,
+} from "../components/layout/Form/forms";
 
 const SERVICES_LIST = [
   "General Maintenance",
@@ -24,7 +30,9 @@ const SERVICES_LIST = [
   "AC & Electrical Repair",
   "Denting & Painting",
   "Washing & Detailing",
-  "Wheel Alignment",
+  "Tyre & Battery Services",
+  "Engine Diagnostics",
+  "CNG Fitting & Repair",
 ];
 
 const BENEFITS = [
@@ -114,7 +122,7 @@ export default function OwnerSignup() {
   return (
     <div className="min-h-screen bg-emerald-50/30 dark:bg-zinc-950 flex items-center justify-center p-2 xs:p-4 sm:p-6 lg:p-8 selection:bg-emerald-200">
       <div className="w-full max-w-6xl flex flex-col lg:flex-row bg-white dark:bg-zinc-900 rounded-3xl sm:rounded-[2.5rem] border border-emerald-100 dark:border-zinc-800 shadow-[0_24px_70px_rgba(16,185,129,0.06)] overflow-hidden min-h-150">
-        {/* ── Left Column: Value Prop & Trust (Emerald Branding) ── */}
+        {/*  Left Column: Value Prop & Trust (Emerald Branding)  */}
         <div className="w-full lg:w-5/12 bg-emerald-600 dark:bg-emerald-950 p-4 xs:p-8 sm:p-12 text-white flex flex-col justify-between relative overflow-hidden">
           {/* Decorative ambient gradient blobs inside the panel */}
           <div className="absolute top-[-20%] right-[-10%] w-72 h-72 rounded-full bg-emerald-500/20 blur-3xl pointer-events-none" />
@@ -192,7 +200,7 @@ export default function OwnerSignup() {
           </div>
         </div>
 
-        {/* ── Right Column: Lead Form or Success Page ── */}
+        {/*  Right Column: Lead Form or Success Page  */}
         <div className="w-full lg:w-7/12 p-4 xs:p-8 sm:p-12 flex flex-col justify-center bg-white dark:bg-zinc-900 transition-colors">
           <AnimatePresence mode="wait">
             {!submitted ? (
@@ -243,7 +251,9 @@ export default function OwnerSignup() {
                       onChange={(e) => setGarageName(e.target.value)}
                       placeholder="Speedy Auto Works"
                       label="Garage Name"
-                      leftIcon={<Store className="w-4 h-4 text-emerald-500/80" />}
+                      leftIcon={
+                        <Store className="w-4 h-4 text-emerald-500/80" />
+                      }
                       inputClassName="border-emerald-100 dark:border-zinc-800 bg-emerald-50/20 dark:bg-zinc-800/40 focus:ring-emerald-400/20 focus:border-emerald-500 dark:text-white"
                     />
 
@@ -252,9 +262,11 @@ export default function OwnerSignup() {
                       required
                       value={ownerName}
                       onChange={(e) => setOwnerName(e.target.value)}
-                      placeholder="Rahul Sharma"
+                      placeholder="John Doe"
                       label="Owner Name"
-                      leftIcon={<User className="w-4 h-4 text-emerald-500/80" />}
+                      leftIcon={
+                        <User className="w-4 h-4 text-emerald-500/80" />
+                      }
                       inputClassName="border-emerald-100 dark:border-zinc-800 bg-emerald-50/20 dark:bg-zinc-800/40 focus:ring-emerald-400/20 focus:border-emerald-500 dark:text-white"
                     />
                   </FormRow>
@@ -279,7 +291,9 @@ export default function OwnerSignup() {
                       placeholder="+91 9876543210"
                       maxLength={14}
                       label="Mobile Number"
-                      leftIcon={<Phone className="w-4 h-4 text-emerald-500/80" />}
+                      leftIcon={
+                        <Phone className="w-4 h-4 text-emerald-500/80" />
+                      }
                       inputClassName="border-emerald-100 dark:border-zinc-800 bg-emerald-50/20 dark:bg-zinc-800/40 focus:ring-emerald-400/20 focus:border-emerald-500 dark:text-white"
                     />
 
@@ -288,9 +302,11 @@ export default function OwnerSignup() {
                       required
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
-                      placeholder="Mumbai"
+                      placeholder="Ahmedabad"
                       label="City"
-                      leftIcon={<MapPin className="w-4 h-4 text-emerald-500/80" />}
+                      leftIcon={
+                        <MapPin className="w-4 h-4 text-emerald-500/80" />
+                      }
                       inputClassName="border-emerald-100 dark:border-zinc-800 bg-emerald-50/20 dark:bg-zinc-800/40 focus:ring-emerald-400/20 focus:border-emerald-500 dark:text-white"
                     />
                   </FormRow>
@@ -301,7 +317,7 @@ export default function OwnerSignup() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="owner@example.com"
+                    placeholder="owner@gmail.com"
                     label="Email Address"
                     leftIcon={<Mail className="w-4 h-4 text-emerald-500/80" />}
                     inputClassName="border-emerald-100 dark:border-zinc-800 bg-emerald-50/20 dark:bg-zinc-800/40 focus:ring-emerald-400/20 focus:border-emerald-500 dark:text-white"
@@ -377,7 +393,7 @@ export default function OwnerSignup() {
                 </div>
               </motion.div>
             ) : (
-              // ── Success State ──
+              //  Success State 
               <motion.div
                 key="success-state"
                 initial={{ opacity: 0, scale: 0.95 }}

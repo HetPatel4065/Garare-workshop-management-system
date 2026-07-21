@@ -246,7 +246,7 @@ export default function Dashboard() {
 
   return (
     <div className="w-full min-h-screen bg-gray-100 px-2 xs:px-3 sm:px-6 lg:px-8 3xl:px-12 4xl:px-16 py-3 xs:py-4 sm:py-6 overflow-y-auto">
-      {/* ── Header ── */}
+      {/*  Header  */}
       <div className="mb-4 xs:mb-6 flex flex-col gap-3 xs:gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:mb-8">
         {/* Left Side: Identity & Greetings */}
         <div className="min-w-0 flex-1">
@@ -278,7 +278,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ── Stats Cards ── */}
+      {/*  Stats Cards  */}
       {["owner", "admin"].includes(role) && (
         <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-2 xs:gap-3 sm:gap-4 mb-4 xs:mb-6 sm:mb-8">
           <StatsCard
@@ -324,7 +324,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* ── Charts Row ── */}
+      {/*  Charts Row  */}
       {["owner", "admin"].includes(role) && (
         <div className="grid grid-cols-1 lg:grid-cols-3 3xl:grid-cols-3 gap-3 xs:gap-4 sm:gap-6 mb-4 xs:mb-6 sm:mb-8">
           {/* Business Analytics — takes 2 of 3 cols on lg+ */}
@@ -521,7 +521,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* ── Bottom Row: Recent Activity + Sidebar ── */}
+      {/*  Bottom Row: Recent Activity + Sidebar  */}
       <div className="grid grid-cols-1 lg:grid-cols-3 3xl:grid-cols-3 gap-3 xs:gap-4 sm:gap-6 items-start">
         {/* Recent Activity — 2 cols */}
         <div className="lg:col-span-2 bg-white rounded-2xl xs:rounded-3xl border border-slate-100 shadow-sm overflow-hidden">

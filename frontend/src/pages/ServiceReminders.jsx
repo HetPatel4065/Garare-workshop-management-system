@@ -24,7 +24,7 @@ import { FaCar } from "react-icons/fa6";
 import ExportButton from "../components/common/ExportButton";
 import EmptyState from "../components/UI/EmptyState";
 
-// ─── MetaField (mirrors RequestedCustomers) ───
+//  MetaField (mirrors RequestedCustomers) 
 function MetaField({
   label,
   primary,
@@ -114,7 +114,7 @@ function getStatusMeta(reminderStatus, nextServiceDate) {
     );
   }
 
-  // ─── Skeleton Card ────
+  //  Skeleton Card 
   const SkeletonCard = () => (
     <div className="bg-white rounded-3xl p-4 sm:p-5 mb-4 border border-slate-100 shadow-sm animate-pulse">
       <div className="flex flex-wrap items-center gap-3 mb-4">
@@ -135,7 +135,7 @@ function getStatusMeta(reminderStatus, nextServiceDate) {
     </div>
   );
 
-  // ─── Stat Card ───
+  //  Stat Card 
   const StatCard = ({
     label,
     count,
@@ -176,7 +176,7 @@ function getStatusMeta(reminderStatus, nextServiceDate) {
     </button>
   );
 
-  // ─── Reminder Card (mirrors RequestCard layout) ───────────────────
+  //  Reminder Card (mirrors RequestCard layout) 
   function ReminderCard({ r, onSendEmail, onSendSMS, onCall, isSending }) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -220,7 +220,7 @@ function getStatusMeta(reminderStatus, nextServiceDate) {
 
     return (
       <div className="bg-white rounded-3xl p-4 sm:p-5 mb-4 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] transition-all duration-300 border border-slate-100 shadow-sm relative overflow-hidden group">
-        {/* ── TOP ROW: Plate + Make/Model + Status ── */}
+        {/*  TOP ROW: Plate + Make/Model + Status  */}
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-lg font-bold text-gray-900 tracking-tight">
@@ -236,7 +236,7 @@ function getStatusMeta(reminderStatus, nextServiceDate) {
           </div>
         </div>
 
-        {/* ── META GRID ── */}
+        {/*  META GRID  */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-4 relative z-10">
           <MetaField
             label="Customer"
@@ -263,10 +263,10 @@ function getStatusMeta(reminderStatus, nextServiceDate) {
           />
         </div>
 
-        {/* ── DIVIDER ── */}
+        {/*  DIVIDER  */}
         <div className="border-t border-gray-100 my-3" />
 
-        {/* ── BOTTOM ROW: Actions ── */}
+        {/*  BOTTOM ROW: Actions  */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-2">
           {/* Left: previous service record */}
           {r.lastServiceDate ? (
@@ -342,7 +342,7 @@ function getStatusMeta(reminderStatus, nextServiceDate) {
     );
   }
 
-  // ─── Main Component ───────────────────────────────────────────────
+  //  Main Component 
   export default function ServiceReminders() {
     const { token } = useAuth();
     const { addToast } = useToast();
@@ -456,7 +456,7 @@ function getStatusMeta(reminderStatus, nextServiceDate) {
       return true; // "All"
     });
 
-    // ── Status counts (mirrors filteredReminders classification logic) ──
+    //  Status counts (mirrors filteredReminders classification logic) 
     const statusCounts = reminders.reduce(
       (acc, r) => {
         if (!r.nextServiceDate) return acc;
@@ -484,7 +484,7 @@ function getStatusMeta(reminderStatus, nextServiceDate) {
       { All: 0, Today: 0, Upcoming: 0, Overdue: 0, Completed: 0 },
     );
 
-    // ── Pagination ──
+    //  Pagination 
     const totalPages = 1;
     const currentReminders = filteredReminders;
 
@@ -604,7 +604,7 @@ function getStatusMeta(reminderStatus, nextServiceDate) {
 
     return (
       <div className="p-4 sm:p-6 bg-gray-100 min-h-screen">
-        {/* ── Header ── */}
+        {/*  Header  */}
         <div className="mb-8 pb-5 border-b-3 border-slate-200/80 dark:border-slate-700">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div>
@@ -649,7 +649,7 @@ function getStatusMeta(reminderStatus, nextServiceDate) {
           </div>
         </div>
 
-        {/* ── Stat Cards ── */}
+        {/*  Stat Cards  */}
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-6">
           {statCards.map((card) => (
             <StatCard
@@ -661,7 +661,7 @@ function getStatusMeta(reminderStatus, nextServiceDate) {
           ))}
         </div>
 
-        {/* ── Search ── */}
+        {/*  Search  */}
         <div className="mb-4">
           <div className="relative">
             <Search
@@ -688,7 +688,7 @@ function getStatusMeta(reminderStatus, nextServiceDate) {
           </div>
         </div>
 
-        {/* ── Active Filter Chip ── */}
+        {/*  Active Filter Chip  */}
         {statusFilter !== "All" && (
           <div className="mb-4 flex items-center gap-2">
             <span className="text-[11px] font-bold text-slate-500">
@@ -703,7 +703,7 @@ function getStatusMeta(reminderStatus, nextServiceDate) {
           </div>
         )}
 
-        {/* ── Count ── */}
+        {/*  Count  */}
         {!loading && filteredReminders.length > 0 && (
           <div className="mb-3 px-1">
             <p className="text-sm font-medium text-gray-500">
@@ -715,7 +715,7 @@ function getStatusMeta(reminderStatus, nextServiceDate) {
           </div>
         )}
 
-        {/* ── Cards ── */}
+        {/*  Cards  */}
         <div>
           {loading ? (
             [...Array(4)].map((_, i) => <SkeletonCard key={i} />)
@@ -747,7 +747,7 @@ function getStatusMeta(reminderStatus, nextServiceDate) {
           )}
         </div>
 
-        {/* ── Pagination ── */}
+        {/*  Pagination  */}
         {totalPages > 1 && (
           <div className="flex items-center justify-center gap-2 mt-6">
             <button

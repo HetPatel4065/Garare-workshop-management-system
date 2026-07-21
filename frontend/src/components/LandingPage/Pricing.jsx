@@ -56,7 +56,7 @@ export const Pricing = () => {
         }}
       />
 
-      <div className="max-w-5xl mx-auto relative z-10 3xl:max-w-[1200px] 4xl:max-w-[1400px]">
+      <div className="max-w-5xl mx-auto relative z-10 3xl:max-w-[300] 4xl:max-w-[350]">
         <div className="text-center mb-12 md:mb-16">
           <motion.div
             initial={{ opacity: 0, y: 10 }}

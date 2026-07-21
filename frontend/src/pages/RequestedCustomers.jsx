@@ -30,7 +30,7 @@ import ExportButton from "../components/common/ExportButton";
 import { useSocket } from "../context/SocketContext";
 import { FaCar } from "react-icons/fa";
 
-// ─── MetaField (mirrors CustomerCard) ────────────────────────────
+//  MetaField (mirrors CustomerCard) 
 function MetaField({
   label,
   primary,
@@ -59,7 +59,7 @@ function MetaField({
   );
 }
 
-// ─── Status Badge ─────────────────────────────────────────────────
+//  Status Badge 
 const STATUS_META = {
   pending: "text-amber-700 bg-amber-50 border-amber-200",
   approved: "text-emerald-700 bg-emerald-50 border-emerald-200",
@@ -85,7 +85,7 @@ function StatusBadge({ status }) {
   );
 }
 
-// ─── Skeleton Card ────────────────────────────────────────────────
+//  Skeleton Card 
 const SkeletonCard = () => (
   <div className="bg-white rounded-3xl p-4 sm:p-5 mb-4 border border-slate-100 shadow-sm animate-pulse">
     <div className="flex flex-wrap items-center gap-3 mb-4">
@@ -106,7 +106,7 @@ const SkeletonCard = () => (
   </div>
 );
 
-// ─── Stat Card ───
+//  Stat Card 
 const StatCard = ({
   label,
   count,
@@ -147,7 +147,7 @@ const StatCard = ({
   </button>
 );
 
-// ─── Request Card (mirrors CustomerCard layout) ───
+//  Request Card (mirrors CustomerCard layout) 
 function RequestCard({ req, onView, onApprove, onReject, onDelete }) {
   const dateObj = new Date(req.createdAt);
   const apponintmwntTime = req.appointmentTime
@@ -156,7 +156,7 @@ function RequestCard({ req, onView, onApprove, onReject, onDelete }) {
 
   return (
     <div className="bg-white rounded-3xl p-4 sm:p-5 mb-4 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] transition-all duration-300 border border-slate-100 shadow-sm relative overflow-hidden group cursor-auto">
-      {/* ── TOP ROW: Name + ID + Status ── */}
+      {/*  TOP ROW: Name + ID + Status  */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div className="flex flex-wrap items-center gap-2">
           <h3 className="text-lg font-bold text-gray-900 tracking-tight">
@@ -169,7 +169,7 @@ function RequestCard({ req, onView, onApprove, onReject, onDelete }) {
         </div>
       </div>
 
-      {/* ── META GRID ── */}
+      {/*  META GRID  */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-4 relative z-10">
         <MetaField label="Phone" primary={req.phone || "No Phone"} />
         <MetaField label="Email" primary={req.email || "—"} noCapitalize />
@@ -216,10 +216,10 @@ function RequestCard({ req, onView, onApprove, onReject, onDelete }) {
         />
       </div>
 
-      {/* ── DIVIDER ── */}
+      {/*  DIVIDER  */}
       <div className="border-t border-gray-100 my-3" />
 
-      {/* ── BOTTOM ROW: Actions ── */}
+      {/*  BOTTOM ROW: Actions  */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mt-2">
         {/* View */}
         <button
@@ -276,7 +276,7 @@ function RequestCard({ req, onView, onApprove, onReject, onDelete }) {
   );
 }
 
-// ─── Section Heading (for modal) ───
+//  Section Heading (for modal) 
 function SectionHeading({ title }) {
   return (
     <div className="flex items-center gap-2 pt-4.5 pb-2">
@@ -288,7 +288,7 @@ function SectionHeading({ title }) {
   );
 }
 
-// ─── Detail Row (for modal) ───
+//  Detail Row (for modal) 
 function DetailRow({ icon, label, value }) {
   return (
     <div className="flex items-start gap-3 py-2.5 px-4">
@@ -305,7 +305,7 @@ function DetailRow({ icon, label, value }) {
   );
 }
 
-// ─── Meta Card (for modal) ───
+//  Meta Card (for modal) 
 function MetaCard({ title, children, wide = false }) {
   return (
     <div
@@ -319,7 +319,7 @@ function MetaCard({ title, children, wide = false }) {
   );
 }
 
-// ─── Main Component ───
+//  Main Component 
 export default function RequestedCustomers() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -590,7 +590,7 @@ export default function RequestedCustomers() {
 
   return (
     <div className="p-4 sm:p-6 bg-gray-100 max-w-screen min-h-screen mx-auto dark:bg-slate-950">
-      {/* ── Header ── */}
+      {/*  Header  */}
       <div className="mb-8 pb-5 border-b-3 border-slate-200/80 dark:border-slate-700">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>
@@ -635,7 +635,7 @@ export default function RequestedCustomers() {
         </div>
       </div>
 
-      {/* ── Search ── */}
+      {/*  Search  */}
       <div className="mb-6">
         <SearchBar
           value={searchInput}
@@ -652,7 +652,7 @@ export default function RequestedCustomers() {
         />
       </div>
 
-      {/* ── Stat Cards ── */}
+      {/*  Stat Cards  */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
         {statCards.map((card) => (
           <StatCard
@@ -664,7 +664,7 @@ export default function RequestedCustomers() {
         ))}
       </div>
 
-      {/* ── Active Filter Chip ── */}
+      {/*  Active Filter Chip  */}
       {(statusFilter !== "All" || activeQuery) && (
         <div className="mb-4 flex flex-wrap items-center gap-2">
           <span className="text-[11px] font-bold text-slate-500">
@@ -689,7 +689,7 @@ export default function RequestedCustomers() {
         </div>
       )}
 
-      {/* ── Count ── */}
+      {/*  Count  */}
       {!loading && filteredRequests.length > 0 && (
         <div className="mt-4 border-t border-gray-100 p-4">
           <p className="text-sm font-medium text-gray-500">
@@ -701,7 +701,7 @@ export default function RequestedCustomers() {
         </div>
       )}
 
-      {/* ── Cards ── */}
+      {/*  Cards  */}
       <div>
         {loading ? (
           [...Array(4)].map((_, i) => <SkeletonCard key={i} />)
@@ -747,7 +747,7 @@ export default function RequestedCustomers() {
         )}
       </div>
 
-      {/* ── Pagination ── */}
+      {/*  Pagination  */}
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 mt-6">
           <button
@@ -770,7 +770,7 @@ export default function RequestedCustomers() {
         </div>
       )}
 
-      {/* ── Details Modal ── */}
+      {/*  Details Modal  */}
       <Modal
         isOpen={detailsModalOpen}
         onClose={() => setDetailsModalOpen(false)}
@@ -779,7 +779,7 @@ export default function RequestedCustomers() {
       >
         {selectedRequest && (
           <div className="flex flex-col max-h-[80vh] overflow-hidden">
-            {/* ── Modal Header: tag + close + vehicle identity ── */}
+            {/*  Modal Header: tag + close + vehicle identity  */}
             <div className="pb-0 shrink-0">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-[10.5px] font-bold text-slate-400 uppercase tracking-[0.14em]">
@@ -805,7 +805,7 @@ export default function RequestedCustomers() {
               </div>
             </div>
 
-            {/* ── Scrollable body ── */}
+            {/*  Scrollable body  */}
             <div className="flex-1 overflow-y-auto pr-1">
               <SectionHeading title="Customer details" />
 
@@ -856,7 +856,7 @@ export default function RequestedCustomers() {
               </div>
             </div>
 
-            {/* ── Footer actions ── */}
+            {/*  Footer actions  */}
             <div className="pt-4 border-t border-slate-100 shrink-0">
               <div className="flex items-center gap-2">
                 <button
@@ -904,7 +904,7 @@ export default function RequestedCustomers() {
         )}
       </Modal>
 
-      {/* ── Approve Modal ── */}
+      {/*  Approve Modal  */}
       <ConfirmModal
         isOpen={approveModalOpen}
         onClose={() => setApproveModalOpen(false)}
@@ -967,7 +967,7 @@ export default function RequestedCustomers() {
         </div>
       </ConfirmModal>
 
-      {/* ── Reject Modal ── */}
+      {/*  Reject Modal  */}
       <ConfirmModal
         isOpen={rejectModalOpen}
         onClose={() => setRejectModalOpen(false)}
@@ -990,7 +990,7 @@ export default function RequestedCustomers() {
         </div>
       </ConfirmModal>
 
-      {/* ── Delete Modal ── */}
+      {/*  Delete Modal  */}
       <ConfirmModal
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}

@@ -53,7 +53,6 @@ export const CAR_MAKES_MODELS = {
     "Brezza",
     "Grand Vitara",
     "Jimny",
-    "Kizashi",
   ],
 
   Hyundai: [
@@ -80,8 +79,6 @@ export const CAR_MAKES_MODELS = {
   Tata: [
     "Indica",
     "Indigo",
-    "Manza",
-    "Bolt",
     "Zest",
     "Nano",
     "Tiago",
@@ -112,7 +109,6 @@ export const CAR_MAKES_MODELS = {
     "Thar Roxx",
     "Marazzo",
     "KUV100",
-    "Quanto",
     "TUV300",
     "BE 6",
     "XEV 9e",
@@ -150,13 +146,14 @@ export const CAR_MAKES_MODELS = {
     "Land Cruiser",
   ],
 
-  Kia: ["Sonet", "Seltos", "Carens", "Carnival", "EV6", "EV9"],
+  Kia: ["Sonet", "Seltos", "Carens", "Carnival", "EV6"],
 
   MG: [
     "Astor",
     "Hector",
     "Hector Plus",
     "Gloster",
+    "ZS",
     "ZS EV",
     "Comet EV",
     "Windsor EV",
@@ -187,6 +184,7 @@ export const CAR_MAKES_MODELS = {
     "Superb",
     "Kodiaq",
     "Yeti",
+    "Karoq",
   ],
 
   Ford: [
@@ -199,7 +197,7 @@ export const CAR_MAKES_MODELS = {
     "Ikon",
   ],
 
-  Jeep: ["Compass", "Meridian", "Wrangler", "Grand Cherokee"],
+  Jeep: ["Compass", "Meridian", "Wrangler","Rubicon", "Grand Cherokee"],
 
   Mercedes: [
     "A-Class",

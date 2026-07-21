@@ -1,4 +1,3 @@
-
 function PartsUsedList({ parts = [] }) {
   if (!parts.length) return <p className="text-gray-500">No parts used.</p>;
 

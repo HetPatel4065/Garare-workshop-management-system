@@ -64,7 +64,7 @@ export const validateVehicle = (vehicle) => {
   return errors;
 };
 
-// ─── Main VehicleForm ─────────────────────────────────────────────────────────
+// ─── Main VehicleForm ───
 export default function VehicleForm({
   vehicle,
   onChange,
